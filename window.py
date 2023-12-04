@@ -1,4 +1,4 @@
-# window.py in f_ghostly (folder)
+# window.py in d_inheritance (folder)
 '''
 title: Window class for pygame
 author: kliment lo
@@ -38,6 +38,3 @@ class Window:
 
     def getHeight(self):
         return self.__HEIGHT
-
-    def getFPS(self):
-        return self.__FPS
