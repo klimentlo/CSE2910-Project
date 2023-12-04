@@ -5,8 +5,6 @@ date: 2023-12-1
 """
 
 class Attacks:
-
-
     def __init__(self, NAME, DAMAGE, RANGE, COOLDOWN):
         """
 
@@ -33,8 +31,22 @@ class Attacks:
         return self._COOLDOWN
 
 moveSet = {
-    "chomp": Attacks("Chomp", 60, 45, 10),
+    # fish attacks
+    "flop": Attacks("Flop", 60, 45, 10),
+    "sting": Attacks("Sting", 60, 45, 10),
     "sword slash": Attacks("Sword Slash", 40, 45, 2),
-    "ember": Attacks("Ember", 40, 45, 123),
-    "leg kick": Attacks("Leg Kick", 35, 45,23)
+    "star shine": Attacks("Star Shine", 60, 45, 10),
+    "bubble beam": Attacks("Bubble Beam", 60, 45, 10),
+    "chomp": Attacks("Chomp", 60, 45, 10),
+    "acid shot": Attacks("Acid Shot", 40, 45, 123),
+    "devour": Attacks("Devour", 60, 45, 10),
+    # human attacks
+    "picture": Attacks("Picture", 60, 45, 10),
+    "water push": Attacks("Water Push", 60, 45, 10), # use there strong legs to kick the fish back
+    "spear throw": Attacks("Spear Throw", 60, 45, 10),
+    "net throw": Attacks("Net Throw", 60, 45, 10),
+    "vile fluid": Attacks("Vile Fluid", 35, 45,23),
+    "ram": Attacks("Ram", 35, 45,23),
+    "missile": Attacks("Missile", 35, 45,23),
+    "eat": Attacks("Eat", 35, 45,23),
 }
