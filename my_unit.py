@@ -4,7 +4,7 @@ from image_sprite import ImageSprite
 from window import Window
 import pygame
 
-class MyUnits(MySprite):
+class MyUnit(MySprite):
     def __init__(self, FILENAME, X, SPEED, SPAWN_COOLDOWN, MAX_HEALTH, RANGE, ATTACK, ATTACK_COOLDOWN, UNIT_TYPE, LEVEL=1):
                                             #   Y \/
         MySprite.__init__(self, 1, 1, X, 300, SPEED)
@@ -17,7 +17,6 @@ class MyUnits(MySprite):
         self.__ATTACKS = []
         self.__ATTACKS.append(ATTACK)
         self.__ATTACK_COOLDOWN = ATTACK_COOLDOWN
-        self.__ALIVE = True
         self.__UNIT_TYPE = UNIT_TYPE
         self.__LEVEL = LEVEL
         self._SURFACE = self.__UNIT.getSurface()
@@ -36,6 +35,7 @@ class MyUnits(MySprite):
         :return: bool
         '''
         if X < self.getX() + self.getWidth() + self.__RANGE and X > self.getX():
+            self.setSpeed(0)
             return True # Yes, a cat is within the range of the human
 
     def inCatRange(self, WIDTH, X):
@@ -50,20 +50,20 @@ class MyUnits(MySprite):
     def addAttack(self, ATTACK):
         self.__ATTACKS.append(ATTACK)
 
-    def isAlive(self):
+    def isAlive(self, LIST):
         if self.__CURENT_HEALTH < 0:
-            self.__ALIVE = False
             # will eventually pop it off, which will disappear
             print("Dead")
 
+
 if __name__ == "__main__":
     pygame.init()
-    WINDOW = Window("Image Sprites", 800, 600, 30)
-    UNIT2 = MyUnits("media/pngtree-an-orange-cat-with-squinting-eyes-png-image_2664925.jpg", 600, 5, 50, 50, 50, 50, 50,
+    WINDOW = Window("Image Sprites", 800, 600, 30)                                                         # \/RANGE
+    UNIT2 = MyUnits("media/pngtree-an-orange-cat-with-squinting-eyes-png-image_2664925.jpg", 600, 5, 50, 50, 100, 50, 50,
                     50)
     UNIT2.setScale(0.2)
                                                                                                         #  \/ RANGE
-    UNIT = MyUnits("media/pngtree-an-orange-cat-with-squinting-eyes-png-image_2664925.jpg", 100, 5, 0, 50, 50, 50 , 50,50)
+    UNIT = MyUnits("media/pngtree-an-orange-cat-with-squinting-eyes-png-image_2664925.jpg", 100, 5, 0, 50, 100, 50 , 50,50)
     UNIT.setScale(0.2)
 
 
@@ -77,13 +77,20 @@ if __name__ == "__main__":
 
 
         WINDOW.clearScreen()
-        UNIT.marqueeX(WINDOW.getWidth())
+
         if UNIT.inHumanRange(UNIT2.getX()):
             print("CAT IN RANGE!")
-            UNIT.setSpeed(0)
+        else:
+            UNIT.setSpeed(1)
+        UNIT.marqueeX(WINDOW.getWidth())
 
         if UNIT2.inCatRange(UNIT.getWidth(), UNIT.getX()):
             print("HUMAN IN RANGE")
+        else:
+            UNIT.setSpeed(1)
+
+        KEYPRESSES = pygame.key.get_pressed()
+        UNIT2.WASDmove(KEYPRESSES)
         WINDOW.getSurface().blit(UNIT.getSurface(), UNIT.getPOS())
         WINDOW.getSurface().blit(UNIT2.getSurface(), UNIT2.getPOS())
         WINDOW.updateFrame()
