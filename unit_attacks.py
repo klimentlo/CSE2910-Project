@@ -34,11 +34,11 @@ moveSet = {
     # fish attacks
     "flop": Attacks("Flop", 60, 45, 10),
     "sting": Attacks("Sting", 60, 45, 10),
-    "sword slash": Attacks("Sword Slash", 40, 45, 2),
-    "star shine": Attacks("Star Shine", 60, 45, 10),
-    "bubble beam": Attacks("Bubble Beam", 60, 45, 10),
+    "swordSlash": Attacks("Sword Slash", 40, 45, 2),
+    "starShine": Attacks("Star Shine", 60, 45, 10),
+    "bubbleBeam": Attacks("Bubble Beam", 60, 45, 10),
     "chomp": Attacks("Chomp", 60, 45, 10),
-    "acid shot": Attacks("Acid Shot", 40, 45, 123),
+    "acidShot": Attacks("Acid Shot", 40, 45, 123),
     "devour": Attacks("Devour", 60, 45, 10),
     # human attacks
     "picture": Attacks("Picture", 60, 45, 10),

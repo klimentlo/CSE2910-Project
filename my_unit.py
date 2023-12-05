@@ -5,7 +5,7 @@ from window import Window
 import pygame
 
 class MyUnit(MySprite):
-    def __init__(self, FILENAME, X, SPEED, SPAWN_COOLDOWN, MAX_HEALTH, RANGE, ATTACK, ATTACK_COOLDOWN, UNIT_TYPE, LEVEL=1):
+    def __init__(self, FILENAME, X, SPEED, SPAWN_COOLDOWN, MAX_HEALTH, RANGE, ATTACK, ATTACK_COOLDOWN, UNIT_TYPE, DIRECTION=1 , LEVEL=1):
                                             #   Y \/
         MySprite.__init__(self, 1, 1, X, 300, SPEED)
         self.__UNIT = ImageSprite(FILENAME)
