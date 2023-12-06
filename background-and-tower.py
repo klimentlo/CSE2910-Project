@@ -17,6 +17,10 @@ if __name__ == "__main__":
     E_TOWER = ImageSprite("media/image-removebg-preview.png")
     E_TOWER.setScale(2/5)
     E_TOWER.setY(200)
+    A_TOWER = ImageSprite("media/humanBase.png")
+    A_TOWER.setScale(2 / 5)
+    A_TOWER.setY(185)
+    A_TOWER.setX(870)
 
 
     while True:
@@ -29,4 +33,5 @@ if __name__ == "__main__":
         WINDOW.clearScreen()
         WINDOW.getSurface().blit(BACKGROUND.getSurface(), BACKGROUND.getPOS())
         WINDOW.getSurface().blit(E_TOWER.getSurface(), E_TOWER.getPOS())
+        WINDOW.getSurface().blit(A_TOWER.getSurface(), A_TOWER.getPOS())
         WINDOW.updateFrame()
