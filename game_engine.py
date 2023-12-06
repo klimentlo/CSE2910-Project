@@ -32,10 +32,10 @@ class Game():
             KEYPRESSED = pygame.key.get_pressed()
             SPAWNEDFISH = self.__spawnFish(KEYPRESSED)
 
-            if SPAWNEDFISH != None:
-                self.__DEPlOYED_FISHES.append(SPAWNEDFISH)
-            for FISH in self.__DEPlOYED_FISHES:
-                FISH.marqueeX(self.__WINDOW.getWidth())
+            if SPAWNEDFISH != None: # if a key was pressed
+                self.__DEPlOYED_FISHES.append(SPAWNEDFISH) # deploy the wanted fish
+            for FISH in self.__DEPlOYED_FISHES: # For all the fish in existence
+                FISH.marqueeX(self.__WINDOW.getWidth()) # make it move
 
 
 
@@ -53,7 +53,7 @@ class Game():
             return MyUnit("media/image-removebg-preview.png", 50, 5, 8,500, 100, moveSet["flop"], 2, "Fish")
         if KEYPRESSED[pygame.K_2] == 1:
             # Stingray
-            return MyUnit("media/pngtree-an-orange-cat-with-squinting-eyes-png-image_2664925.jpg", 50, 5, 8,500, 100, moveSet["sting"], 2, "Fish")
+            return MyUnit("media/pngtree-an-orange-cat-with-squinting-eyes-png-image_2664925.jpg", 50, 5, 8,500, 100, moveSet["sting"], 2, "Fish", -1)
         if KEYPRESSED[pygame.K_3] == 1:
             return MyUnit("media/drawing-underwater-world-poster-background_2752998.jpg", 50, 5, 8,500, 100, moveSet["swordSlash"], 2, "Fish")
         if KEYPRESSED[pygame.K_4] == 1:

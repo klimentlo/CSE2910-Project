@@ -7,7 +7,7 @@ import pygame
 class MyUnit(MySprite):
     def __init__(self, FILENAME, X, SPEED, SPAWN_COOLDOWN, MAX_HEALTH, RANGE, ATTACK, ATTACK_COOLDOWN, UNIT_TYPE, DIRECTION=1 , LEVEL=1):
                                             #   Y \/
-        MySprite.__init__(self, 1, 1, X, 300, SPEED)
+        MySprite.__init__(self, 1, 1, X, 300, SPEED, DIRECTION)
         self.__UNIT = ImageSprite(FILENAME)
         # will have to add the skill point modifiers later
         self.__SPAWN_COOLDOWN = SPAWN_COOLDOWN
@@ -18,6 +18,10 @@ class MyUnit(MySprite):
         self.__ATTACKS.append(ATTACK)
         self.__ATTACK_COOLDOWN = ATTACK_COOLDOWN
         self.__UNIT_TYPE = UNIT_TYPE
+        if self.__UNIT_TYPE == "Fish":
+            print(self.__UNIT_TYPE)
+            self.__DIR_X = -1
+
         self.__LEVEL = LEVEL
         self._SURFACE = self.__UNIT.getSurface()
 
