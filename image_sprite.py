@@ -45,7 +45,7 @@ class ImageSprite(MySprite):
         if KEYS_PRESSED[pygame.K_a] == 1 and self.__IMAGE_DIR_X:
             # if a key is pressed and the image is looking right is true
             self._SURFACE = pygame.transform.flip(self._SURFACE, True, False)
-            self.__IMAGE_DIR_X = False
+            self.__IMAGE_DIR_X = Falsez
 if __name__ == "__main__":
     from window import Window
 

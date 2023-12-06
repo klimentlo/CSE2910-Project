@@ -15,7 +15,7 @@ class Game():
     game class
     '''
     def __init__(self):
-        self.__WINDOW = Window("Fighting Fish", 800, 600, 30)
+        self.__WINDOW = Window("Fighting Fish", 960, 400, 30)
         self.__MONEY = 0
         self.__DEPlOYED_FISHES = []
         self.__DEPLOYED_HUMANS = []
@@ -29,13 +29,28 @@ class Game():
                     pygame.quit()
                     exit()
 
+
+            # SPAWNING
             KEYPRESSED = pygame.key.get_pressed()
             SPAWNEDFISH = self.__spawnFish(KEYPRESSED)
-
+            SPAWNEDHUMAN = self.__spawnHuman(KEYPRESSED)
             if SPAWNEDFISH != None: # if a key was pressed
                 self.__DEPlOYED_FISHES.append(SPAWNEDFISH) # deploy the wanted fish
+            if SPAWNEDHUMAN != None:
+                self.__DEPLOYED_HUMANS.append(SPAWNEDHUMAN)  # deploy the wanted fish
+
+            # MOVEMENT
             for FISH in self.__DEPlOYED_FISHES: # For all the fish in existence
                 FISH.marqueeX(self.__WINDOW.getWidth()) # make it move
+                for HUMAN in self.__DEPLOYED_HUMANS:
+                    if FISH.inFishRange(HUMAN.getWidth(), HUMAN.getX()):
+                        print("nice")
+
+            for HUMAN in self.__DEPLOYED_HUMANS: # For all the fish in existence
+                HUMAN.marqueeX(self.__WINDOW.getWidth()) # make it move
+
+
+
 
 
 
@@ -50,24 +65,78 @@ class Game():
         # (self, FILENAME, X, SPEED, SPAWN_COOLDOWN, MAX_HEALTH, RANGE, ATTACK, ATTACK_COOLDOWN, UNIT_TYPE, LEVEL=1)
         if KEYPRESSED[pygame.K_1] == 1:
             # Salmon
-            return MyUnit("media/image-removebg-preview.png", 50, 5, 8,500, 100, moveSet["flop"], 2, "Fish")
+            UNIT = MyUnit("media/image-removebg-preview.png", 700, 5, 8,500, 100, moveSet["flop"], 2, "Fish", -1)
+            UNIT.setScale(0.3)
         if KEYPRESSED[pygame.K_2] == 1:
             # Stingray
-            return MyUnit("media/pngtree-an-orange-cat-with-squinting-eyes-png-image_2664925.jpg", 50, 5, 8,500, 100, moveSet["sting"], 2, "Fish", -1)
-        if KEYPRESSED[pygame.K_3] == 1:
-            return MyUnit("media/drawing-underwater-world-poster-background_2752998.jpg", 50, 5, 8,500, 100, moveSet["swordSlash"], 2, "Fish")
-        if KEYPRESSED[pygame.K_4] == 1:
-            return MyUnit("media/drawing-underwater-world-poster-background_2752998.jpg", 50, 5, 8,500, 100, moveSet["starShine"], 2, "Fish")
-        if KEYPRESSED[pygame.K_5] == 1:
-            return MyUnit("media/drawing-underwater-world-poster-background_2752998.jpg", 50, 5, 8,500, 100, moveSet["bubbleBeam"], 2, "Fish")
-        if KEYPRESSED[pygame.K_6] == 1:
-            return MyUnit("media/drawing-underwater-world-poster-background_2752998.jpg", 50, 5, 8,500, 100, moveSet["chomp"], 2, "Fish")
-        if KEYPRESSED[pygame.K_7] == 1:
-            return MyUnit("media/drawing-underwater-world-poster-background_2752998.jpg", 50, 5, 8,500, 100, moveSet["acidShot"], 2, "Fish")
-        if KEYPRESSED[pygame.K_8] == 1:
-            return MyUnit("media/drawing-underwater-world-poster-background_2752998.jpg", 50, 5, 8,500, 100, moveSet["devour"], 2, "Fish")
-        return None
+            UNIT =  MyUnit("media/pngtree-an-orange-cat-with-squinting-eyes-png-image_2664925.jpg", 700, 5, 8,500, 100, moveSet["sting"], 2, "Fish", -1)
+            UNIT.setScale(0.3)
 
+        if KEYPRESSED[pygame.K_3] == 1:
+            UNIT = MyUnit("media/pngtree-an-orange-cat-with-squinting-eyes-png-image_2664925.jpg", 700, 5, 8, 500, 100, moveSet["flop"], 2, "Fish", -1)
+            UNIT.setScale(0.2)
+        if KEYPRESSED[pygame.K_4] == 1:
+            UNIT = MyUnit("media/image-removebg-preview.png", 700, 5, 8, 500, 100, moveSet["flop"], 2, "Fish", -1)
+            UNIT.setScale(0.2)
+        if KEYPRESSED[pygame.K_5] == 1:
+            UNIT = MyUnit("media/image-removebg-preview.png", 700, 5, 8, 500, 100, moveSet["flop"], 2, "Fish", -1)
+            UNIT.setScale(0.2)
+        if KEYPRESSED[pygame.K_6] == 1:
+            UNIT = MyUnit("media/image-removebg-preview.png", 700, 5, 8, 500, 100, moveSet["flop"], 2, "Fish", -1)
+            UNIT.setScale(0.2)
+        if KEYPRESSED[pygame.K_7] == 1:
+            UNIT = MyUnit("media/image-removebg-preview.png", 700, 5, 8, 500, 100, moveSet["flop"], 2, "Fish", -1)
+            UNIT.setScale(0.2)
+        if KEYPRESSED[pygame.K_8] == 1:
+            UNIT = MyUnit("media/image-removebg-preview.png", 700, 5, 8, 500, 100, moveSet["flop"], 2, "Fish", -1)
+            UNIT.setScale(0.2)
+        try:
+            UNIT.setY(300 - UNIT.getHeight())
+            return UNIT
+        except UnboundLocalError:
+            return None
+
+    def __spawnHuman(self, KEYPRESSED):
+        '''
+        checks if they clicked any of the following buttons
+        :param KEYPRESSED:
+        :return:
+        '''
+        # (self, FILENAME, X, SPEED, SPAWN_COOLDOWN, MAX_HEALTH, RANGE, ATTACK, ATTACK_COOLDOWN, UNIT_TYPE, LEVEL=1)
+        if KEYPRESSED[pygame.K_1] == 1:
+            # Salmon
+            UNIT = MyUnit("media/image-removebg-preview.png", 700, 5, 8, 500, 100, moveSet["flop"], 2, "Human")
+            UNIT.setScale(0.3)
+        if KEYPRESSED[pygame.K_2] == 1:
+            # Stingray
+            UNIT = MyUnit("media/pngtree-an-orange-cat-with-squinting-eyes-png-image_2664925.jpg", 700, 5, 8, 500, 100,
+                          moveSet["sting"], 2, "Human")
+            UNIT.setScale(0.3)
+
+        if KEYPRESSED[pygame.K_3] == 1:
+            UNIT = MyUnit("media/pngtree-an-orange-cat-with-squinting-eyes-png-image_2664925.jpg", 700, 5, 8, 500, 100,
+                          moveSet["flop"], 2, "Human")
+            UNIT.setScale(0.2)
+        if KEYPRESSED[pygame.K_4] == 1:
+            UNIT = MyUnit("media/image-removebg-preview.png", 700, 5, 8, 500, 100, moveSet["flop"], 2, "Human")
+            UNIT.setScale(0.2)
+        if KEYPRESSED[pygame.K_5] == 1:
+            UNIT = MyUnit("media/image-removebg-preview.png", 700, 5, 8, 500, 100, moveSet["flop"], 2, "Human")
+            UNIT.setScale(0.2)
+        if KEYPRESSED[pygame.K_6] == 1:
+            UNIT = MyUnit("media/image-removebg-preview.png", 700, 5, 8, 500, 100, moveSet["flop"], 2, "Human")
+            UNIT.setScale(0.2)
+        if KEYPRESSED[pygame.K_7] == 1:
+            UNIT = MyUnit("media/image-removebg-preview.png", 700, 5, 8, 500, 100, moveSet["flop"], 2, "Human")
+            UNIT.setScale(0.2)
+        if KEYPRESSED[pygame.K_8] == 1:
+            UNIT = MyUnit("media/image-removebg-preview.png", 700, 5, 8, 500, 100, moveSet["flop"], 2, "Human")
+            UNIT.setScale(0.2)
+        try:
+            UNIT.setY(300 - UNIT.getHeight())
+            return UNIT
+        except UnboundLocalError:
+            return None
 
     def __updateWindowFrame(self):
         self.__WINDOW.clearScreen()

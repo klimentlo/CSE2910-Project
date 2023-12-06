@@ -11,7 +11,7 @@ class MySprite:
     abstract sprite class to build other sprites. they should be generic where both objects should share in attributes
     '''
     # ATTRIBUTES
-    def __init__(self, WIDTH=1, HEIGHT=1, X=0, Y=0, SPEED=5, COLOR=(255,255,255)):
+    def __init__(self, WIDTH=1, HEIGHT=1, X=0, Y=0, SPEED=5, COLOR=(255,255,255), DIRX=1):
         self.__WIDTH = WIDTH
         self.__HEIGHT = HEIGHT
         self._DIMENSIONS = (self.__WIDTH, self.__HEIGHT)
@@ -21,7 +21,7 @@ class MySprite:
         self.__POS = (self.__X, self.__Y)
         self._SPD = SPEED
         self._SURFACE = pygame.Surface
-        self.__DIR_X = 1
+        self.__DIR_X = DIRX
         self.__DIR_Y = 1
 
 
@@ -43,7 +43,7 @@ class MySprite:
         self.setY(Y)
 
     def marqueeX(self, MAX_X, MIN_X=0):
-        self.__X += self._SPD * self.__DIR_X
+        self.__X += (self._SPD * self.__DIR_X)
 
         if self.__X > MAX_X:
             self.__X = MIN_X - self.getWidth()
