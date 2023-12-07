@@ -45,8 +45,7 @@ class MySprite:
     def marqueeX(self, MAX_X, MIN_X=0):
         self.__X += (self._SPD * self.__DIR_X)
 
-        if self.__X > MAX_X:
-            self.__X = MIN_X - self.getWidth()
+
 
         self.__POS = (self.__X, self.__Y)
 

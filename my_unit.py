@@ -5,12 +5,11 @@ from window import Window
 import pygame
 
 class MyUnit(MySprite):
-    def __init__(self, FILENAME, X, SPEED, SPAWN_COOLDOWN, MAX_HEALTH, RANGE, ATTACK, ATTACK_COOLDOWN, UNIT_TYPE, DIRECTION=1 , LEVEL=1):
+    def __init__(self, FILENAME, X, SPEED, MAX_HEALTH, RANGE, ATTACK, ATTACK_COOLDOWN, UNIT_TYPE, DIRECTION=1 , LEVEL=1):
                                             #   Y \/
         MySprite.__init__(self, 1, 1, X, 300, SPEED, (255, 255, 255), DIRECTION)
         self.__UNIT = ImageSprite(FILENAME)
         # will have to add the skill point modifiers later
-        self.__SPAWN_COOLDOWN = SPAWN_COOLDOWN
         self.__MAX_HEALTH = MAX_HEALTH
         self.__CURENT_HEALTH = MAX_HEALTH
         self.__RANGE = RANGE
