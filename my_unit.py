@@ -18,11 +18,14 @@ class MyUnit(MySprite):
         self.__ATTACK_COOLDOWN = ATTACK_COOLDOWN
         self.__UNIT_TYPE = UNIT_TYPE
         self.__LEVEL = LEVEL
+        self.__SPEED = SPEED
         self._SURFACE = self.__UNIT.getSurface()
 
     def takeDamage(self, DAMAGE):
         self.__CURENT_HEALTH -= DAMAGE
 
+    def getSpeed(self):
+        return self.__SPEED
 
     def increaseLevel(self):
         self.__LEVEL += 1
