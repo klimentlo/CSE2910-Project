@@ -125,6 +125,9 @@ class MySprite:
     def getSurface(self):
         return self._SURFACE
 
+    def getSpeed(self):
+        return self._SPD
+
     def isCollision(self, WIDTH, HEIGHT, POS):
         '''
         use the width, height, and position of an external sprite to text if it is colliding with the given sprite
