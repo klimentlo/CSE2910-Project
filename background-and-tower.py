@@ -6,6 +6,9 @@ date: 2023-12-4
 import pygame
 from image_sprite import ImageSprite
 
+class Player(ImageSprite):
+
+
 
 if __name__ == "__main__":
     from window import Window
@@ -21,11 +24,6 @@ if __name__ == "__main__":
     A_TOWER.setScale(2 / 5)
     A_TOWER.setY(185)
     A_TOWER.setX(870)
-    SAND1 = ImageSprite("media/sand-background-preview.png")
-    SAND1.setY(250)
-    SAND2 = ImageSprite("media/sand-background-preview.png")
-    SAND2.setY(250)
-    SAND2.setX(500)
 
 
 
@@ -40,6 +38,5 @@ if __name__ == "__main__":
         WINDOW.getSurface().blit(BACKGROUND.getSurface(), BACKGROUND.getPOS())
         WINDOW.getSurface().blit(E_TOWER.getSurface(), E_TOWER.getPOS())
         WINDOW.getSurface().blit(A_TOWER.getSurface(), A_TOWER.getPOS())
-        WINDOW.getSurface().blit(SAND1.getSurface(), SAND1.getPOS())
-        WINDOW.getSurface().blit(SAND2.getSurface(), SAND2.getPOS())
+
         WINDOW.updateFrame()
