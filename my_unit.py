@@ -15,17 +15,27 @@ class MyUnit(MySprite):
         self.__RANGE = RANGE
         self.__ATTACKS = []
         self.__ATTACKS.append(ATTACK)
-        self.__ATTACK_COOLDOWN = ATTACK_COOLDOWN
+        self.__ATTACK_COOLDOWN = float(ATTACK_COOLDOWN)
+        self.__CURRENT_ATTACK_COOLDOWN = float(ATTACK_COOLDOWN)
         self.__UNIT_TYPE = UNIT_TYPE
         self.__LEVEL = LEVEL
-        self.__SPEED = SPEED
         self._SURFACE = self.__UNIT.getSurface()
 
     def takeDamage(self, DAMAGE):
         self.__CURENT_HEALTH -= DAMAGE
 
-    def getSpeed(self):
-        return self.__SPEED
+    def getAttackCooldown(self):
+        return self.__ATTACK_COOLDOWN
+
+    def getCurrentAttackCooldown(self):
+        return self.__CURRENT_ATTACK_COOLDOWN
+
+    def updateAttackCooldown(self, TIMEPASSED):
+        self.__CURRENT_ATTACK_COOLDOWN += TIMEPASSED
+
+    def resetAttackCooldown(self):
+        self.__CURRENT_ATTACK_COOLDOWN = 0
+
 
     def increaseLevel(self):
         self.__LEVEL += 1

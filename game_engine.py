@@ -28,39 +28,36 @@ class Game():
         self.__LIVE_ATTACKS = []
         self.__TIME = time.time()
         self.__PREVIOUS_TIME = self.__TIME
-        self.__TIME_PASSED = 1
+        self.__TIME_PASSED = 0.1
 
         # Fish Spawning Cooldown
-        self.__FISH_COOLDOWN = [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
-        self.__FISH_CURRENT_COOLDOWN = [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
+        self.__FISH_SPAWN_COOLDOWN = [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
+        self.__FISH_CURRENT_SPAWN_COOLDOWN = [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
         # (self, FILENAME, X, SPEED, MAX_HEALTH, RANGE, ATTACK, ATTACK_COOLDOWN, UNIT_TYPE, LEVEL=1)
-        # Fish attacking cooldown
-        self.__FISH_ATTACK_COOLDOWN = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-
 
         self.__X_SPAWN_LOCATION = 900
-
         self.__FISH_SPEED = [1, 2, 3, 4, 5]
         self.__FISH_MAX_HEALTH = [50, 100, 150, 200, 250]
         self.__FISH_RANGE = [50, 100, 150, 200, 250]
+        self.__FISH_ATTACK_COOLDOWN = [1, 2, 3, 4, 5]
 
-        self.__SALMON = MyUnit("media/image-removebg-preview.png", self.__X_SPAWN_LOCATION, self.__FISH_SPEED[0], self.__FISH_MAX_HEALTH[0], self.__FISH_RANGE[0], moveSet["flop"], 2, "Fish", -1)
+        self.__SALMON = MyUnit("media/image-removebg-preview.png", self.__X_SPAWN_LOCATION, self.__FISH_SPEED[0], self.__FISH_MAX_HEALTH[0], self.__FISH_RANGE[0], moveSet["flop"], self.__FISH_ATTACK_COOLDOWN[0], "Fish", -1)
         self.__SALMON_COST = 50
         self.__SALMON.setScale(0.5)
 
-        self.__STING_RAY = MyUnit("media/scuba1.png", self.__X_SPAWN_LOCATION, self.__FISH_SPEED[1], self.__FISH_MAX_HEALTH[1], self.__FISH_RANGE[1], moveSet["sting"], 2, "Fish", -1)
+        self.__STING_RAY = MyUnit("media/scuba1.png", self.__X_SPAWN_LOCATION, self.__FISH_SPEED[1], self.__FISH_MAX_HEALTH[1], self.__FISH_RANGE[1], moveSet["sting"], self.__FISH_ATTACK_COOLDOWN[1], "Fish", -1)
         self.__STING_RAY_COST = 100
         self.__STING_RAY.setScale(0.5)
 
-        self.__SWORD_FISH = MyUnit("media/submarine2.png", self.__X_SPAWN_LOCATION, self.__FISH_SPEED[2], self.__FISH_MAX_HEALTH[2], self.__FISH_RANGE[2], moveSet["sting"], 2, "Fish", -1)
+        self.__SWORD_FISH = MyUnit("media/submarine2.png", self.__X_SPAWN_LOCATION, self.__FISH_SPEED[2], self.__FISH_MAX_HEALTH[2], self.__FISH_RANGE[2], moveSet["sting"], self.__FISH_ATTACK_COOLDOWN[2], "Fish", -1)
         self.__SWORD_FISH_COST = 150
         self.__SWORD_FISH.setScale(0.5)
 
-        self.__STAR_FISH = MyUnit("media/catpaws.jpg", self.__X_SPAWN_LOCATION, self.__FISH_SPEED[3], self.__FISH_MAX_HEALTH[3], self.__FISH_RANGE[3], moveSet["sting"], 2, "Fish", -1)
+        self.__STAR_FISH = MyUnit("media/catpaws.jpg", self.__X_SPAWN_LOCATION, self.__FISH_SPEED[3], self.__FISH_MAX_HEALTH[3], self.__FISH_RANGE[3], moveSet["sting"], self.__FISH_ATTACK_COOLDOWN[3], "Fish", -1)
         self.__STAR_FISH_COST = 250
         self.__STAR_FISH.setScale(0.1)
 
-        self.__SEA_HORSE = MyUnit("media/humanBase.png", self.__X_SPAWN_LOCATION, self.__FISH_SPEED[4], self.__FISH_MAX_HEALTH[4], self.__FISH_RANGE[4],moveSet["sting"], 2, "Fish", -1)
+        self.__SEA_HORSE = MyUnit("media/humanBase.png", self.__X_SPAWN_LOCATION, self.__FISH_SPEED[4], self.__FISH_MAX_HEALTH[4], self.__FISH_RANGE[4],moveSet["sting"], self.__FISH_ATTACK_COOLDOWN[4], "Fish", -1)
         self.__SEA_HORSE_COST = 400
         self.__SEA_HORSE.setScale(0.25)
 
@@ -100,7 +97,6 @@ class Game():
                 for HUMAN in self.__DEPLOYED_HUMANS:
                     if FISH.inFishRange(HUMAN.getWidth(), HUMAN.getX()):
                         FISH.setSpeed(0)
-                        print("nice")
                     else:
                         FISH.setSpeed(FISH.getSpeed())
                 FISH.marqueeX(self.__WINDOW.getWidth())  # make it move
@@ -113,17 +109,28 @@ class Game():
                 KEYSPRESSED = pygame.key.get_pressed()
                 HUMAN.WASDmove(KEYSPRESSED)
 
-            for FISH in self.__DEPlOYED_FISHES:
-                if FISH.getSpeed() == 0:
-                    FISH.attack()
 
+
+            self.__fishAttack()
+            self.__updateCooldowns()
             self.__updateWindowFrame()
 
-    def __timePassed(self, TIME_PASSED):
+
+
+
+
+
+    def __updateCooldowns(self):
         self.__TIME = time.time()
-        if self.__TIME >= self.__PREVIOUS_TIME + TIME_PASSED:
-            self.__PREVIOUS_TIME = self.__TIME # updates previous time to what self.__TIME is right now, and returns the fact that a milisend
-            return True
+        if self.__TIME >= self.__PREVIOUS_TIME + self.__TIME_PASSED:
+            self.__PREVIOUS_TIME = self.__TIME # saves its current time, so when another second passes, it will do this again
+
+            # updates the cooldowns
+            for i in range(len(self.__FISH_CURRENT_SPAWN_COOLDOWN)): # for every unique fish
+                self.__FISH_CURRENT_SPAWN_COOLDOWN[i] += self.__TIME_PASSED # updates the cooldown timers by the time passed
+
+            for FISH in self.__DEPlOYED_FISHES:
+                FISH.updateAttackCooldown(self.__TIME_PASSED)
 
     def __spawnFish(self, KEYPRESSED):
         '''
@@ -133,48 +140,43 @@ class Game():
         '''
         SPAWN = 900
 
-        # COOLDOWN CODE
-        if self.__timePassed(self.__TIME_PASSED): # if the wanted time interval has passed
-            for i in range(len(self.__FISH_CURRENT_COOLDOWN)): # for every unique fish
-                self.__FISH_CURRENT_COOLDOWN[i] += self.__TIME_PASSED # updates the cooldown timers by the time passed
-
         # If Salmon cooldown is above the current cooldown, allow it to be spawned
-        if self.__FISH_CURRENT_COOLDOWN[0] >= self.__FISH_COOLDOWN[0]:
+        if self.__FISH_CURRENT_SPAWN_COOLDOWN[0] >= self.__FISH_SPAWN_COOLDOWN[0]:
             if KEYPRESSED[pygame.K_1] == 1:
                 if self.__INCOME >= self.__SALMON_COST:
                     UNIT = copy.copy(self.__SALMON)
-                    self.__FISH_CURRENT_COOLDOWN[0] = 0
+                    self.__FISH_CURRENT_SPAWN_COOLDOWN[0] = 0
                     self.__INCOME -= self.__SALMON_COST
 
 
-        if self.__FISH_CURRENT_COOLDOWN[1] >= self.__FISH_COOLDOWN[1]:
+        if self.__FISH_CURRENT_SPAWN_COOLDOWN[1] >= self.__FISH_SPAWN_COOLDOWN[1]:
             if KEYPRESSED[pygame.K_2] == 1:
                 # Stingray
                 if self.__INCOME >= self.__STING_RAY_COST:
                     UNIT = copy.copy(self.__STING_RAY)
-                    self.__FISH_CURRENT_COOLDOWN[1] = 0
+                    self.__FISH_CURRENT_SPAWN_COOLDOWN[1] = 0
                     self.__INCOME -= self.__STING_RAY_COST
 
-        if self.__FISH_CURRENT_COOLDOWN[2] >= self.__FISH_COOLDOWN[2]:
+        if self.__FISH_CURRENT_SPAWN_COOLDOWN[2] >= self.__FISH_SPAWN_COOLDOWN[2]:
             if KEYPRESSED[pygame.K_3] == 1:
                 if self.__INCOME >= self.__SWORD_FISH_COST:
                     UNIT = copy.copy(self.__SWORD_FISH)
-                    self.__FISH_CURRENT_COOLDOWN[2] = 0
+                    self.__FISH_CURRENT_SPAWN_COOLDOWN[2] = 0
                     self.__INCOME -= self.__SWORD_FISH_COST
 
-        if self.__FISH_CURRENT_COOLDOWN[3] >= self.__FISH_COOLDOWN[3]:
+        if self.__FISH_CURRENT_SPAWN_COOLDOWN[3] >= self.__FISH_SPAWN_COOLDOWN[3]:
 
             if KEYPRESSED[pygame.K_4] == 1:
                 if self.__INCOME >= self.__STAR_FISH_COST:
                     UNIT = copy.copy(self.__STAR_FISH)
-                    self.__FISH_CURRENT_COOLDOWN[3] = 0
+                    self.__FISH_CURRENT_SPAWN_COOLDOWN[3] = 0
                     self.__INCOME -= self.__STAR_FISH_COST
 
-        if self.__FISH_CURRENT_COOLDOWN[4] >= self.__FISH_COOLDOWN[4]:
+        if self.__FISH_CURRENT_SPAWN_COOLDOWN[4] >= self.__FISH_SPAWN_COOLDOWN[4]:
             if KEYPRESSED[pygame.K_5] == 1:
                 if self.__INCOME >= self.__SEA_HORSE_COST:
                     UNIT = copy.copy(self.__SEA_HORSE)
-                    self.__FISH_CURRENT_COOLDOWN[4] = 0
+                    self.__FISH_CURRENT_SPAWN_COOLDOWN[4] = 0
                     self.__INCOME -= self.__SEA_HORSE_COST
         try:
             UNIT.setY(300 - UNIT.getHeight())
@@ -219,11 +221,6 @@ class Game():
         except UnboundLocalError:
             return None
 
-    def fishAttack(self):
-        print("Fish attacking!")
-
-    def humanAttack(self):
-        print("Human attacking")
 
 
     def __updateWindowFrame(self):
@@ -242,7 +239,14 @@ class Game():
 
         self.__WINDOW.updateFrame()
 
-    def attack(self):
+    def __fishAttack(self):
+        for FISH in self.__DEPlOYED_FISHES:
+            if FISH.getSpeed() == 0: # if their movement speed is zero
+                FISH.getAttackCooldown()
+                if FISH.getCurrentAttackCooldown() >= FISH.getAttackCooldown():
+                    self.__LIVE_ATTACKS.append(moveSet["flop"])
+                    FISH.resetAttackCooldown()
+
 
 
 
