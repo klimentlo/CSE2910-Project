@@ -13,8 +13,7 @@ class MyUnit(MySprite):
         self.__MAX_HEALTH = MAX_HEALTH
         self.__CURENT_HEALTH = MAX_HEALTH
         self.__RANGE = RANGE
-        self.__ATTACKS = []
-        self.__ATTACKS.append(ATTACK)
+        self.__ATTACK = ATTACK
         self.__ATTACK_COOLDOWN = float(ATTACK_COOLDOWN)
         self.__CURRENT_ATTACK_COOLDOWN = float(ATTACK_COOLDOWN)
         self.__UNIT_TYPE = UNIT_TYPE
@@ -29,6 +28,9 @@ class MyUnit(MySprite):
 
     def getCurrentAttackCooldown(self):
         return self.__CURRENT_ATTACK_COOLDOWN
+
+    def getAttack(self):
+        return self.__ATTACK
 
     def updateAttackCooldown(self, TIMEPASSED):
         self.__CURRENT_ATTACK_COOLDOWN += TIMEPASSED

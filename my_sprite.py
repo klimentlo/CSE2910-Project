@@ -43,6 +43,7 @@ class MySprite:
         self.setY(Y)
 
     def marqueeX(self, MAX_X, MIN_X=0):
+        print(self.__X)
         self.__X += (self._SPD * self.__DIR_X)
 
 
