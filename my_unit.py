@@ -23,6 +23,9 @@ class MyUnit(MySprite):
     def takeDamage(self, DAMAGE):
         self.__CURENT_HEALTH -= DAMAGE
 
+    def getHealth(self):
+        return self.__CURENT_HEALTH
+
     def getAttackCooldown(self):
         return self.__ATTACK_COOLDOWN
 

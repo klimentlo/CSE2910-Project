@@ -20,6 +20,7 @@ class MySprite:
         self.__Y = Y
         self.__POS = (self.__X, self.__Y)
         self._SPD = SPEED
+        self._INITIAL_SPEED = SPEED
         self._SURFACE = pygame.Surface
         self.__DIR_X = DIRX
         self.__DIR_Y = 1
@@ -43,7 +44,6 @@ class MySprite:
         self.setY(Y)
 
     def marqueeX(self, MAX_X, MIN_X=0):
-        print(self.__X)
         self.__X += (self._SPD * self.__DIR_X)
 
 
@@ -128,6 +128,9 @@ class MySprite:
 
     def getSpeed(self):
         return self._SPD
+
+    def getInitialSpeed(self):
+        return self._INITIAL_SPEED
 
     def isCollision(self, WIDTH, HEIGHT, POS):
         '''
