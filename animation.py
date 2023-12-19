@@ -13,6 +13,7 @@ class Fish1(pygame.sprite.Sprite):
         self.sprites.append(pygame.image.load('media/50.png'))
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
+        self.image = pygame.transform.scale(self.image, (100, 100))
 
         self.rect = self.image.get_rect()
         self.rect.topleft = [pos_x, pos_y]
@@ -31,6 +32,7 @@ class Fish1(pygame.sprite.Sprite):
                 self.is_animating = False
 
             self.image = self.sprites[int(self.current_sprite)]
+            self.image = pygame.transform.scale(self.image, (100, 100))
 
 class Octattack(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y):
@@ -45,6 +47,7 @@ class Octattack(pygame.sprite.Sprite):
         self.sprites.append(pygame.image.load('media/octopus/oct6attack.png'))
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
+        self.image = pygame.transform.scale(self.image, (100, 100))
 
         self.rect = self.image.get_rect()
         self.rect.topleft = [pos_x, pos_y]
@@ -63,6 +66,7 @@ class Octattack(pygame.sprite.Sprite):
                 self.is_animating = False
 
             self.image = self.sprites[int(self.current_sprite)]
+            self.image = pygame.transform.scale(self.image, (100, 100))
 
 class Octmove(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y):
@@ -77,6 +81,7 @@ class Octmove(pygame.sprite.Sprite):
         self.sprites.append(pygame.image.load('media/octopus/oct6move.png'))
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
+        self.image = pygame.transform.scale(self.image, (100, 100))
 
         self.rect = self.image.get_rect()
         self.rect.topleft = [pos_x, pos_y]
@@ -95,6 +100,7 @@ class Octmove(pygame.sprite.Sprite):
                 self.is_animating = False
 
             self.image = self.sprites[int(self.current_sprite)]
+            self.image = pygame.transform.scale(self.image, (100, 100))
 
 
 class Octidle(pygame.sprite.Sprite):
@@ -110,6 +116,7 @@ class Octidle(pygame.sprite.Sprite):
         self.sprites.append(pygame.image.load('media/octopus/oct6idle.png'))
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
+        self.image = pygame.transform.scale(self.image, (100, 100))
 
         self.rect = self.image.get_rect()
         self.rect.topleft = [pos_x, pos_y]
@@ -128,6 +135,7 @@ class Octidle(pygame.sprite.Sprite):
                 self.is_animating = False
 
             self.image = self.sprites[int(self.current_sprite)]
+            self.image = pygame.transform.scale(self.image, (100, 100))
 
 class Octdeath(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y):
@@ -138,6 +146,7 @@ class Octdeath(pygame.sprite.Sprite):
         self.sprites.append(pygame.image.load('media/octopus/oct2death.png'))
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
+        self.image = pygame.transform.scale(self.image, (100, 100))
 
         self.rect = self.image.get_rect()
         self.rect.topleft = [pos_x, pos_y]
@@ -156,62 +165,61 @@ class Octdeath(pygame.sprite.Sprite):
                 self.is_animating = False
 
             self.image = self.sprites[int(self.current_sprite)]
-
-class Octopus()
-
-if __name__ == "__main__":
-    pygame.init()
-    clock = pygame.time.Clock()
-
-    screen_width = 800
-    screen_height = 600
-    screen = pygame.display.set_mode((screen_width, screen_height))
-    pygame.display.set_caption("anime")
+            self.image = pygame.transform.scale(self.image, (100, 100))
 
 
-    oct_moving_sprites = pygame.sprite.Group()
-    #scuda = Scuda(100, 100)
-    #moving_sprites.add(scuda)
+pygame.init()
+clock = pygame.time.Clock()
 
-    #moving_sprites2 = pygame.sprite.Group()
-    #boat = Boat(200, 100)
-    #moving_sprites2.add(boat)
-    #moving_sprites.add(boat)
-
-    #fish1 = Fish1(300,300)
-    #moving_sprites.add(fish1)
-
-    OCTATTACK = Octattack(100, 300)
-    oct_moving_sprites.add(OCTATTACK)
-
-    OCTMOVE = Octmove(100, 250)
-    oct_moving_sprites.add(OCTMOVE)
-
-    OCTIDLE = Octidle(100, 200)
-    oct_moving_sprites.add(OCTIDLE)
-
-    OCTDEATH = Octdeath(100, 150)
-    oct_moving_sprites.add(OCTDEATH)
+screen_width = 800
+screen_height = 600
+screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption("anime")
 
 
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
-            PRESSED_KEYS = pygame.key.get_pressed()
+oct_moving_sprites = pygame.sprite.Group()
+#scuda = Scuda(100, 100)
+#moving_sprites.add(scuda)
 
-            if event.type == pygame.KEYDOWN:
-                #fish1.animate()
-                OCTATTACK.animate()
-                OCTMOVE.animate()
-                OCTIDLE.animate()
-                OCTDEATH.animate()
+#moving_sprites2 = pygame.sprite.Group()
+#boat = Boat(200, 100)
+#moving_sprites2.add(boat)
+#moving_sprites.add(boat)
 
-        # drawing
-        screen.fill((0,0,0))
+#fish1 = Fish1(300,300)
+#moving_sprites.add(fish1)
 
-        oct_moving_sprites.draw(screen)
-        oct_moving_sprites.update()
-        pygame.display.flip()
-        clock.tick(60)
+OCTATTACK = Octattack(100, 300)
+oct_moving_sprites.add(OCTATTACK)
+
+OCTMOVE = Octmove(100, 250)
+oct_moving_sprites.add(OCTMOVE)
+
+OCTIDLE = Octidle(100, 200)
+oct_moving_sprites.add(OCTIDLE)
+
+OCTDEATH = Octdeath(100, 150)
+oct_moving_sprites.add(OCTDEATH)
+
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            exit()
+        PRESSED_KEYS = pygame.key.get_pressed()
+
+        if event.type == pygame.KEYDOWN:
+            #fish1.animate()
+            OCTATTACK.animate()
+            OCTMOVE.animate()
+            OCTIDLE.animate()
+            OCTDEATH.animate()
+
+    # drawing
+    screen.fill((0,0,0))
+
+    oct_moving_sprites.draw(screen)
+    oct_moving_sprites.update()
+    pygame.display.flip()
+    clock.tick(60)
