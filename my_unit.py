@@ -1,11 +1,12 @@
 # myunits.py
 from my_sprite import MySprite
 from image_sprite import ImageSprite
+from animation import Octattack
 from window import Window
 import pygame
 
 class MyUnit(MySprite):
-    def __init__(self, FILENAME, X, SPEED, MAX_HEALTH, RANGE, ATTACK, ATTACK_COOLDOWN, UNIT_TYPE, DIRECTION=1 , LEVEL=1):
+    def __init__(self, FILENAME, X, SPEED, MAX_HEALTH, RANGE, ATTACK, ATTACK_COOLDOWN,DIRECTION=1, IDLE_ANIMATION=None, MOVE_ANIMATION=None, ATTACK_ANIMATION=None, DEATH_ANIMATION=None):
                                             #   Y \/
         MySprite.__init__(self, 1, 1, X, 300, SPEED, (255, 255, 255), DIRECTION)
         self.__UNIT = ImageSprite(FILENAME)
@@ -16,8 +17,10 @@ class MyUnit(MySprite):
         self.__ATTACK = ATTACK
         self.__ATTACK_COOLDOWN = float(ATTACK_COOLDOWN)
         self.__CURRENT_ATTACK_COOLDOWN = float(ATTACK_COOLDOWN)
-        self.__UNIT_TYPE = UNIT_TYPE
-        self.__LEVEL = LEVEL
+        self.__ATTACK_ANIMATION = ATTACK_ANIMATION
+        self.__IDLE_ANIMATION = IDLE_ANIMATION
+        self.__MOVE_ANIMATION = MOVE_ANIMATION
+        self.__DEATH_ANIMATION = DEATH_ANIMATION
         self._SURFACE = self.__UNIT.getSurface()
 
     def takeDamage(self, DAMAGE):
@@ -41,10 +44,6 @@ class MyUnit(MySprite):
     def resetAttackCooldown(self):
         self.__CURRENT_ATTACK_COOLDOWN = 0
 
-
-    def increaseLevel(self):
-        self.__LEVEL += 1
-
     def inHumanRange(self, X):
         '''
         If a fish is in range of a human's attack range
@@ -59,13 +58,23 @@ class MyUnit(MySprite):
         if X + WIDTH > self.getX() - self.__RANGE and X < self.getX():
             return True
 
+    def attackAnimation(self):
+        self.__ATTACK_ANIMATION.animate()
+
+    def moveAnimation(self):
+        self.__MOVE_ANIMATION.animate()
+
+    def idleAnimation(self):
+        self.__ATTACK_ANIMATION.animate()
+
+    def deathAnimation(self):
+        self.__DEATH_ANIMATION.animate()
+
+
 
 #    def canAtack(self):
 #    enemyUnits = [Enemy(), Enemy(), Enemy(), Enemy(), Enemy()]
 #        for ENEMIES in enemyUnits:
-
-    def addAttack(self, ATTACK):
-        self.__ATTACKS.append(ATTACK)
 
     def isAlive(self, LIST):
         if self.__CURENT_HEALTH < 0:

@@ -36,37 +36,34 @@ class Game():
         # - - - - - - - - - - - - - - - - - - - - #
 
         # Fish Spawning Cooldown
-        self.__FISH_SPAWN_COOLDOWN = [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
-        self.__FISH_CURRENT_SPAWN_COOLDOWN = [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
+        self.__FISH_SPAWN_COOLDOWN = [2.0, 3.0, 4.0, 5.0, 1.0]
+        self.__FISH_CURRENT_SPAWN_COOLDOWN = [2.0, 3.0, 4.0, 5.0, 1.0]
 
 
 
         self.__FISH_SPAWN_LOCATION = 900
         self.__FISH_SPEED = [1, 2, 3, 4, 5]
-        self.__FISH_MAX_HEALTH = [50, 100, 150, 200, 250]
+        self.__FISH_MAX_HEALTH = [5, 5, 5, 5, 5]
         self.__FISH_RANGE = [50, 100, 150, 200, 250]
         self.__FISH_ATTACK_COOLDOWN = [1, 2, 3, 4, 5]
 
                                                 # (self, FILENAME, X, SPEED, MAX_HEALTH, RANGE, ATTACK, ATTACK_COOLDOWN, UNIT_TYPE, LEVEL=1)
-        self.__SALMON = MyUnit("media/00.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[0], self.__FISH_MAX_HEALTH[0], self.__FISH_RANGE[0], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[0], "Fish", -1)
+        self.__SALMON = MyUnit("media/00.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[0], self.__FISH_MAX_HEALTH[0], self.__FISH_RANGE[0], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[0], -1)
         self.__SALMON_COST = 50
         self.__SALMON.setScale(0.5)
 
-        self.__STING_RAY = MyUnit("media/00.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[1], self.__FISH_MAX_HEALTH[1], self.__FISH_RANGE[1], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[1], "Fish", -1)
+        self.__STING_RAY = MyUnit("media/00.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[1], self.__FISH_MAX_HEALTH[1], self.__FISH_RANGE[1], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[1], -1)
         self.__STING_RAY_COST = 100
         self.__STING_RAY.setScale(0.5)
 
-        self.__SWORD_FISH = MyUnit("media/00.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[2], self.__FISH_MAX_HEALTH[2], self.__FISH_RANGE[2], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[2], "Fish", -1)
+        self.__SWORD_FISH = MyUnit("media/00.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[2], self.__FISH_MAX_HEALTH[2], self.__FISH_RANGE[2], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[2], -1)
         self.__SWORD_FISH_COST = 150
         self.__SWORD_FISH.setScale(0.5)
 
-        self.__STAR_FISH = MyUnit("media/00.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[3], self.__FISH_MAX_HEALTH[3], self.__FISH_RANGE[3], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[3], "Fish", -1)
+        self.__STAR_FISH = MyUnit("media/00.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[3], self.__FISH_MAX_HEALTH[3], self.__FISH_RANGE[3], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[3], -1)
         self.__STAR_FISH_COST = 250
         self.__STAR_FISH.setScale(0.1)
 
-        self.__SEA_HORSE = MyUnit("media/humanBase.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[4], self.__FISH_MAX_HEALTH[4], self.__FISH_RANGE[4], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[4], "Fish", -1)
-        self.__SEA_HORSE_COST = 400
-        self.__SEA_HORSE.setScale(0.25)
         self.__oct_moving_sprites = pygame.sprite.Group()
         self.__OCTATTACK = Octattack(100, 300)
         self.__oct_moving_sprites.add(self.__OCTATTACK)
@@ -75,7 +72,13 @@ class Game():
         self.__OCTIDLE = Octidle(100, 200)
         self.__oct_moving_sprites.add(self.__OCTIDLE)
         self.__OCTDEATH = Octdeath(100, 150)
+        self.__OCTDEATH.setX(500)
         self.__oct_moving_sprites.add(self.__OCTDEATH)
+
+        self.__OCTOPUS = MyUnit("media/humanBase.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[4], self.__FISH_MAX_HEALTH[4], self.__FISH_RANGE[4], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[4], -1, self.__OCTATTACK, self.__OCTMOVE, self.__OCTATTACK, self.__OCTDEATH)
+        self.__OCTOPUS_COST = 400
+        self.__OCTOPUS.setScale(0.25)
+
 
 
         # - - - - - - - - - - - - - - - - - - - - - #
@@ -137,15 +140,17 @@ class Game():
 
             # - - - MOVEMENT - - - #
             for FISH in self.__DEPlOYED_FISHES: # For all the fish in existence
+                FISH.marqueeX(self.__WINDOW.getWidth())  # make it move
+                if FISH.getSpeed != 0:
+                    FISH.moveAnimation()
+                FISH.setSpeed(FISH.getInitialSpeed())
                 for HUMAN in self.__DEPLOYED_HUMANS:
                     if FISH.inFishRange(HUMAN.getWidth(), HUMAN.getX()):
                         FISH.setSpeed(0)
-                    else:
-                        FISH.setSpeed(FISH.getSpeed())
-                FISH.marqueeX(self.__WINDOW.getWidth())  # make it move
+                        FISH.idleAnimation()
 
 
-            for HUMAN in self.__DEPLOYED_HUMANS: # For all the fish in existence
+            for HUMAN in self.__DEPLOYED_HUMANS: # For all the human in existence
                 HUMAN.marqueeX(self.__WINDOW.getWidth())
                 HUMAN.setSpeed(HUMAN.getInitialSpeed())
                 for FISH in self.__DEPlOYED_FISHES:
@@ -159,13 +164,12 @@ class Game():
             for ATTACK in self.__LIVE_HUMAN_ATTACKS:
                 ATTACK.marqueeX(self.__WINDOW.getWidth())
 
-            #self.__fishOutputAttack()
-            self.__humanOutputAttack()
+            self.__fishOutputAttack()
+            #self.__humanOutputAttack()
             self.__humanAttackCollision()
             self.__fishAttackCollision()
             self.__updateCooldowns()
             self.__updateWindowFrame()
-            print(self.__oct_moving_sprites)
 
 
 
@@ -237,10 +241,10 @@ class Game():
 
         if self.__FISH_CURRENT_SPAWN_COOLDOWN[4] >= self.__FISH_SPAWN_COOLDOWN[4]:
             if KEYPRESSED[pygame.K_5] == 1:
-                if self.__INCOME >= self.__SEA_HORSE_COST:
-                    UNIT = copy.copy(self.__SEA_HORSE)
+                if self.__INCOME >= self.__OCTOPUS_COST:
+                    UNIT = copy.copy(self.__OCTOPUS)
                     self.__FISH_CURRENT_SPAWN_COOLDOWN[4] = 0
-                    self.__INCOME -= self.__SEA_HORSE_COST
+                    self.__INCOME -= self.__OCTOPUS_COST
         try:
             UNIT.setY(300 - UNIT.getHeight())
             UNIT.setX(SPAWN - UNIT.getWidth() // 2)
@@ -305,6 +309,7 @@ class Game():
                     self.__LIVE_FISH_ATTACKS.append(ATTACK)
                     self.__LIVE_FISH_ATTACKS[-1].setX(FISH.getX()-ATTACK.getWidth())
                     self.__LIVE_FISH_ATTACKS[-1].setY(FISH.getY()+FISH.getWidth()//2-ATTACK.getWidth()//2)
+                    FISH.attackAnimation()
                     FISH.resetAttackCooldown()
 
     def __humanOutputAttack(self):
@@ -321,17 +326,34 @@ class Game():
 
     def __humanAttackCollision(self):
         for i in range(len(self.__LIVE_HUMAN_ATTACKS)-1,-1,-1):
+            print("Things in LIVE_HUMAN_ATTACKS: ",i)
             for j in range(len(self.__DEPlOYED_FISHES)-1,-1,-1): # for all the fish deployed
-                if self.__LIVE_HUMAN_ATTACKS[i].isCollision(self.__DEPlOYED_FISHES[j].getWidth(), self.__DEPlOYED_FISHES[j].getHeight(), self.__DEPlOYED_FISHES[j].getPOS()):
-                    self.__DEPlOYED_FISHES[j].takeDamage(self.__LIVE_HUMAN_ATTACKS[i].getDamage())
-                    self.__LIVE_HUMAN_ATTACKS.pop(i)
-                    if self.__DEPlOYED_FISHES[j].getHealth() <= 0:
-                        self.__DEPlOYED_FISHES.pop(j)
+                print("Things in DEPLOYED FISH: ", j)
+                try:
+                    if self.__LIVE_HUMAN_ATTACKS[i].isCollision(self.__DEPlOYED_FISHES[j].getWidth(), self.__DEPlOYED_FISHES[j].getHeight(), self.__DEPlOYED_FISHES[j].getPOS()):
+                        self.__DEPlOYED_FISHES[j].takeDamage(self.__LIVE_HUMAN_ATTACKS[i].getDamage())
+                        self.__LIVE_HUMAN_ATTACKS.pop(i)
+                        if self.__DEPlOYED_FISHES[j].getHealth() <= 0:
+                            self.__DEPlOYED_FISHES.pop(j)
+                except IndexError:
+                    print("Errored")
+                    pass
 
 
     def __fishAttackCollision(self):
-        ""
-        #lol
+        for i in range(len(self.__LIVE_FISH_ATTACKS)-1,-1,-1):
+            print("Things in LIVE_HUMAN_ATTACKS: ",i)
+            for j in range(len(self.__DEPLOYED_HUMANS)-1,-1,-1): # for all the fish deployed
+                print("Things in DEPLOYED FISH: ", j)
+                try:
+                    if self.__LIVE_FISH_ATTACKS[i].isCollision(self.__DEPLOYED_HUMANS[j].getWidth(), self.__DEPLOYED_HUMANS[j].getHeight(), self.__DEPLOYED_HUMANS[j].getPOS()):
+                        self.__DEPLOYED_HUMANS[j].takeDamage(self.__LIVE_FISH_ATTACKS[i].getDamage())
+                        self.__LIVE_FISH_ATTACKS.pop(i)
+                        if self.__DEPLOYED_HUMANS[j].getHealth() <= 0:
+                            self.__DEPLOYED_HUMANS.pop(j)
+                except IndexError:
+                    print("Errored")
+                    pass
 
 
 
