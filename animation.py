@@ -1,38 +1,5 @@
 import pygame
 
-class Fish1(pygame.sprite.Sprite):
-    def __init__(self, pos_x, pos_y):
-        super().__init__()
-        self.sprites = []
-        self.is_animating = False
-        self.sprites.append(pygame.image.load('media/00.png'))
-        self.sprites.append(pygame.image.load('media/10.png'))
-        self.sprites.append(pygame.image.load('media/20.png'))
-        self.sprites.append(pygame.image.load('media/30.png'))
-        self.sprites.append(pygame.image.load('media/40.png'))
-        self.sprites.append(pygame.image.load('media/50.png'))
-        self.current_sprite = 0
-        self.image = self.sprites[self.current_sprite]
-        self.image = pygame.transform.scale(self.image, (100, 100))
-
-        self.rect = self.image.get_rect()
-        self.rect.topleft = [pos_x, pos_y]
-
-
-    def animate(self):
-        self.is_animating = True
-
-
-    def update(self):
-        if self.is_animating == True:
-            self.current_sprite += 0.2
-
-            if self.current_sprite >= len(self.sprites):
-                self.current_sprite = 0
-                self.is_animating = False
-
-            self.image = self.sprites[int(self.current_sprite)]
-            self.image = pygame.transform.scale(self.image, (100, 100))
 
 class Octattack(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y):
@@ -48,7 +15,10 @@ class Octattack(pygame.sprite.Sprite):
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
         self.image = pygame.transform.scale(self.image, (100, 100))
+        self.image = pygame.transform.flip(self.image, True, False)
 
+        self.__X = pos_x
+        self.__Y = pos_y
         self.rect = self.image.get_rect()
         self.rect.topleft = [pos_x, pos_y]
 
@@ -67,6 +37,24 @@ class Octattack(pygame.sprite.Sprite):
 
             self.image = self.sprites[int(self.current_sprite)]
             self.image = pygame.transform.scale(self.image, (100, 100))
+            self.image = pygame.transform.flip(self.image, True, False)
+
+    def setX(self, X):
+        self.__X = X
+        self.rect.topleft = (self.__X, self.__Y)
+
+    def setY(self, Y):
+        self.__Y = Y
+        self.rect.topleft = (self.__X, self.__Y)
+
+    def getPOS(self):
+        return self.rect
+
+    def getX(self):
+        return self.__X
+
+    def getY(self):
+        return self.__Y
 
 class Octmove(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y):
@@ -82,7 +70,11 @@ class Octmove(pygame.sprite.Sprite):
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
         self.image = pygame.transform.scale(self.image, (100, 100))
+        self.image = pygame.transform.flip(self.image, True, False)
+        self.image = pygame.transform.rotate(self.image, 50)
 
+        self.__X = pos_x
+        self.__Y = pos_y
         self.rect = self.image.get_rect()
         self.rect.topleft = [pos_x, pos_y]
 
@@ -101,6 +93,25 @@ class Octmove(pygame.sprite.Sprite):
 
             self.image = self.sprites[int(self.current_sprite)]
             self.image = pygame.transform.scale(self.image, (100, 100))
+            self.image = pygame.transform.flip(self.image, True, False)
+            self.image = pygame.transform.rotate(self.image, 50)
+
+    def setX(self, X):
+        self.__X = X
+        self.rect.topleft = (self.__X, self.__Y)
+
+    def setY(self, Y):
+        self.__Y = Y
+        self.rect.topleft = (self.__X, self.__Y)
+
+    def getPOS(self):
+        return self.rect
+
+    def getX(self):
+        return self.__X
+
+    def getY(self):
+        return self.__Y
 
 
 class Octidle(pygame.sprite.Sprite):
@@ -117,7 +128,10 @@ class Octidle(pygame.sprite.Sprite):
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
         self.image = pygame.transform.scale(self.image, (100, 100))
+        self.image = pygame.transform.flip(self.image, True, False)
 
+        self.__X = pos_x
+        self.__Y = pos_y
         self.rect = self.image.get_rect()
         self.rect.topleft = [pos_x, pos_y]
 
@@ -136,6 +150,24 @@ class Octidle(pygame.sprite.Sprite):
 
             self.image = self.sprites[int(self.current_sprite)]
             self.image = pygame.transform.scale(self.image, (100, 100))
+            self.image = pygame.transform.flip(self.image, True, False)
+
+    def setX(self, X):
+        self.__X = X
+        self.rect.topleft = (self.__X, self.__Y)
+
+    def setY(self, Y):
+        self.__Y = Y
+        self.rect.topleft = (self.__X, self.__Y)
+
+    def getPOS(self):
+        return self.rect
+
+    def getX(self):
+        return self.__X
+
+    def getY(self):
+        return self.__Y
 
 class Octdeath(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y):
@@ -147,7 +179,10 @@ class Octdeath(pygame.sprite.Sprite):
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
         self.image = pygame.transform.scale(self.image, (100, 100))
+        self.image = pygame.transform.flip(self.image, True, False)
 
+        self.__X = pos_x
+        self.__Y = pos_y
         self.rect = self.image.get_rect()
         self.rect.topleft = [pos_x, pos_y]
 
@@ -166,6 +201,25 @@ class Octdeath(pygame.sprite.Sprite):
 
             self.image = self.sprites[int(self.current_sprite)]
             self.image = pygame.transform.scale(self.image, (100, 100))
+            self.image = pygame.transform.flip(self.image, True, False)
+
+    def setX(self, X):
+        self.__X = X
+        self.rect.topleft = (self.__X, self.__Y)
+
+    def setY(self, Y):
+        self.__Y = Y
+        self.rect.topleft = (self.__X, self.__Y)
+
+
+    def getPOS(self):
+        return self.rect
+
+    def getX(self):
+        return self.__X
+
+    def getY(self):
+        return self.__Y
 
 
 class Eelattack(pygame.sprite.Sprite):
@@ -182,9 +236,12 @@ class Eelattack(pygame.sprite.Sprite):
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
         self.image = pygame.transform.scale(self.image, (100, 100))
+        self.image = pygame.transform.flip(self.image, True, False)
 
+        self.__X = pos_x
+        self.__Y = pos_y
         self.rect = self.image.get_rect()
-        self.rect.topleft = [pos_x, pos_y]
+        self.rect.topleft = (pos_x, pos_y)
 
 
     def animate(self):
@@ -201,6 +258,24 @@ class Eelattack(pygame.sprite.Sprite):
 
             self.image = self.sprites[int(self.current_sprite)]
             self.image = pygame.transform.scale(self.image, (100, 100))
+            self.image = pygame.transform.flip(self.image, True, False)
+
+    def setX(self, X):
+        self.__X = X
+        self.rect.topleft = (self.__X, self.__Y)
+
+    def setY(self, Y):
+        self.__Y = Y
+        self.rect.topleft = (self.__X, self.__Y)
+
+    def getPOS(self):
+        return self.rect
+
+    def getX(self):
+        return self.__X
+
+    def getY(self):
+        return self.__Y
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -227,7 +302,7 @@ eel_moving_sprites = pygame.sprite.Group()
 OCTATTACK = Octattack(100, 300)
 oct_moving_sprites.add(OCTATTACK)
 
-OCTMOVE = Octmove(100, 250)
+OCTMOVE = Octmove(100, 500)
 oct_moving_sprites.add(OCTMOVE)
 
 OCTIDLE = Octidle(100, 200)
