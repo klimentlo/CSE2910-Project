@@ -6,7 +6,7 @@ from window import Window
 import pygame
 
 class MyUnit(MySprite):
-    def __init__(self, FILENAME, X, SPEED, MAX_HEALTH, RANGE, ATTACK, ATTACK_COOLDOWN,DIRECTION=1, IDLE_ANIMATION=None, MOVE_ANIMATION=None, ATTACK_ANIMATION=None, DEATH_ANIMATION=None):
+    def __init__(self, FILENAME, X, SPEED, MAX_HEALTH, RANGE, ATTACK, ATTACK_COOLDOWN,DIRECTION=1, IDLE_ANIMATION=None, MOVE_ANIMATION=None, ATTACK_ANIMATION=None, DEATH_ANIMATION=None, GROUP_ANIMATON=None):
                                             #   Y \/
         MySprite.__init__(self, 1, 1, X, 300, SPEED, (255, 255, 255), DIRECTION)
         self.__UNIT = ImageSprite(FILENAME)
@@ -21,10 +21,24 @@ class MyUnit(MySprite):
         self.__IDLE_ANIMATION = IDLE_ANIMATION
         self.__MOVE_ANIMATION = MOVE_ANIMATION
         self.__DEATH_ANIMATION = DEATH_ANIMATION
+        self.__GROUP_ANIMATION = GROUP_ANIMATON
         self._SURFACE = self.__UNIT.getSurface()
 
     def takeDamage(self, DAMAGE):
         self.__CURENT_HEALTH -= DAMAGE
+
+    def getGroupAnimation(self):
+        return self.__GROUP_ANIMATION
+
+    def setAnimationPOS(self, POS):
+        self.__ATTACK_ANIMATION.setX(POS[0])
+        self.__ATTACK_ANIMATION.setY(POS[1])
+        self.__IDLE_ANIMATION.setX(POS[0])
+        self.__IDLE_ANIMATION.setY(POS[1])
+        self.__DEATH_ANIMATION.setX(POS[0])
+        self.__DEATH_ANIMATION.setY(POS[1])
+        self.__MOVE_ANIMATION.setX(POS[0])
+        self.__MOVE_ANIMATION.setY(POS[1])
 
     def getHealth(self):
         return self.__CURENT_HEALTH
@@ -80,6 +94,9 @@ class MyUnit(MySprite):
         if self.__CURENT_HEALTH < 0:
             # will eventually pop it off, which will disappear
             print("Dead")
+
+    def updateGroupAnimation(self):
+        self.__GROUP_ANIMATION.update()
 
 
 if __name__ == "__main__":
