@@ -44,7 +44,7 @@ class Game():
         self.__FISH_SPAWN_LOCATION = 900
         self.__FISH_SPEED = [1, 2, 3, 4, 5]
         self.__FISH_MAX_HEALTH = [5, 5, 5, 5, 5]
-        self.__FISH_RANGE = [50, 100, 150, 200, 250]
+        self.__FISH_RANGE = [50, 100, 150, 200, 50]
         self.__FISH_ATTACK_COOLDOWN = [1, 2, 3, 4, 5]
 
                                                 # (self, FILENAME, X, SPEED, MAX_HEALTH, RANGE, ATTACK, ATTACK_COOLDOWN, UNIT_TYPE, LEVEL=1)
@@ -75,7 +75,7 @@ class Game():
         self.__OCTDEATH.setX(500)
         self.__oct_moving_sprites.add(self.__OCTDEATH)
 
-        self.__OCTOPUS = MyUnit("media/humanBase.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[4], self.__FISH_MAX_HEALTH[4], self.__FISH_RANGE[4], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[4], -1, self.__OCTATTACK, self.__OCTMOVE, self.__OCTATTACK, self.__OCTDEATH)
+        self.__OCTOPUS = MyUnit("media/humanBase.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[4], self.__FISH_MAX_HEALTH[4], self.__FISH_RANGE[4], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[4], -1, self.__OCTATTACK, self.__OCTMOVE, self.__OCTATTACK, self.__OCTDEATH, self.__oct_moving_sprites)
         self.__OCTOPUS_COST = 400
         self.__OCTOPUS.setScale(0.25)
 
@@ -140,9 +140,10 @@ class Game():
 
             # - - - MOVEMENT - - - #
             for FISH in self.__DEPlOYED_FISHES: # For all the fish in existence
-                FISH.marqueeX(self.__WINDOW.getWidth())  # make it move
-                if FISH.getSpeed != 0:
+                if FISH.getSpeed() != 0:
                     FISH.moveAnimation()
+                    FISH.setAnimationPOS(FISH.getPOS())
+                FISH.marqueeX(self.__WINDOW.getWidth())  # make it move
                 FISH.setSpeed(FISH.getInitialSpeed())
                 for HUMAN in self.__DEPLOYED_HUMANS:
                     if FISH.inFishRange(HUMAN.getWidth(), HUMAN.getX()):
@@ -289,14 +290,11 @@ class Game():
 
         for ATTACK in self.__LIVE_HUMAN_ATTACKS:
             self.__WINDOW.getSurface().blit(ATTACK.getSurface(), ATTACK.getPOS())
-        KEYS_PRESSED = pygame.key.get_pressed()
-        if KEYS_PRESSED[pygame.K_SPACE] == 1:
-            self.__OCTDEATH.animate()
-            self.__OCTIDLE.animate()
-            self.__OCTATTACK.animate()
-            self.__OCTMOVE.animate()
-        self.__oct_moving_sprites.draw(self.__WINDOW.getSurface())
-        self.__oct_moving_sprites.update()
+
+        for FISH in self.__DEPlOYED_FISHES:
+            FISH.getGroupAnimation().draw(self.__WINDOW.getSurface())
+            FISH.updateGroupAnimation()
+
         self.__WINDOW.updateFrame()
 
 
@@ -354,6 +352,7 @@ class Game():
                 except IndexError:
                     print("Errored")
                     pass
+
 
 
 
