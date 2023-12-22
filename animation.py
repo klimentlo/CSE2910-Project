@@ -798,7 +798,7 @@ if __name__ == "__main__":
                 SWORDDEATH.animate()
                 SWORDIDLE.animate()
                 WANDATTACK.animate()
-
+#
         # drawing
         screen.fill((0,0,0))
         eel_moving_sprites.draw(screen)
