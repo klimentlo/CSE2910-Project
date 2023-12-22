@@ -6,7 +6,7 @@ from window import Window
 import pygame
 
 class MyUnit(MySprite):
-    def __init__(self, FILENAME, X, SPEED, MAX_HEALTH, RANGE, ATTACK, ATTACK_COOLDOWN,DIRECTION=1, IDLE_ANIMATION=None, MOVE_ANIMATION=None, ATTACK_ANIMATION=None, DEATH_ANIMATION=None, GROUP_ANIMATON=None):
+    def __init__(self, FILENAME, X, SPEED, MAX_HEALTH, RANGE, ATTACK, ATTACK_COOLDOWN,DIRECTION=1, IDLE_ANIMATION=None, MOVE_ANIMATION=None, ATTACK_ANIMATION=None, DEATH_ANIMATION=None, GROUP_ANIMATION=None):
                                             #   Y \/
         MySprite.__init__(self, 1, 1, X, 300, SPEED, (255, 255, 255), DIRECTION)
         self.__UNIT = ImageSprite(FILENAME)
@@ -21,8 +21,11 @@ class MyUnit(MySprite):
         self.__IDLE_ANIMATION = IDLE_ANIMATION
         self.__MOVE_ANIMATION = MOVE_ANIMATION
         self.__DEATH_ANIMATION = DEATH_ANIMATION
-        self.__GROUP_ANIMATION = GROUP_ANIMATON
+        self.__GROUP_ANIMATION = GROUP_ANIMATION
+
+
         self._SURFACE = self.__UNIT.getSurface()
+
 
     def takeDamage(self, DAMAGE):
         self.__CURENT_HEALTH -= DAMAGE
@@ -30,15 +33,31 @@ class MyUnit(MySprite):
     def getGroupAnimation(self):
         return self.__GROUP_ANIMATION
 
-    def setAnimationPOS(self, POS):
-        self.__ATTACK_ANIMATION.setX(POS[0])
-        self.__ATTACK_ANIMATION.setY(POS[1])
-        self.__IDLE_ANIMATION.setX(POS[0])
-        self.__IDLE_ANIMATION.setY(POS[1])
-        self.__DEATH_ANIMATION.setX(POS[0])
-        self.__DEATH_ANIMATION.setY(POS[1])
-        self.__MOVE_ANIMATION.setX(POS[0])
-        self.__MOVE_ANIMATION.setY(POS[1])
+    def setAttackPOS(self, X, Y):
+        self.__ATTACK_ANIMATION.setX(X)
+        self.__ATTACK_ANIMATION.setY(Y)
+
+    def setIdlePOS(self, X, Y):
+        self.__IDLE_ANIMATION.setX(X)
+        self.__IDLE_ANIMATION.setY(Y)
+
+    def setDeathPOS(self, X, Y):
+        self.__DEATH_ANIMATION.setX(X)
+        self.__DEATH_ANIMATION.setY(Y)
+
+    def setMovePOS(self, X, Y):
+        self.__MOVE_ANIMATION.setX(X)
+        self.__MOVE_ANIMATION.setY(Y)
+
+    def setAnimationPOS(self, X, Y):
+        self.__ATTACK_ANIMATION.setX(X)
+        self.__ATTACK_ANIMATION.setY(Y)
+        self.__IDLE_ANIMATION.setX(X)
+        self.__IDLE_ANIMATION.setY(Y)
+        self.__DEATH_ANIMATION.setX(X)
+        self.__DEATH_ANIMATION.setY(Y)
+        self.__MOVE_ANIMATION.setX(X)
+        self.__MOVE_ANIMATION.setY(Y)
 
     def getHealth(self):
         return self.__CURENT_HEALTH
@@ -74,12 +93,15 @@ class MyUnit(MySprite):
 
     def attackAnimation(self):
         self.__ATTACK_ANIMATION.animate()
+        print("Boom animation completed")
 
     def moveAnimation(self):
         self.__MOVE_ANIMATION.animate()
+        print("Moving")
 
     def idleAnimation(self):
-        self.__ATTACK_ANIMATION.animate()
+        self.__IDLE_ANIMATION.animate()
+
 
     def deathAnimation(self):
         self.__DEATH_ANIMATION.animate()
@@ -97,43 +119,3 @@ class MyUnit(MySprite):
 
     def updateGroupAnimation(self):
         self.__GROUP_ANIMATION.update()
-
-
-if __name__ == "__main__":
-    pygame.init()
-    WINDOW = Window("Image Sprites", 800, 600, 30)                                                         # \/RANGE
-    UNIT2 = MyUnits("media/pngtree-an-orange-cat-with-squinting-eyes-png-image_2664925.jpg", 600, 5, 50, 50, 100, 50, 50,
-                    50)
-    UNIT2.setScale(0.2)
-                                                                                                        #  \/ RANGE
-    UNIT = MyUnits("media/pngtree-an-orange-cat-with-squinting-eyes-png-image_2664925.jpg", 100, 5, 0, 50, 100, 50 , 50,50)
-    UNIT.setScale(0.2)
-
-
-
-
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
-
-
-        WINDOW.clearScreen()
-
-        if UNIT.inHumanRange(UNIT2.getX()):
-            print("CAT IN RANGE!")
-        else:
-            UNIT.setSpeed(1)
-        UNIT.marqueeX(WINDOW.getWidth())
-
-        if UNIT2.inCatRange(UNIT.getWidth(), UNIT.getX()):
-            print("HUMAN IN RANGE")
-        else:
-            UNIT.setSpeed(1)
-
-        KEYPRESSES = pygame.key.get_pressed()
-        UNIT2.WASDmove(KEYPRESSES)
-        WINDOW.getSurface().blit(UNIT.getSurface(), UNIT.getPOS())
-        WINDOW.getSurface().blit(UNIT2.getSurface(), UNIT2.getPOS())
-        WINDOW.updateFrame()

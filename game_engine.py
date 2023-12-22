@@ -48,21 +48,21 @@ class Game():
         self.__FISH_ATTACK_COOLDOWN = [1, 2, 3, 4, 5]
 
                                                 # (self, FILENAME, X, SPEED, MAX_HEALTH, RANGE, ATTACK, ATTACK_COOLDOWN, UNIT_TYPE, LEVEL=1)
-        self.__SALMON = MyUnit("media/00.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[0], self.__FISH_MAX_HEALTH[0], self.__FISH_RANGE[0], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[0], -1)
-        self.__SALMON_COST = 50
-        self.__SALMON.setScale(0.5)
-
-        self.__STING_RAY = MyUnit("media/00.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[1], self.__FISH_MAX_HEALTH[1], self.__FISH_RANGE[1], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[1], -1)
-        self.__STING_RAY_COST = 100
-        self.__STING_RAY.setScale(0.5)
-
-        self.__SWORD_FISH = MyUnit("media/00.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[2], self.__FISH_MAX_HEALTH[2], self.__FISH_RANGE[2], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[2], -1)
-        self.__SWORD_FISH_COST = 150
-        self.__SWORD_FISH.setScale(0.5)
-
-        self.__STAR_FISH = MyUnit("media/00.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[3], self.__FISH_MAX_HEALTH[3], self.__FISH_RANGE[3], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[3], -1)
-        self.__STAR_FISH_COST = 250
-        self.__STAR_FISH.setScale(0.1)
+        #self.__SALMON = MyUnit("media/00.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[0], self.__FISH_MAX_HEALTH[0], self.__FISH_RANGE[0], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[0], -1)
+        #self.__SALMON_COST = 50
+        #self.__SALMON.setScale(0.5)
+#
+        #self.__STING_RAY = MyUnit("media/00.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[1], self.__FISH_MAX_HEALTH[1], self.__FISH_RANGE[1], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[1], -1)
+        #self.__STING_RAY_COST = 100
+        #self.__STING_RAY.setScale(0.5)
+#
+        #self.__SWORD_FISH = MyUnit("media/00.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[2], self.__FISH_MAX_HEALTH[2], self.__FISH_RANGE[2], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[2], -1)
+        #self.__SWORD_FISH_COST = 150
+        #self.__SWORD_FISH.setScale(0.5)
+#
+        #self.__STAR_FISH = MyUnit("media/00.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[3], self.__FISH_MAX_HEALTH[3], self.__FISH_RANGE[3], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[3], -1)
+        #self.__STAR_FISH_COST = 250
+        #self.__STAR_FISH.setScale(0.1)
 
         self.__oct_moving_sprites = pygame.sprite.Group()
         self.__OCTATTACK = Octattack(100, 300)
@@ -72,13 +72,11 @@ class Game():
         self.__OCTIDLE = Octidle(100, 200)
         self.__oct_moving_sprites.add(self.__OCTIDLE)
         self.__OCTDEATH = Octdeath(100, 150)
-        self.__OCTDEATH.setX(500)
         self.__oct_moving_sprites.add(self.__OCTDEATH)
 
-        self.__OCTOPUS = MyUnit("media/humanBase.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[4], self.__FISH_MAX_HEALTH[4], self.__FISH_RANGE[4], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[4], -1, self.__OCTATTACK, self.__OCTMOVE, self.__OCTATTACK, self.__OCTDEATH, self.__oct_moving_sprites)
+        self.__OCTOPUS = MyUnit("media/octopus/oct6attack.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[4], self.__FISH_MAX_HEALTH[4], self.__FISH_RANGE[4], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[4], -1, copy.copy(self.__OCTIDLE), copy.copy(self.__OCTMOVE), copy.copy(self.__OCTATTACK), copy.copy(self.__OCTDEATH), copy.copy(self.__oct_moving_sprites))
         self.__OCTOPUS_COST = 400
-        self.__OCTOPUS.setScale(0.25)
-
+        self.__OCTOPUS.setScale(2)
 
 
         # - - - - - - - - - - - - - - - - - - - - - #
@@ -141,8 +139,10 @@ class Game():
             # - - - MOVEMENT - - - #
             for FISH in self.__DEPlOYED_FISHES: # For all the fish in existence
                 if FISH.getSpeed() != 0:
+                    FISH.setMovePOS(FISH.getX(), FISH.getY())
                     FISH.moveAnimation()
-                    FISH.setAnimationPOS(FISH.getPOS())
+                    FISH.setAnimationPOS(FISH.getX()-50, FISH.getY())
+
                 FISH.marqueeX(self.__WINDOW.getWidth())  # make it move
                 FISH.setSpeed(FISH.getInitialSpeed())
                 for HUMAN in self.__DEPLOYED_HUMANS:
@@ -301,14 +301,14 @@ class Game():
     def __fishOutputAttack(self):
         for FISH in self.__DEPlOYED_FISHES:
             if FISH.getSpeed() == 0: # if their movement speed is zero
-                FISH.getAttackCooldown()
                 if FISH.getCurrentAttackCooldown() >= FISH.getAttackCooldown():
                     ATTACK = copy.copy(FISH.getAttack())
+                    FISH.attackAnimation()
                     self.__LIVE_FISH_ATTACKS.append(ATTACK)
                     self.__LIVE_FISH_ATTACKS[-1].setX(FISH.getX()-ATTACK.getWidth())
                     self.__LIVE_FISH_ATTACKS[-1].setY(FISH.getY()+FISH.getWidth()//2-ATTACK.getWidth()//2)
-                    FISH.attackAnimation()
                     FISH.resetAttackCooldown()
+
 
     def __humanOutputAttack(self):
         for HUMAN in self.__DEPLOYED_HUMANS:
@@ -354,6 +354,8 @@ class Game():
                     pass
 
 
+    def createOctopus(self):
+        make it call this, which will create completely new objects
 
 
 
