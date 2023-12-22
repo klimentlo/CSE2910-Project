@@ -495,84 +495,86 @@ class Swordattack(pygame.sprite.Sprite):
 
     def getY(self):
         return self.__Y
-pygame.init()
-clock = pygame.time.Clock()
 
-screen_width = 800
-screen_height = 600
-screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption("anime")
+if __name__ == "__main__":
+    pygame.init()
+    clock = pygame.time.Clock()
+
+    screen_width = 800
+    screen_height = 600
+    screen = pygame.display.set_mode((screen_width, screen_height))
+    pygame.display.set_caption("anime")
 
 
-oct_moving_sprites = pygame.sprite.Group()
-eel_moving_sprites = pygame.sprite.Group()
-human_sword_moving_sprites = pygame.sprite.Group()
-#scuda = Scuda(100, 100)
-#moving_sprites.add(scuda)
+    oct_moving_sprites = pygame.sprite.Group()
+    eel_moving_sprites = pygame.sprite.Group()
+    human_sword_moving_sprites = pygame.sprite.Group()
+    #scuda = Scuda(100, 100)
+    #moving_sprites.add(scuda)
 
-#moving_sprites2 = pygame.sprite.Group()
-#boat = Boat(200, 100)
-#moving_sprites2.add(boat)
-#moving_sprites.add(boat)
+    #moving_sprites2 = pygame.sprite.Group()
+    #boat = Boat(200, 100)
+    #moving_sprites2.add(boat)
+    #moving_sprites.add(boat)
 
-#fish1 = Fish1(300,300)
-#moving_sprites.add(fish1)
+    #fish1 = Fish1(300,300)
+    #moving_sprites.add(fish1)
 
-OCTATTACK = Octattack(100, 300)
-oct_moving_sprites.add(OCTATTACK)
+    OCTATTACK = Octattack(100, 300)
+    oct_moving_sprites.add(OCTATTACK)
 
-OCTMOVE = Octmove(100, 500)
-oct_moving_sprites.add(OCTMOVE)
+    OCTMOVE = Octmove(100, 500)
+    oct_moving_sprites.add(OCTMOVE)
 
-OCTIDLE = Octidle(100, 200)
-oct_moving_sprites.add(OCTIDLE)
+    OCTIDLE = Octidle(100, 200)
+    oct_moving_sprites.add(OCTIDLE)
 
-OCTDEATH = Octdeath(100, 150)
-oct_moving_sprites.add(OCTDEATH)
+    OCTDEATH = Octdeath(100, 150)
+    oct_moving_sprites.add(OCTDEATH)
 
-EELATTACK = Eelattack(300, 300)
-eel_moving_sprites.add(EELATTACK)
+    EELATTACK = Eelattack(300, 300)
+    eel_moving_sprites.add(EELATTACK)
 
-EELMOVE = Eelmove(300, 100)
-eel_moving_sprites.add(EELMOVE)
+    EELMOVE = Eelmove(300, 100)
+    eel_moving_sprites.add(EELMOVE)
 
-EELIDLE = Eelidle(300, 200)
-eel_moving_sprites.add(EELIDLE)
+    EELIDLE = Eelidle(300, 200)
+    eel_moving_sprites.add(EELIDLE)
 
-EELDEATH = Eeldeath(300, 150)
-eel_moving_sprites.add(EELDEATH)
+    EELDEATH = Eeldeath(300, 150)
+    eel_moving_sprites.add(EELDEATH)
 
-SWORDATTACK = Swordattack(300, 150)
-human_sword_moving_sprites.add(SWORDATTACK)
+    SWORDATTACK = Swordattack(300, 150)
+    human_sword_moving_sprites.add(SWORDATTACK)
 
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            exit()
-        PRESSED_KEYS = pygame.key.get_pressed()
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            PRESSED_KEYS = pygame.key.get_pressed()
 
-        if event.type == pygame.KEYDOWN:
-            #fish1.animate()
-            OCTATTACK.animate()
-            OCTMOVE.animate()
-            OCTIDLE.animate()
-            OCTDEATH.animate()
-            EELATTACK.animate()
-            EELMOVE.animate()
-            EELIDLE.animate()
-            EELDEATH.animate()
-            SWORDATTACK.animate()
+            if event.type == pygame.KEYDOWN:
+                #fish1.animate()
+                OCTATTACK.animate()
+                OCTMOVE.animate()
+                OCTIDLE.animate()
+                OCTDEATH.animate()
+                EELATTACK.animate()
+                EELMOVE.animate()
+                EELIDLE.animate()
+                EELDEATH.animate()
+                SWORDATTACK.animate()
 
-    # drawing
-    screen.fill((0,0,0))
-    eel_moving_sprites.draw(screen)
-    eel_moving_sprites.update()
+        # drawing
+        screen.fill((0,0,0))
+        eel_moving_sprites.draw(screen)
+        eel_moving_sprites.update()
 
-    oct_moving_sprites.draw(screen)
-    oct_moving_sprites.update()
+        oct_moving_sprites.draw(screen)
+        oct_moving_sprites.update()
 
-    human_sword_moving_sprites.draw(screen)
-    human_sword_moving_sprites.update()
-    pygame.display.flip()
-    clock.tick(60)
+        human_sword_moving_sprites.draw(screen)
+        human_sword_moving_sprites.update()
+        pygame.display.flip()
+        clock.tick(60)
