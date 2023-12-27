@@ -133,7 +133,7 @@ class MyUnit(MySprite):
 
     def resetCurrentAttackAnimationDuration(self):
         self.__CURRENT_ATTACK_ANIMATION_DURATION = 0
-
+#
     def isAttacking(self):
         return self.__ATTACKING
 
