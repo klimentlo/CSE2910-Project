@@ -14,8 +14,8 @@ class Octattack(pygame.sprite.Sprite):
         self.sprites.append(pygame.image.load('media/octopus/oct6attack.png'))
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
-        self.height = 100
-        self.width = 100
+        self.height = 144
+        self.width = 144
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.image = pygame.transform.flip(self.image, True, False)
 
@@ -49,10 +49,19 @@ class Octattack(pygame.sprite.Sprite):
         self.__Y = Y
         self.rect.topleft = (self.__X, self.__Y)
 
-    def setScale(self, WIDTH, HEIGHT):
-        self.width = WIDTH
-        self.height = HEIGHT
-        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+    def setScale(self, SCALE_X, SCALE_Y=0):
+        '''
+        changes the image, making it bigger or smaller
+        :param SCALE_X: float
+        :param SCALE_Y: float
+        :return: none
+        '''
+        if SCALE_Y == 0:
+            SCALE_Y = SCALE_X
+
+        self.width = self.getWidth() * SCALE_X
+        self.height = self.getHeight() * SCALE_Y
+        self.image = pygame.transform.scale(self.image, (self.getWidth() * SCALE_X, self.getHeight() * SCALE_Y))
 
     def getPOS(self):
         return self.rect
@@ -82,8 +91,8 @@ class Octmove(pygame.sprite.Sprite):
         self.sprites.append(pygame.image.load('media/octopus/oct6move.png'))
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
-        self.height = 100
-        self.width = 100
+        self.height = 144
+        self.width = 144
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.image = pygame.transform.flip(self.image, True, False)
         self.image = pygame.transform.rotate(self.image, 50)
@@ -119,10 +128,19 @@ class Octmove(pygame.sprite.Sprite):
         self.__Y = Y
         self.rect.topleft = (self.__X, self.__Y)
 
-    def setScale(self, WIDTH, HEIGHT):
-        self.width = WIDTH
-        self.height = HEIGHT
-        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+    def setScale(self, SCALE_X, SCALE_Y=0):
+        '''
+        changes the image, making it bigger or smaller
+        :param SCALE_X: float
+        :param SCALE_Y: float
+        :return: none
+        '''
+        if SCALE_Y == 0:
+            SCALE_Y = SCALE_X
+
+        self.width = self.getWidth() * SCALE_X
+        self.height = self.getHeight() * SCALE_Y
+        self.image = pygame.transform.scale(self.image, (self.getWidth() * SCALE_X, self.getHeight() * SCALE_Y))
 
     def getPOS(self):
         return self.rect
@@ -153,8 +171,8 @@ class Octidle(pygame.sprite.Sprite):
         self.sprites.append(pygame.image.load('media/octopus/oct6idle.png'))
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
-        self.height = 100
-        self.width = 100
+        self.height = 144
+        self.width = 144
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.image = pygame.transform.flip(self.image, True, False)
 
@@ -188,10 +206,19 @@ class Octidle(pygame.sprite.Sprite):
         self.__Y = Y
         self.rect.topleft = (self.__X, self.__Y)
 
-    def setScale(self, WIDTH, HEIGHT):
-        self.width = WIDTH
-        self.height = HEIGHT
-        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+    def setScale(self, SCALE_X, SCALE_Y=0):
+        '''
+        changes the image, making it bigger or smaller
+        :param SCALE_X: float
+        :param SCALE_Y: float
+        :return: none
+        '''
+        if SCALE_Y == 0:
+            SCALE_Y = SCALE_X
+
+        self.width = self.getWidth() * SCALE_X
+        self.height = self.getHeight() * SCALE_Y
+        self.image = pygame.transform.scale(self.image, (self.getWidth() * SCALE_X, self.getHeight() * SCALE_Y))
 
 
     def getPOS(self):
@@ -220,8 +247,8 @@ class Octdeath(pygame.sprite.Sprite):
         self.sprites.append(pygame.image.load('media/octopus/oct2death.png'))
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
-        self.height = 100
-        self.width = 100
+        self.height = 144
+        self.width = 144
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.image = pygame.transform.flip(self.image, True, False)
 
@@ -255,10 +282,19 @@ class Octdeath(pygame.sprite.Sprite):
         self.__Y = Y
         self.rect.topleft = (self.__X, self.__Y)
 
-    def setScale(self, WIDTH, HEIGHT):
-        self.width = WIDTH
-        self.height = HEIGHT
-        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+    def setScale(self, SCALE_X, SCALE_Y=0):
+        '''
+        changes the image, making it bigger or smaller
+        :param SCALE_X: float
+        :param SCALE_Y: float
+        :return: none
+        '''
+        if SCALE_Y == 0:
+            SCALE_Y = SCALE_X
+
+        self.width = self.getWidth() * SCALE_X
+        self.height = self.getHeight() * SCALE_Y
+        self.image = pygame.transform.scale(self.image, (self.getWidth() * SCALE_X, self.getHeight() * SCALE_Y))
 
 
     def getPOS(self):
@@ -290,8 +326,8 @@ class Eelattack(pygame.sprite.Sprite):
         self.sprites.append(pygame.image.load('media/eel/eel6attack.png'))
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
-        self.height = 100
-        self.width = 100
+        self.height = 144
+        self.width = 144
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.image = pygame.transform.flip(self.image, True, False)
 
@@ -325,10 +361,19 @@ class Eelattack(pygame.sprite.Sprite):
         self.__Y = Y
         self.rect.topleft = (self.__X, self.__Y)
 
-    def setScale(self, WIDTH, HEIGHT):
-        self.width = WIDTH
-        self.height = HEIGHT
-        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+    def setScale(self, SCALE_X, SCALE_Y=0):
+        '''
+        changes the image, making it bigger or smaller
+        :param SCALE_X: float
+        :param SCALE_Y: float
+        :return: none
+        '''
+        if SCALE_Y == 0:
+            SCALE_Y = SCALE_X
+
+        self.width = self.getWidth() * SCALE_X
+        self.height = self.getHeight() * SCALE_Y
+        self.image = pygame.transform.scale(self.image, (self.getWidth() * SCALE_X, self.getHeight() * SCALE_Y))
 
     def getPOS(self):
         return self.rect
@@ -357,8 +402,8 @@ class Eelmove(pygame.sprite.Sprite):
         self.sprites.append(pygame.image.load('media/eel/eel4move.png'))
         self.sprites.append(pygame.image.load('media/eel/eel5move.png'))
         self.sprites.append(pygame.image.load('media/eel/eel6move.png'))
-        self.height = 100
-        self.width = 100
+        self.height = 144
+        self.width = 144
 
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
@@ -395,10 +440,19 @@ class Eelmove(pygame.sprite.Sprite):
         self.__Y = Y
         self.rect.topleft = (self.__X, self.__Y)
 
-    def setScale(self, WIDTH, HEIGHT):
-        self.width = WIDTH
-        self.height = HEIGHT
-        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+    def setScale(self, SCALE_X, SCALE_Y=0):
+        '''
+        changes the image, making it bigger or smaller
+        :param SCALE_X: float
+        :param SCALE_Y: float
+        :return: none
+        '''
+        if SCALE_Y == 0:
+            SCALE_Y = SCALE_X
+
+        self.width = self.getWidth() * SCALE_X
+        self.height = self.getHeight() * SCALE_Y
+        self.image = pygame.transform.scale(self.image, (self.getWidth() * SCALE_X, self.getHeight() * SCALE_Y))
 
     def getPOS(self):
         return self.rect
@@ -427,8 +481,8 @@ class Eelidle(pygame.sprite.Sprite):
         self.sprites.append(pygame.image.load('media/eel/eel4idle.png'))
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
-        self.height = 100
-        self.width = 100
+        self.height = 144
+        self.width = 144
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.image = pygame.transform.flip(self.image, True, False)
 
@@ -462,10 +516,19 @@ class Eelidle(pygame.sprite.Sprite):
         self.__Y = Y
         self.rect.topleft = (self.__X, self.__Y)
 
-    def setScale(self, WIDTH, HEIGHT):
-        self.width = WIDTH
-        self.height = HEIGHT
-        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+    def setScale(self, SCALE_X, SCALE_Y=0):
+        '''
+        changes the image, making it bigger or smaller
+        :param SCALE_X: float
+        :param SCALE_Y: float
+        :return: none
+        '''
+        if SCALE_Y == 0:
+            SCALE_Y = SCALE_X
+
+        self.width = self.getWidth() * SCALE_X
+        self.height = self.getHeight() * SCALE_Y
+        self.image = pygame.transform.scale(self.image, (self.getWidth() * SCALE_X, self.getHeight() * SCALE_Y))
 
 
     def getPOS(self):
@@ -493,8 +556,8 @@ class Eeldeath(pygame.sprite.Sprite):
         self.sprites.append(pygame.image.load('media/eel/eel2death.png'))
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
-        self.height = 100
-        self.width = 100
+        self.height = 144
+        self.width = 144
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.image = pygame.transform.flip(self.image, True, False)
 
@@ -528,10 +591,19 @@ class Eeldeath(pygame.sprite.Sprite):
         self.__Y = Y
         self.rect.topleft = (self.__X, self.__Y)
 
-    def setScale(self, WIDTH, HEIGHT):
-        self.width = WIDTH
-        self.height = HEIGHT
-        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+    def setScale(self, SCALE_X, SCALE_Y=0):
+        '''
+        changes the image, making it bigger or smaller
+        :param SCALE_X: float
+        :param SCALE_Y: float
+        :return: none
+        '''
+        if SCALE_Y == 0:
+            SCALE_Y = SCALE_X
+
+        self.width = self.getWidth() * SCALE_X
+        self.height = self.getHeight() * SCALE_Y
+        self.image = pygame.transform.scale(self.image, (self.getWidth() * SCALE_X, self.getHeight() * SCALE_Y))
 
 
     def getPOS(self):
@@ -563,8 +635,8 @@ class Swordattack(pygame.sprite.Sprite):
         self.sprites.append(pygame.image.load('media/sword/sword6attack.png'))
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
-        self.height = 100
-        self.width = 100
+        self.height = 144
+        self.width = 144
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.image = pygame.transform.flip(self.image, False, False)
 
@@ -598,10 +670,19 @@ class Swordattack(pygame.sprite.Sprite):
         self.__Y = Y
         self.rect.topleft = (self.__X, self.__Y)
 
-    def setScale(self, WIDTH, HEIGHT):
-        self.width = WIDTH
-        self.height = HEIGHT
-        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+    def setScale(self, SCALE_X, SCALE_Y=0):
+        '''
+        changes the image, making it bigger or smaller
+        :param SCALE_X: float
+        :param SCALE_Y: float
+        :return: none
+        '''
+        if SCALE_Y == 0:
+            SCALE_Y = SCALE_X
+
+        self.width = self.getWidth() * SCALE_X
+        self.height = self.getHeight() * SCALE_Y
+        self.image = pygame.transform.scale(self.image, (self.getWidth() * SCALE_X, self.getHeight() * SCALE_Y))
 
 
     def getPOS(self):
@@ -634,8 +715,8 @@ class Swordmove(pygame.sprite.Sprite):
 
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
-        self.height = 100
-        self.width = 100
+        self.height = 144
+        self.width = 144
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.image = pygame.transform.flip(self.image, False, False)
 
@@ -669,10 +750,19 @@ class Swordmove(pygame.sprite.Sprite):
         self.__Y = Y
         self.rect.topleft = (self.__X, self.__Y)
 
-    def setScale(self, WIDTH, HEIGHT):
-        self.width = WIDTH
-        self.height = HEIGHT
-        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+    def setScale(self, SCALE_X, SCALE_Y=0):
+        '''
+        changes the image, making it bigger or smaller
+        :param SCALE_X: float
+        :param SCALE_Y: float
+        :return: none
+        '''
+        if SCALE_Y == 0:
+            SCALE_Y = SCALE_X
+
+        self.width = self.getWidth() * SCALE_X
+        self.height = self.getHeight() * SCALE_Y
+        self.image = pygame.transform.scale(self.image, (self.getWidth() * SCALE_X, self.getHeight() * SCALE_Y))
 
 
     def getPOS(self):
@@ -705,8 +795,8 @@ class Sworddeath(pygame.sprite.Sprite):
 
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
-        self.height = 100
-        self.width = 100
+        self.height = 144
+        self.width = 144
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.image = pygame.transform.flip(self.image, False, False)
 
@@ -740,10 +830,19 @@ class Sworddeath(pygame.sprite.Sprite):
         self.__Y = Y
         self.rect.topleft = (self.__X, self.__Y)
 
-    def setScale(self, WIDTH, HEIGHT):
-        self.width = WIDTH
-        self.height = HEIGHT
-        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+    def setScale(self, SCALE_X, SCALE_Y=0):
+        '''
+        changes the image, making it bigger or smaller
+        :param SCALE_X: float
+        :param SCALE_Y: float
+        :return: none
+        '''
+        if SCALE_Y == 0:
+            SCALE_Y = SCALE_X
+
+        self.width = self.getWidth() * SCALE_X
+        self.height = self.getHeight() * SCALE_Y
+        self.image = pygame.transform.scale(self.image, (self.getWidth() * SCALE_X, self.getHeight() * SCALE_Y))
 
 
     def getPOS(self):
@@ -774,8 +873,8 @@ class Swordidle(pygame.sprite.Sprite):
 
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
-        self.height = 100
-        self.width = 100
+        self.height = 144
+        self.width = 144
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.image = pygame.transform.flip(self.image, False, False)
 
@@ -809,10 +908,19 @@ class Swordidle(pygame.sprite.Sprite):
         self.__Y = Y
         self.rect.topleft = (self.__X, self.__Y)
 
-    def setScale(self, WIDTH, HEIGHT):
-        self.width = WIDTH
-        self.height = HEIGHT
-        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+    def setScale(self, SCALE_X, SCALE_Y=0):
+        '''
+        changes the image, making it bigger or smaller
+        :param SCALE_X: float
+        :param SCALE_Y: float
+        :return: none
+        '''
+        if SCALE_Y == 0:
+            SCALE_Y = SCALE_X
+
+        self.width = self.getWidth() * SCALE_X
+        self.height = self.getHeight() * SCALE_Y
+        self.image = pygame.transform.scale(self.image, (self.getWidth() * SCALE_X, self.getHeight() * SCALE_Y))
 
 
     def getPOS(self):
@@ -845,8 +953,8 @@ class Wandattack(pygame.sprite.Sprite):
 
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
-        self.height = 100
-        self.width = 100
+        self.height = 144
+        self.width = 144
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.image = pygame.transform.flip(self.image, False, False)
 
@@ -880,10 +988,19 @@ class Wandattack(pygame.sprite.Sprite):
         self.__Y = Y
         self.rect.topleft = (self.__X, self.__Y)
 
-    def setScale(self, WIDTH, HEIGHT):
-        self.width = WIDTH
-        self.height = HEIGHT
-        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+    def setScale(self, SCALE_X, SCALE_Y=0):
+        '''
+        changes the image, making it bigger or smaller
+        :param SCALE_X: float
+        :param SCALE_Y: float
+        :return: none
+        '''
+        if SCALE_Y == 0:
+            SCALE_Y = SCALE_X
+
+        self.width = self.getWidth() * SCALE_X
+        self.height = self.getHeight() * SCALE_Y
+        self.image = pygame.transform.scale(self.image, (self.getWidth() * SCALE_X, self.getHeight() * SCALE_Y))
 
 
     def getPOS(self):
@@ -916,8 +1033,8 @@ class Wandmove(pygame.sprite.Sprite):
 
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
-        self.height = 100
-        self.width = 100
+        self.height = 144
+        self.width = 144
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.image = pygame.transform.flip(self.image, False, False)
 
@@ -951,10 +1068,19 @@ class Wandmove(pygame.sprite.Sprite):
         self.__Y = Y
         self.rect.topleft = (self.__X, self.__Y)
 
-    def setScale(self, WIDTH, HEIGHT):
-        self.width = WIDTH
-        self.height = HEIGHT
-        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+    def setScale(self, SCALE_X, SCALE_Y=0):
+        '''
+        changes the image, making it bigger or smaller
+        :param SCALE_X: float
+        :param SCALE_Y: float
+        :return: none
+        '''
+        if SCALE_Y == 0:
+            SCALE_Y = SCALE_X
+
+        self.width = self.getWidth() * SCALE_X
+        self.height = self.getHeight() * SCALE_Y
+        self.image = pygame.transform.scale(self.image, (self.getWidth() * SCALE_X, self.getHeight() * SCALE_Y))
 
 
     def getPOS(self):
@@ -987,8 +1113,8 @@ class Wanddeath(pygame.sprite.Sprite):
 
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
-        self.height = 100
-        self.width = 100
+        self.height = 144
+        self.width = 144
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.image = pygame.transform.flip(self.image, False, False)
 
@@ -1022,10 +1148,19 @@ class Wanddeath(pygame.sprite.Sprite):
         self.__Y = Y
         self.rect.topleft = (self.__X, self.__Y)
 
-    def setScale(self, WIDTH, HEIGHT):
-        self.width = WIDTH
-        self.height = HEIGHT
-        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+    def setScale(self, SCALE_X, SCALE_Y=0):
+        '''
+        changes the image, making it bigger or smaller
+        :param SCALE_X: float
+        :param SCALE_Y: float
+        :return: none
+        '''
+        if SCALE_Y == 0:
+            SCALE_Y = SCALE_X
+
+        self.width = self.getWidth() * SCALE_X
+        self.height = self.getHeight() * SCALE_Y
+        self.image = pygame.transform.scale(self.image, (self.getWidth() * SCALE_X, self.getHeight() * SCALE_Y))
 
 
     def getPOS(self):
@@ -1056,8 +1191,8 @@ class Wandidle(pygame.sprite.Sprite):
 
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
-        self.height = 100
-        self.width = 100
+        self.height = 144
+        self.width = 144
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.image = pygame.transform.flip(self.image, False, False)
 
@@ -1091,10 +1226,19 @@ class Wandidle(pygame.sprite.Sprite):
         self.__Y = Y
         self.rect.topleft = (self.__X, self.__Y)
 
-    def setScale(self, WIDTH, HEIGHT):
-        self.width = WIDTH
-        self.height = HEIGHT
-        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+    def setScale(self, SCALE_X, SCALE_Y=0):
+        '''
+        changes the image, making it bigger or smaller
+        :param SCALE_X: float
+        :param SCALE_Y: float
+        :return: none
+        '''
+        if SCALE_Y == 0:
+            SCALE_Y = SCALE_X
+
+        self.width = self.getWidth() * SCALE_X
+        self.height = self.getHeight() * SCALE_Y
+        self.image = pygame.transform.scale(self.image, (self.getWidth() * SCALE_X, self.getHeight() * SCALE_Y))
 
 
     def getPOS(self):
@@ -1128,22 +1272,22 @@ if __name__ == "__main__":
     human_sword_moving_sprites = pygame.sprite.Group()
     human_wand_moving_sprites = pygame.sprite.Group()
 
-    OCTATTACK = Octattack(100, 300)
+    OCTATTACK = Octattack(144, 300)
     oct_moving_sprites.add(OCTATTACK)
 
-    OCTMOVE = Octmove(100, 500)
+    OCTMOVE = Octmove(144, 500)
     oct_moving_sprites.add(OCTMOVE)
 
-    OCTIDLE = Octidle(100, 200)
+    OCTIDLE = Octidle(144, 200)
     oct_moving_sprites.add(OCTIDLE)
 
-    OCTDEATH = Octdeath(100, 150)
+    OCTDEATH = Octdeath(144, 150)
     oct_moving_sprites.add(OCTDEATH)
 
     EELATTACK = Eelattack(300, 300)
     eel_moving_sprites.add(EELATTACK)
 
-    EELMOVE = Eelmove(300, 100)
+    EELMOVE = Eelmove(300, 144)
     eel_moving_sprites.add(EELMOVE)
 
     EELIDLE = Eelidle(300, 200)
@@ -1173,7 +1317,7 @@ if __name__ == "__main__":
     WANDDEATH = Wanddeath(500, 200)
     human_sword_moving_sprites.add(WANDDEATH)
 
-    WANDIDLE = Wandidle(500, 100)
+    WANDIDLE = Wandidle(500, 144)
     human_sword_moving_sprites.add(WANDIDLE)
 
     while True:

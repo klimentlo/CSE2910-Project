@@ -25,6 +25,7 @@ class MyUnit(MySprite):
         self.__ATTACK_ANIMATION_DURATION = float(ATTACK_ANIMATION_DURATION)
         self.__CURRENT_ATTACK_ANIMATION_DURATION = float(ATTACK_ANIMATION_DURATION)
         self.__GROUP_ANIMATION = GROUP_ANIMATION
+        self.__ALIVE = True
 
 
         self._SURFACE = self.__UNIT.getSurface()
@@ -36,17 +37,19 @@ class MyUnit(MySprite):
     def getGroupAnimation(self):
         return self.__GROUP_ANIMATION
 
+    def setDead(self):
+        self.__ALIVE = False
     def setAttackPOS(self, X, Y, WIDTH, HEIGHT):
-        self.__ATTACK_ANIMATION.setX(X+WIDTH//2-(96//2))
-        self.__ATTACK_ANIMATION.setY(Y+HEIGHT//2-(96//2))
+        self.__ATTACK_ANIMATION.setX(X+WIDTH//2-(self.__ATTACK_ANIMATION.getWidth()//2))
+        self.__ATTACK_ANIMATION.setY(Y+HEIGHT//2-(self.__ATTACK_ANIMATION.getHeight()//2))
 
         self.__MOVE_ANIMATION.setX(2000)
         self.__DEATH_ANIMATION.setX(2000)
         self.__IDLE_ANIMATION.setX(2000)
 
     def setIdlePOS(self, X, Y, WIDTH, HEIGHT):
-        self.__IDLE_ANIMATION.setX(X+WIDTH//2-(96//2))
-        self.__IDLE_ANIMATION.setY(Y+HEIGHT//2-(96//2))
+        self.__IDLE_ANIMATION.setX(X+WIDTH//2-(self.__IDLE_ANIMATION.getWidth()//2))
+        self.__IDLE_ANIMATION.setY(Y+HEIGHT//2-(self.__IDLE_ANIMATION.getHeight()//2))
         # Move everything else
         self.__MOVE_ANIMATION.setX(2000)
         self.__DEATH_ANIMATION.setX(2000)
@@ -54,13 +57,13 @@ class MyUnit(MySprite):
 
 
     def setDeathPOS(self, X, Y, WIDTH, HEIGHT):
-        self.__DEATH_ANIMATION.setX(X+WIDTH//2-(96//2))
-        self.__DEATH_ANIMATION.setY(Y+HEIGHT//2-(96//2))
+        self.__DEATH_ANIMATION.setX(X+WIDTH//2-(self.__DEATH_ANIMATION.getWidth()//2))
+        self.__DEATH_ANIMATION.setY(Y+HEIGHT//2-(self.__DEATH_ANIMATION.getHeight()//2))
 
     def setMovePOS(self, X, Y, WIDTH, HEIGHT):
         # PLACES MOVE ANIMATION WHERE IT SHOULD BE
-        self.__MOVE_ANIMATION.setX(X+WIDTH//2-(96//2))
-        self.__MOVE_ANIMATION.setY(Y+HEIGHT//2-(96//2))
+        self.__MOVE_ANIMATION.setX(X+WIDTH//2-(self.__MOVE_ANIMATION.getWidth()//2))
+        self.__MOVE_ANIMATION.setY(Y+HEIGHT//2-(self.__MOVE_ANIMATION.getHeight()//2))
         # MOVES EVERYTHING ELSE AWAY
         self.__ATTACK_ANIMATION.setX(2000)
         self.__IDLE_ANIMATION.setX(2000)

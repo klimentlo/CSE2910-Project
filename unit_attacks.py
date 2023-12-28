@@ -5,13 +5,19 @@ date: 2023-12-1
 """
 from my_sprite import MySprite
 from image_sprite import ImageSprite
+import pygame
+
 class Attacks(MySprite):
-    def __init__(self, FILENAME, DAMAGE, RANGE, SPEED=5, DIRECTION=1, X =40):
+    def __init__(self, FILENAME, DAMAGE, RANGE, SPEED=5, DIRECTION=1, X =40, PROJECTILE = False):
         MySprite.__init__(self, 1, 1, X, 300, SPEED, (255, 255, 255), DIRECTION)
         self.__ATTACK = ImageSprite(FILENAME)
         self.__DAMAGE = DAMAGE
         self.__RANGE = RANGE
+        self.__PROJECTILE = PROJECTILE
         self._SURFACE = self.__ATTACK.getSurface()
+        self.width = 50
+        self.height = 50
+
 
     # -- MODIFERS METHODS --#
     # -- ACCESSOR METHODS  -- #
@@ -21,6 +27,14 @@ class Attacks(MySprite):
 
     def getRange(self):
         return self.__RANGE
+
+    def isProjectile(self):
+        return self.__PROJECTILE
+
+    def setScale(self, WIDTH, HEIGHT):
+        self.width = WIDTH
+        self.height = HEIGHT
+        self._SURFACE = pygame.transform.scale(self._SURFACE, (self.width, self.height))
 
 
 #moveSet = {

@@ -8,7 +8,9 @@ import time, random, copy
 from threading import Timer
 import pygame
 
-from animation import Octdeath, Octidle, Octattack, Octmove
+from animation import Octidle, Octmove, Octattack, Octdeath
+from animation import Wandidle, Wandmove, Wandattack, Wanddeath
+from animation import Swordidle, Swordmove, Swordattack, Sworddeath
 pygame.init()
 
 
@@ -25,7 +27,7 @@ class Game():
         self.__INCOME_TEXT = Text(f"${self.__INCOME}")
         self.__INCOME_TEXT.setPOS(self.__WINDOW.getWidth() - self.__INCOME_TEXT.getWidth() - 25, 25)
 
-        self.__DEPlOYED_FISHES = []
+        self.__DEPLOYED_FISHES = []
         self.__DEPLOYED_HUMANS = []
         self.__LIVE_FISH_ATTACKS = []
         self.__LIVE_HUMAN_ATTACKS = []
@@ -37,48 +39,18 @@ class Game():
         #   -  -  - FISH CONFIGURATIONS -  -  -   #
         # - - - - - - - - - - - - - - - - - - - - #
 
-        # Fish Spawning Cooldown
-        self.__FISH_SPAWN_COOLDOWN = [2.0, 3.0, 4.0, 5.0, 1.0]
-        self.__FISH_CURRENT_SPAWN_COOLDOWN = [2.0, 3.0, 4.0, 5.0, 1.0]
-
-
+        # --- GENERAL ATTRIBUTE CONFIGURATION --- #
 
         self.__FISH_SPAWN_LOCATION = 900
-        self.__FISH_SPEED = [1, 2, 3, 4, 5]
-        self.__FISH_MAX_HEALTH = [5, 5, 5, 5, 5]
-        self.__FISH_RANGE = [50, 100, 150, 200, 50]
+
+        self.__FISH_SPAWN_COOLDOWN = [2.0, 3.0, 4.0, 5.0, 1.0]
+        self.__FISH_CURRENT_SPAWN_COOLDOWN = [2.0, 3.0, 4.0, 5.0, 1.0]
+        self.__FISH_MAX_HEALTH = [200, 5, 5, 0, 200]
+        self.__FISH_RANGE = [50, 100, 150, 200, -50]
+        self.__FISH_SPEED = [1, 2, 3, 4, 3]
         self.__FISH_ATTACK_COOLDOWN = [1, 2, 3, 4, 5]
 
-                                                # (self, FILENAME, X, SPEED, MAX_HEALTH, RANGE, ATTACK, ATTACK_COOLDOWN, UNIT_TYPE, LEVEL=1)
-        #self.__SALMON = MyUnit("media/00.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[0], self.__FISH_MAX_HEALTH[0], self.__FISH_RANGE[0], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[0], -1)
-        #self.__SALMON_COST = 50
-        #self.__SALMON.setScale(0.5)
-#
-        #self.__STING_RAY = MyUnit("media/00.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[1], self.__FISH_MAX_HEALTH[1], self.__FISH_RANGE[1], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[1], -1)
-        #self.__STING_RAY_COST = 100
-        #self.__STING_RAY.setScale(0.5)
-#
-        #self.__SWORD_FISH = MyUnit("media/00.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[2], self.__FISH_MAX_HEALTH[2], self.__FISH_RANGE[2], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[2], -1)
-        #self.__SWORD_FISH_COST = 150
-        #self.__SWORD_FISH.setScale(0.5)
-#
-        #self.__STAR_FISH = MyUnit("media/00.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[3], self.__FISH_MAX_HEALTH[3], self.__FISH_RANGE[3], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[3], -1)
-        #self.__STAR_FISH_COST = 250
-        #self.__STAR_FISH.setScale(0.1)
-
-        #self.__oct_moving_sprites = pygame.sprite.Group()
-        #self.__OCTATTACK = Octattack(100, 300)
-        #self.__oct_moving_sprites.add(self.__OCTATTACK)
-        #self.__OCTMOVE = Octmove(100, 250)
-        #self.__oct_moving_sprites.add(self.__OCTMOVE)
-        #self.__OCTIDLE = Octidle(100, 200)
-        #self.__oct_moving_sprites.add(self.__OCTIDLE)
-        #self.__OCTDEATH = Octdeath(100, 150)
-        #self.__oct_moving_sprites.add(self.__OCTDEATH)
-#
-        #self.__OCTOPUS = MyUnit("media/octopus/oct6attack.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[4], self.__FISH_MAX_HEALTH[4], self.__FISH_RANGE[4], Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[4], -1, copy.copy(self.__OCTIDLE), copy.copy(self.__OCTMOVE), copy.copy(self.__OCTATTACK), copy.copy(self.__OCTDEATH), copy.copy(self.__oct_moving_sprites))
-        #self.__OCTOPUS_COST = 400
-        #self.__OCTOPUS.setScale(2)
+        # --- COST OF THE UNITS --- #
         self.__OCTOPUS_COST = 400
 
         # - - - - - - - - - - - - - - - - - - - - - #
@@ -86,19 +58,19 @@ class Game():
         # - - - - - - - - - - - - - - - - - - - - - #
 
         # Human Spawning Cooldown
-        self.__HUMAN_SPAWN_COOLDOWN = [1000.0, 10.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
-        self.__HUMAN_CURRENT_SPAWN_COOLDOWN = [1.0, 9.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
+        self.__HUMAN_SPAWN_COOLDOWN = [10.0, 5000.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
+        self.__HUMAN_CURRENT_SPAWN_COOLDOWN = [8.0, 9.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
 
 
         self.__HUMAN_SPAWN_LOCATION = 60
         self.__HUMAN_SPEED = [1, 5, 3, 4, 5]
-        self.__HUMAN_MAX_HEALTH = [50, 100, 150, 200, 250]
-        self.__HUMAN_RANGE = [50, 100, 150, 200, 250]
+        self.__HUMAN_MAX_HEALTH = [500000, 100, 150, 200, 250]
+        self.__HUMAN_RANGE = [300, 100, 150, 200, 250]
         self.__HUMAN_ATTACK_COOLDOWN = [1, 2, 3, 4, 5]
 
 
         # (self, FILENAME, X, SPEED, MAX_HEALTH, RANGE, ATTACK, ATTACK_COOLDOWN, UNIT_TYPE, LEVEL=1)
-        self.__SPEAR_FISHERMAN = MyUnit("media/00.png", self.__HUMAN_SPAWN_LOCATION, self.__HUMAN_SPEED[0],self.__HUMAN_MAX_HEALTH[0], self.__HUMAN_RANGE[0],Attacks("media/humanBase.png", 60, 45, 5, 1), self.__HUMAN_ATTACK_COOLDOWN[0], 1, 1.0, 1.0, 1.0, 1.0,1.0,1.0)
+        self.__SPEAR_FISHERMAN = MyUnit("media/00.png", self.__HUMAN_SPAWN_LOCATION, self.__HUMAN_SPEED[0],self.__HUMAN_MAX_HEALTH[0], self.__HUMAN_RANGE[0],Attacks("media/wand/Projectile.png", 1, 45, 5, 1), self.__HUMAN_ATTACK_COOLDOWN[0], 1, 1.0, 1.0, 1.0, 1.0,1.0,1.0)
         self.__SPEAR_FISHERMAN_COST = 0
         self.__SPEAR_FISHERMAN.setScale(0.5)
 
@@ -118,19 +90,25 @@ class Game():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
+            # How the user makes money
             self.__INCOME += 1
             self.__INCOME_TEXT.setText(f"$ {self.__INCOME}")
             self.__INCOME_TEXT.setPOS(self.__WINDOW.getWidth() - self.__INCOME_TEXT.getWidth() - 25, 25)
-            # - - - SPAWNING
+
+
+
+            # - - - SPAWNING - - - #
             KEYPRESSED = pygame.key.get_pressed()
             SPAWNEDFISH = self.__spawnFish(KEYPRESSED)
             SPAWNEDHUMAN = self.__spawnHuman()
 
+
+
             if SPAWNEDFISH != None: # if a key was pressed
-                if len(self.__DEPlOYED_FISHES) == 0:
-                    self.__DEPlOYED_FISHES.append(SPAWNEDFISH)
+                if len(self.__DEPLOYED_FISHES) == 0:
+                    self.__DEPLOYED_FISHES.append(SPAWNEDFISH)
                 else:
-                    self.__DEPlOYED_FISHES.insert(random.randrange(0, len(self.__DEPlOYED_FISHES)), SPAWNEDFISH) # deploy the wanted fish
+                    self.__DEPLOYED_FISHES.insert(random.randrange(0, len(self.__DEPLOYED_FISHES)), SPAWNEDFISH) # deploy the wanted fish
 
             if SPAWNEDHUMAN != None:
                 if len(self.__DEPLOYED_HUMANS) == 0:
@@ -138,13 +116,19 @@ class Game():
                 else:
                     self.__DEPLOYED_HUMANS.insert(random.randrange(0, len(self.__DEPLOYED_HUMANS)), SPAWNEDHUMAN)  # deploy the wanted fish
 
-            # - - - MOVEMENT - - - #
-            for FISH in self.__DEPlOYED_FISHES: # For all the fish in existence
+
+
+            # - - - - - - MOVEMENT - - - - - - #
+
+
+            # --- FISHES --- #
+            for FISH in self.__DEPLOYED_FISHES: # For all the fish in existence
                 if FISH.getSpeed() != 0: # if they are moving
                     FISH.setMovePOS(FISH.getX(), FISH.getY(), FISH.getWidth(), FISH.getHeight()) # make move animation on screen
                     FISH.moveAnimation() # make it animate
                 FISH.marqueeX(self.__WINDOW.getWidth())  # make it move horizontally
                 FISH.setSpeed(FISH.getInitialSpeed()) # sets it's speed back to its originial amount
+                # --- FISH RANGE MECHANICS --- #
                 for HUMAN in self.__DEPLOYED_HUMANS: #
                     if FISH.inFishRange(HUMAN.getWidth(), HUMAN.getX()): # when fish encounters a human
                         FISH.setSpeed(0) # make fish speed zero
@@ -153,14 +137,21 @@ class Game():
                             FISH.setIdlePOS(FISH.getX(), FISH.getY(), FISH.getWidth(), FISH.getHeight()) #make it on screen
 
 
+            # --- HUMANS --- #
+            for HUMAN in self.__DEPLOYED_HUMANS: # For all the HUMAN in existence
+                if HUMAN.getSpeed() != 0: # if they are moving
+                    HUMAN.setMovePOS(HUMAN.getX(), HUMAN.getY(), HUMAN.getWidth(), HUMAN.getHeight()) # make move animation on screen
+                    HUMAN.moveAnimation() # make it animate
+                HUMAN.marqueeX(self.__WINDOW.getWidth())  # make it move horizontally
+                HUMAN.setSpeed(HUMAN.getInitialSpeed()) # sets it's speed back to its originial amount
+                # --- HUMAN RANGE MECHANICS - - - #
+                for FISH in self.__DEPLOYED_FISHES: #
+                    if HUMAN.inHumanRange(FISH.getX()): # when HUMAN encounters a human
+                        HUMAN.setSpeed(0) # make HUMAN speed zero
+                        if HUMAN.isAttacking() == False: # they aren't attacking
+                            HUMAN.idleAnimation() # idle animation
+                            HUMAN.setIdlePOS(HUMAN.getX(), HUMAN.getY(), HUMAN.getWidth(), HUMAN.getHeight()) #make it on screen
 
-
-            for HUMAN in self.__DEPLOYED_HUMANS: # For all the human in existence
-                HUMAN.marqueeX(self.__WINDOW.getWidth())
-                HUMAN.setSpeed(HUMAN.getInitialSpeed())
-                for FISH in self.__DEPlOYED_FISHES:
-                    if HUMAN.inHumanRange(FISH.getX()):
-                        HUMAN.setSpeed(0)
 
 
             for ATTACK in self.__LIVE_FISH_ATTACKS:
@@ -170,9 +161,11 @@ class Game():
                 ATTACK.marqueeX(self.__WINDOW.getWidth())
 
             self.__fishOutputAttack()
-            #self.__humanOutputAttack()
+            self.__humanOutputAttack()
             self.__humanAttackCollision()
             self.__fishAttackCollision()
+            self.__checkDeath()
+
             self.__updateTimers()
             self.__updateWindowFrame()
 
@@ -193,7 +186,7 @@ class Game():
             for i in range(len(self.__HUMAN_CURRENT_SPAWN_COOLDOWN)):
                 self.__HUMAN_CURRENT_SPAWN_COOLDOWN[i] += self.__TIME_PASSED
 
-            for FISH in self.__DEPlOYED_FISHES:
+            for FISH in self.__DEPLOYED_FISHES:
                 FISH.updateAttackCooldown(self.__TIME_PASSED)
                 FISH.updateAttackAnimationDuration(self.__TIME_PASSED)
 
@@ -214,50 +207,11 @@ class Game():
         :param KEYPRESSED:
         :return:
         '''
-        SPAWN = 900
-
-        # If Salmon cooldown is above the current cooldown, allow it to be spawned
-        if self.__FISH_CURRENT_SPAWN_COOLDOWN[0] >= self.__FISH_SPAWN_COOLDOWN[0]:
-            if KEYPRESSED[pygame.K_1] == 1:
-                if self.__INCOME >= self.__SALMON_COST:
-                    UNIT = copy.copy(self.__SALMON)
-                    self.__FISH_CURRENT_SPAWN_COOLDOWN[0] = 0
-                    self.__INCOME -= self.__SALMON_COST
-
-
-        if self.__FISH_CURRENT_SPAWN_COOLDOWN[1] >= self.__FISH_SPAWN_COOLDOWN[1]:
-            if KEYPRESSED[pygame.K_2] == 1:
-                # Stingray
-                if self.__INCOME >= self.__STING_RAY_COST:
-                    UNIT = copy.copy(self.__STING_RAY)
-                    self.__FISH_CURRENT_SPAWN_COOLDOWN[1] = 0
-                    self.__INCOME -= self.__STING_RAY_COST
-
-        if self.__FISH_CURRENT_SPAWN_COOLDOWN[2] >= self.__FISH_SPAWN_COOLDOWN[2]:
-            if KEYPRESSED[pygame.K_3] == 1:
-                if self.__INCOME >= self.__SWORD_FISH_COST:
-                    UNIT = copy.copy(self.__SWORD_FISH)
-                    self.__FISH_CURRENT_SPAWN_COOLDOWN[2] = 0
-                    self.__INCOME -= self.__SWORD_FISH_COST
-
-        if self.__FISH_CURRENT_SPAWN_COOLDOWN[3] >= self.__FISH_SPAWN_COOLDOWN[3]:
-
-            if KEYPRESSED[pygame.K_4] == 1:
-                if self.__INCOME >= self.__STAR_FISH_COST:
-                    UNIT = copy.copy(self.__STAR_FISH)
-                    self.__FISH_CURRENT_SPAWN_COOLDOWN[3] = 0
-                    self.__INCOME -= self.__STAR_FISH_COST
 
         if self.__FISH_CURRENT_SPAWN_COOLDOWN[4] >= self.__FISH_SPAWN_COOLDOWN[4]:
             if KEYPRESSED[pygame.K_5] == 1:
                 if self.__INCOME >= self.__OCTOPUS_COST:
                     self.__createOctopus()
-        try:
-            UNIT.setY(300 - UNIT.getHeight())
-            UNIT.setX(SPAWN - UNIT.getWidth() // 2)
-            return UNIT
-        except UnboundLocalError:
-            return None
 
     def __spawnHuman(self):
         '''
@@ -266,8 +220,7 @@ class Game():
         '''
 
         if self.__HUMAN_CURRENT_SPAWN_COOLDOWN[0] >= self.__HUMAN_SPAWN_COOLDOWN[0]:
-            UNIT = copy.copy(self.__SPEAR_FISHERMAN)
-            self.__HUMAN_CURRENT_SPAWN_COOLDOWN[0] = 0
+            self.__createHumanWand()
 
         if self.__HUMAN_CURRENT_SPAWN_COOLDOWN[1] >= self.__HUMAN_SPAWN_COOLDOWN[1]:
             UNIT = copy.copy(self.__SUBMARINE)
@@ -285,9 +238,9 @@ class Game():
         self.__WINDOW.getSurface().blit(self.__BACKGROUND.getSurface(), self.__BACKGROUND.getPOS())
         self.__WINDOW.getSurface().blit(self.__INCOME_TEXT.getSurface(), self.__INCOME_TEXT.getPOS())
 
-        for FISH in self.__DEPlOYED_FISHES:
+        for FISH in self.__DEPLOYED_FISHES:
             self.__WINDOW.getSurface().blit(FISH.getSurface(), FISH.getPOS())
-
+#
         for HUMAN in self.__DEPLOYED_HUMANS:
             self.__WINDOW.getSurface().blit(HUMAN.getSurface(), HUMAN.getPOS())
 
@@ -297,15 +250,19 @@ class Game():
         for ATTACK in self.__LIVE_HUMAN_ATTACKS:
             self.__WINDOW.getSurface().blit(ATTACK.getSurface(), ATTACK.getPOS())
 
-        for FISH in self.__DEPlOYED_FISHES:
+        for FISH in self.__DEPLOYED_FISHES:
             FISH.getGroupAnimation().draw(self.__WINDOW.getSurface())
             FISH.updateGroupAnimation()
+
+        for HUMAN in self.__DEPLOYED_HUMANS:
+            HUMAN.getGroupAnimation().draw(self.__WINDOW.getSurface())
+            HUMAN.updateGroupAnimation()
 
         self.__WINDOW.updateFrame()
 
 
     def __fishOutputAttack(self):
-        for FISH in self.__DEPlOYED_FISHES:
+        for FISH in self.__DEPLOYED_FISHES:
             if FISH.getSpeed() == 0: # if their movement speed is zero
                 if FISH.getCurrentAttackCooldown() >= FISH.getAttackCooldown(): # if its allowed to attack again
                     FISH.attackAnimation() # activates attack animation
@@ -323,24 +280,37 @@ class Game():
     def __humanOutputAttack(self):
         for HUMAN in self.__DEPLOYED_HUMANS:
             if HUMAN.getSpeed() == 0: # if their movement speed is zero
-                HUMAN.getAttackCooldown()
-                if HUMAN.getCurrentAttackCooldown() >= HUMAN.getAttackCooldown():
-                    ATTACK = copy.copy(HUMAN.getAttack())
-                    self.__LIVE_HUMAN_ATTACKS.append(ATTACK)
-                    self.__LIVE_HUMAN_ATTACKS[-1].setX(HUMAN.getX())
-                    self.__LIVE_HUMAN_ATTACKS[-1].setY(HUMAN.getY()+HUMAN.getWidth()//2-ATTACK.getWidth()//2)
-                    HUMAN.resetAttackCooldown()
+                if HUMAN.getCurrentAttackCooldown() >= HUMAN.getAttackCooldown(): # if its allowed to attack again
+                    HUMAN.attackAnimation() # activates attack animation
+                    HUMAN.setAttackPOS(HUMAN.getX(), HUMAN.getY(), HUMAN.getWidth(), HUMAN.getHeight()) # makes attack animation come on screen
+                    HUMAN.resetCurrentAttackAnimationDuration()  # makes attack duration = 0
+                    HUMAN.resetAttackCooldown() # makes cooldown to 0, so it has to wait again before it can attack again
+                if HUMAN.finishedAttacking(): # if their attack animation has finished
+                    ATTACK = copy.copy(HUMAN.getAttack()) # create the actual attack
+                    self.__LIVE_HUMAN_ATTACKS.append(ATTACK) #make it exist
+                    if self.__LIVE_HUMAN_ATTACKS[-1].isProjectile():
+                        self.__LIVE_HUMAN_ATTACKS[-1].setScale(20, 20)
+                        self.__LIVE_HUMAN_ATTACKS[-1].setY(HUMAN.getY() + HUMAN.getWidth() // 9.2)  # place it at proper height of the unit
+                    else:
+                        self.__LIVE_HUMAN_ATTACKS[-1].setY(HUMAN.getY() + HUMAN.getWidth() // 2 - ATTACK.getWidth() // 2)  # place it at proper height of the unit
+                    self.__LIVE_HUMAN_ATTACKS[-1].setX(HUMAN.getX() + HUMAN.getWidth())  # place it where the unit is positions on the X axis
+
+
+                    HUMAN.updateAttackAnimationDuration(1000) # make the cooldown 1000, so that it wont continuously attack. So now, I acutally dont know how this works but it seems fine
+
+
+
 
 
     def __humanAttackCollision(self):
         for i in range(len(self.__LIVE_HUMAN_ATTACKS)-1,-1,-1):
-            for j in range(len(self.__DEPlOYED_FISHES)-1,-1,-1): # for all the fish deployed
+            for j in range(len(self.__DEPLOYED_FISHES)-1,-1,-1): # for all the fish deployed
                 try:
-                    if self.__LIVE_HUMAN_ATTACKS[i].isCollision(self.__DEPlOYED_FISHES[j].getWidth(), self.__DEPlOYED_FISHES[j].getHeight(), self.__DEPlOYED_FISHES[j].getPOS()):
-                        self.__DEPlOYED_FISHES[j].takeDamage(self.__LIVE_HUMAN_ATTACKS[i].getDamage())
+                    if self.__LIVE_HUMAN_ATTACKS[i].isCollision(self.__DEPLOYED_FISHES[j].getWidth(), self.__DEPLOYED_FISHES[j].getHeight(), self.__DEPLOYED_FISHES[j].getPOS()):
+                        self.__DEPLOYED_FISHES[j].takeDamage(self.__LIVE_HUMAN_ATTACKS[i].getDamage())
                         self.__LIVE_HUMAN_ATTACKS.pop(i)
-                        if self.__DEPlOYED_FISHES[j].getHealth() <= 0:
-                            self.__DEPlOYED_FISHES.pop(j)
+                        if self.__DEPLOYED_FISHES[j].getHealth() <= 0:
+                            self.__DEPLOYED_FISHES.pop(j)
                 except IndexError:
                     print("Errored")
                     pass
@@ -352,6 +322,7 @@ class Game():
                 try:
                     if self.__LIVE_FISH_ATTACKS[i].isCollision(self.__DEPLOYED_HUMANS[j].getWidth(), self.__DEPLOYED_HUMANS[j].getHeight(), self.__DEPLOYED_HUMANS[j].getPOS()):
                         self.__DEPLOYED_HUMANS[j].takeDamage(self.__LIVE_FISH_ATTACKS[i].getDamage())
+                        print("Ow I a human took damage")
                         self.__LIVE_FISH_ATTACKS.pop(i)
                         if self.__DEPLOYED_HUMANS[j].getHealth() <= 0:
                             self.__DEPLOYED_HUMANS.pop(j)
@@ -359,7 +330,16 @@ class Game():
                     print("Errored")
                     pass
 
+    def __checkDeath(self):
+        for FISH in self.__DEPLOYED_FISHES:
+            if FISH.getHealth() <= 0:
+                FISH.deathAnimation()
+                FISH.setDeathPOS(FISH.getX(), FISH.getY(),FISH.getWidth(), FISH.getHeight())
+                FISH.setDead(FISH.getDeathDuration())
 
+
+
+    # --- FISH CREATION FUNCTIONS --- #
     def __createOctopus(self):
         # OCTOPUS COST
         # ANIMATION CREATION
@@ -374,12 +354,51 @@ class Game():
         self.__oct_moving_sprites.add(self.__OCTDEATH)
         # CREATES OCTOPUS BASE UNIT
         self.__OCTOPUS = MyUnit("media/octopus/oct6attack.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[4],self.__FISH_MAX_HEALTH[4], self.__FISH_RANGE[4],Attacks("media/humanBase.png", 60, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[4], -1,self.__OCTIDLE, self.__OCTMOVE, self.__OCTATTACK,self.__OCTDEATH, self.__oct_moving_sprites, 0.8)
-        self.__OCTOPUS.setScale(2)
+
+        self.__OCTOPUS.setScale(3)
+        self.__OCTOPUS.flipSprite()
         # RESETS COOLDOWN, SUBRACTS MONEY, AND ADDS IT TO DEPLOYED UNITS
         self.__FISH_CURRENT_SPAWN_COOLDOWN[4] = 0
         self.__INCOME -= self.__OCTOPUS_COST
-        self.__DEPlOYED_FISHES.append(self.__OCTOPUS)
+        self.__DEPLOYED_FISHES.append(self.__OCTOPUS)
         self.__OCTOPUS.setY(300 - self.__OCTOPUS.getHeight())
+
+
+    # --- HUMAN CREATION FUNCTIONS -- #
+
+
+    def __createHumanWand(self):
+        # Animation Creation
+        self.__human_wand_moving_sprites = pygame.sprite.Group()
+
+        self.__WANDATTACK = Wandattack(500, 800)
+
+        self.__human_wand_moving_sprites.add(self.__WANDATTACK)
+
+
+        self.__WANDMOVE = Wandmove(500, 800)
+
+        self.__human_wand_moving_sprites.add(self.__WANDMOVE)
+
+        self.__WANDDEATH = Wanddeath(500, 800)
+
+        self.__human_wand_moving_sprites.add(self.__WANDDEATH)
+
+        self.__WANDIDLE = Wandidle(500, 800)
+
+        self.__human_wand_moving_sprites.add(self.__WANDIDLE)
+
+        # ACTUALLY CREATES THE UNIT WITH ALL THEIR RESPECTIVE ATTRIBUTES
+        self.__WAND = MyUnit("media/wand/wand1idle.png", self.__HUMAN_SPAWN_LOCATION, self.__HUMAN_SPEED[0],self.__HUMAN_MAX_HEALTH[0], self.__HUMAN_RANGE[0], Attacks("media/wand/Projectile.png", 50, self.__HUMAN_RANGE[0], 5, 1, 40, True), self.__HUMAN_ATTACK_COOLDOWN[0], 1 , self.__WANDIDLE, self.__WANDMOVE, self.__WANDATTACK, self.__WANDDEATH, self.__human_wand_moving_sprites, 0.8)
+        print("Object Width: ", self.__WAND.getWidth())
+        print("Animation Width", self.__WANDIDLE.getWidth())
+        self.__WAND.setScale(3)
+
+
+        # RESETS COOLDOWN, SUBRACTS MONEY, AND ADDS IT TO DEPLOYED UNITS
+        self.__HUMAN_CURRENT_SPAWN_COOLDOWN[0] = 0
+        self.__WAND.setY(300 - self.__WAND.getHeight())
+        self.__DEPLOYED_HUMANS.append(self.__WAND)
 
 
 

@@ -74,6 +74,9 @@ class MySprite:
     def setScale(self, SCALE):
         self._SURFACE = pygame.transform.scale(self._SURFACE, (self.getWidth() * SCALE, self.getHeight() * SCALE))
 
+    def flipSprite(self):
+        self._SURFACE = pygame.transform.flip(self._SURFACE, True, False)
+
     def WASDmove(self, KEYPRESSES):
         '''
         updates the position of the text using the keys wasd
