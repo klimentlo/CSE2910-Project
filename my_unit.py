@@ -19,26 +19,38 @@ class MyUnit(MySprite):
         self.__CURRENT_ATTACK_COOLDOWN = float(ATTACK_COOLDOWN)
         self.__ATTACK_ANIMATION = ATTACK_ANIMATION
         self.__ATTACKING = False
+        self.__ATTACK_ANIMATION_DURATION = float(ATTACK_ANIMATION_DURATION)
+        self.__CURRENT_ATTACK_ANIMATION_DURATION = float(ATTACK_ANIMATION_DURATION)
+
         self.__IDLE_ANIMATION = IDLE_ANIMATION
         self.__MOVE_ANIMATION = MOVE_ANIMATION
         self.__DEATH_ANIMATION = DEATH_ANIMATION
-        self.__ATTACK_ANIMATION_DURATION = float(ATTACK_ANIMATION_DURATION)
-        self.__CURRENT_ATTACK_ANIMATION_DURATION = float(ATTACK_ANIMATION_DURATION)
+        self.__DEATH_ANIMATION_DURATION = 0.6
+        self.__CURRENT_DEATH_ANIMATION_DURATION = 1000.0
         self.__GROUP_ANIMATION = GROUP_ANIMATION
-        self.__ALIVE = True
 
-
+        self.__DEAD = False
         self._SURFACE = self.__UNIT.getSurface()
 
+    def getHealth(self):
+        return self.__CURENT_HEALTH
 
     def takeDamage(self, DAMAGE):
         self.__CURENT_HEALTH -= DAMAGE
 
-    def getGroupAnimation(self):
-        return self.__GROUP_ANIMATION
+    def isDead(self):
+        self.__DEAD = True
 
-    def setDead(self):
-        self.__ALIVE = False
+    def ifDead(self):
+        if self.__DEAD == True:
+            return True
+        else:
+            return False
+
+
+
+
+    # Setting position of the animations
     def setAttackPOS(self, X, Y, WIDTH, HEIGHT):
         self.__ATTACK_ANIMATION.setX(X+WIDTH//2-(self.__ATTACK_ANIMATION.getWidth()//2))
         self.__ATTACK_ANIMATION.setY(Y+HEIGHT//2-(self.__ATTACK_ANIMATION.getHeight()//2))
@@ -57,8 +69,12 @@ class MyUnit(MySprite):
 
 
     def setDeathPOS(self, X, Y, WIDTH, HEIGHT):
-        self.__DEATH_ANIMATION.setX(X+WIDTH//2-(self.__DEATH_ANIMATION.getWidth()//2))
-        self.__DEATH_ANIMATION.setY(Y+HEIGHT//2-(self.__DEATH_ANIMATION.getHeight()//2))
+        self.__DEATH_ANIMATION.setX(X + WIDTH // 2 - (self.__IDLE_ANIMATION.getWidth() // 2))
+        self.__DEATH_ANIMATION.setY(Y + HEIGHT // 2 - (self.__IDLE_ANIMATION.getHeight() // 2))
+        # Move everything else
+        self.__MOVE_ANIMATION.setX(2000)
+        self.__IDLE_ANIMATION.setX(2000)
+        self.__ATTACK_ANIMATION.setX(2000)
 
     def setMovePOS(self, X, Y, WIDTH, HEIGHT):
         # PLACES MOVE ANIMATION WHERE IT SHOULD BE
@@ -69,7 +85,7 @@ class MyUnit(MySprite):
         self.__IDLE_ANIMATION.setX(2000)
         self.__DEATH_ANIMATION.setX(2000)
 
-    def setAnimationPOS(self, X, Y):
+    def setAnimationPOS(self, X, Y): # setts all of them together (probably uneeded)
         self.__ATTACK_ANIMATION.setX(X)
         self.__ATTACK_ANIMATION.setY(Y)
         self.__IDLE_ANIMATION.setX(X)
@@ -79,8 +95,44 @@ class MyUnit(MySprite):
         self.__MOVE_ANIMATION.setX(X)
         self.__MOVE_ANIMATION.setY(Y)
 
-    def getHealth(self):
-        return self.__CURENT_HEALTH
+    # Making The animation move move
+    def attackAnimation(self):
+        self.__ATTACK_ANIMATION.animate()
+        self.__ATTACKING = True
+
+    def moveAnimation(self):
+        self.__MOVE_ANIMATION.animate()
+
+    def idleAnimation(self):
+        self.__IDLE_ANIMATION.animate()
+
+
+    def deathAnimation(self):
+        self.__DEATH_ANIMATION.animate()
+
+    def getGroupAnimation(self):# Is used to update the animations on the game_engine
+        return self.__GROUP_ANIMATION
+
+    def updateGroupAnimation(self):
+        self.__GROUP_ANIMATION.update()
+
+
+
+    # --- ATTACK RELATED FUNCTIONS --- #
+
+    def inHumanRange(self, X):
+        '''
+        If a fish is in range of a human's attack range
+        :param X: gets the X value of the CAT (tuple)
+        :return: bool
+        '''
+        if X < self.getX() + self.getWidth() + self.__RANGE and X > self.getX():
+            self.setSpeed(0)
+            return True # Yes, a cat is within the range of the human
+
+    def inFishRange(self, WIDTH, X):
+        if X + WIDTH > self.getX() - self.__RANGE and X < self.getX():
+            return True
 
     def getAttackCooldown(self):
         return self.__ATTACK_COOLDOWN
@@ -97,34 +149,7 @@ class MyUnit(MySprite):
     def resetAttackCooldown(self):
         self.__CURRENT_ATTACK_COOLDOWN = 0
 
-    def inHumanRange(self, X):
-        '''
-        If a fish is in range of a human's attack range
-        :param X: gets the X value of the CAT (tuple)
-        :return: bool
-        '''
-        if X < self.getX() + self.getWidth() + self.__RANGE and X > self.getX():
-            self.setSpeed(0)
-            return True # Yes, a cat is within the range of the human
-
-    def inFishRange(self, WIDTH, X):
-        if X + WIDTH > self.getX() - self.__RANGE and X < self.getX():
-            return True
-
-    def attackAnimation(self):
-        self.__ATTACK_ANIMATION.animate()
-        self.__ATTACKING = True
-
-    def moveAnimation(self):
-        self.__MOVE_ANIMATION.animate()
-
-    def idleAnimation(self):
-        self.__IDLE_ANIMATION.animate()
-
-
-    def deathAnimation(self):
-        self.__DEATH_ANIMATION.animate()
-
+    # ATTACK ANIMATION AND ITS TIMINGS
     def getAttackAnimationDuration(self):
         return self.__ATTACK_ANIMATION_DURATION
 
@@ -136,7 +161,7 @@ class MyUnit(MySprite):
 
     def resetCurrentAttackAnimationDuration(self):
         self.__CURRENT_ATTACK_ANIMATION_DURATION = 0
-#
+
     def isAttacking(self):
         return self.__ATTACKING
 
@@ -145,17 +170,27 @@ class MyUnit(MySprite):
             self.__ATTACKING = False
             return True
 
+    # DEATH ANIMATION AND ITS TIMINGS
+
+    def beginDeathAnimationDuration(self):
+        self.__CURRENT_DEATH_ANIMATION_DURATION = 0
+
+    def finishedDying(self):
+        if self.__CURRENT_DEATH_ANIMATION_DURATION >= self.__DEATH_ANIMATION_DURATION and self.__CURRENT_DEATH_ANIMATION_DURATION <= 999:
+            return True
+
+    def getDeathTimers(self):
+        print("Current Death Animation Duration: ", self.__CURRENT_DEATH_ANIMATION_DURATION)
+        print("Actual Death duration: ", self.__DEATH_ANIMATION_DURATION)
+
+    def updateDeathAnimationDuration(self, TIMEPASSED):
+        self.__CURRENT_DEATH_ANIMATION_DURATION += TIMEPASSED
+
 
 
 #    def canAtack(self):
 #    enemyUnits = [Enemy(), Enemy(), Enemy(), Enemy(), Enemy()]
 #        for ENEMIES in enemyUnits:
 
-    def isAlive(self, LIST):
-        if self.__CURENT_HEALTH < 0:
-            # will eventually pop it off, which will disappear
-            print("Dead")
 
-    def updateGroupAnimation(self):
-        self.__GROUP_ANIMATION.update()
 
