@@ -47,7 +47,7 @@ class Game():
         self.__FISH_CURRENT_SPAWN_COOLDOWN = [2.0, 3.0, 4.0, 5.0, 1.0]
         self.__FISH_MAX_HEALTH = [200, 5, 5, 0, 2500]
         self.__FISH_RANGE = [50, 100, 150, 200, -50]
-        self.__FISH_SPEED = [1, 2, 3, 4, 30]
+        self.__FISH_SPEED = [1, 2, 3, 4, 5]
         self.__FISH_ATTACK_COOLDOWN = [1, 2, 3, 4, 5]
 
         # --- COST OF THE UNITS --- #
