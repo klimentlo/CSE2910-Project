@@ -4,8 +4,9 @@ from my_unit import MyUnit
 from text import Text
 from unit_attacks import Attacks
 from window import Window
+from box import Box
+from color import Color
 import time, random, copy
-from threading import Timer
 import pygame
 
 from animation import Octidle, Octmove, Octattack, Octdeath
@@ -14,26 +15,61 @@ from animation import Swordidle, Swordmove, Swordattack, Sworddeath
 pygame.init()
 
 
-
 class Game():
     '''
     game class
     '''
     def __init__(self):
-        self.__WINDOW = Window("Fighting Fish", 960, 400, 30)
-        self.__BACKGROUND = ImageSprite("media/b228ea58-42fe-43eb-9f60-07622a4072f9.png")
-        self.__BACKGROUND.setY(-500)
+        # Window & Background
+        self.__WINDOW = Window("background", 1233, 384, 30)
+        self.__BACKGROUND = ImageSprite("media/underwater-fantasy-background.png")
+        self.__BACKGROUND.setScale(3)
+        # Income
         self.__INCOME = 5000
         self.__INCOME_TEXT = Text(f"${self.__INCOME}")
         self.__INCOME_TEXT.setPOS(self.__WINDOW.getWidth() - self.__INCOME_TEXT.getWidth() - 25, 25)
 
+        # - - - Bases
+        self.__TOWERS = []
+        # - Enemy Tower
+        self.__E_MAX_HEALTH = 5000
+        self.__E_TOWER = MyUnit("media/enemybase1.png", None , None ,self.__E_MAX_HEALTH, None, None, None, None , None, None, None, None, None, None)
+        self.__E_TOWER.setScale(4 / 10)
+        self.__E_TOWER.setY(190)
+        self.__E_TOWER.setX(-10)
+        self.__TOWERS.append(self.__E_TOWER)
+
+        # Health Text & Bar
+        self.__E_TOWER_HEALTH_TEXT = Text(f"{self.__E_MAX_HEALTH}", "ComicSans", 18)
+        self.__E_TOWER_HEALTH_TEXT.setPOS(self.__E_TOWER.getX() + (self.__E_TOWER.getWidth()//2 - self.__E_TOWER_HEALTH_TEXT.getWidth()//2),self.__E_TOWER.getY() - 5)
+        self.__E_TOWER_HEALTH_BAR = Box(100, 10)
+        self.__E_TOWER_HEALTH_BAR.setPOS(self.__E_TOWER_HEALTH_TEXT.getX() + (self.__E_TOWER_HEALTH_TEXT.getWidth()//2 - self.__E_TOWER_HEALTH_BAR.getWidth()//2), self.__E_TOWER_HEALTH_TEXT.getY() + self.__E_TOWER_HEALTH_TEXT.getHeight())
+        self.__E_TOWER_HEALTH_BAR.setColor(Color.GREEN)
+
+        self.__E_TOWER_DAMAGE_BAR = Box(100, 10)
+        self.__E_TOWER_DAMAGE_BAR.setPOS(self.__E_TOWER_HEALTH_TEXT.getX() + (self.__E_TOWER_HEALTH_TEXT.getWidth() // 2 - self.__E_TOWER_HEALTH_BAR.getWidth() // 2),self.__E_TOWER_HEALTH_TEXT.getY() + self.__E_TOWER_HEALTH_TEXT.getHeight())
+
+        self.__E_TOWER_DAMAGE_BAR.setColor(Color.RED)
+
+
+
+
+        self.__A_HEALTH = 5000
+        self.__A_TOWER = MyUnit("media/allybase11.png", None, None, self.__A_HEALTH, None, None, None, None, None, None,None, None, None, None)
+        self.__A_TOWER.setScale(0.80)
+        self.__A_TOWER.setY(90)
+        self.__A_TOWER.setX(1015)
+        self.__TOWERS.append(self.__A_TOWER)
+
+
+        #
         self.__DEPLOYED_FISHES = []
         self.__DEPLOYED_HUMANS = []
         self.__LIVE_FISH_ATTACKS = []
         self.__LIVE_HUMAN_ATTACKS = []
         self.__TIME = time.time()
         self.__PREVIOUS_TIME = self.__TIME
-        self.__TIME_PASSED = 0.1
+        self.__TIME_PASSED = 0.12
 
         # - - - - - - - - - - - - - - - - - - - - #
         #   -  -  - FISH CONFIGURATIONS -  -  -   #
@@ -41,14 +77,15 @@ class Game():
 
         # --- GENERAL ATTRIBUTE CONFIGURATION --- #
 
-        self.__FISH_SPAWN_LOCATION = 900
+        self.__FISH_SPAWN_LOCATION = self.__WINDOW.getWidth()-200
 
         self.__FISH_SPAWN_COOLDOWN = [2.0, 3.0, 4.0, 5.0, 1.0]
         self.__FISH_CURRENT_SPAWN_COOLDOWN = [2.0, 3.0, 4.0, 5.0, 1.0]
-        self.__FISH_MAX_HEALTH = [200, 5, 5, 0, 2500]
+        self.__FISH_MAX_HEALTH = [200, 5, 5, 0, 200]
         self.__FISH_RANGE = [50, 100, 150, 200, -50]
         self.__FISH_SPEED = [1, 2, 3, 4, 5]
         self.__FISH_ATTACK_COOLDOWN = [1, 2, 3, 4, 5]
+        self.__FISH_ATTACK_DAMAGE = [5, 10, 15, 20, 93]
 
         # --- COST OF THE UNITS --- #
         self.__OCTOPUS_COST = 400
@@ -58,15 +95,16 @@ class Game():
         # - - - - - - - - - - - - - - - - - - - - - #
 
         # Human Spawning Cooldown
-        self.__HUMAN_SPAWN_COOLDOWN = [10.0, 5000.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
+        self.__HUMAN_SPAWN_COOLDOWN = [10.0, 10.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
         self.__HUMAN_CURRENT_SPAWN_COOLDOWN = [8.0, 9.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
 
 
         self.__HUMAN_SPAWN_LOCATION = 60
-        self.__HUMAN_SPEED = [1, 5, 3, 4, 5]
-        self.__HUMAN_MAX_HEALTH = [50, 100, 150, 200, 250]
-        self.__HUMAN_RANGE = [300, 100, 150, 200, 250]
+        self.__HUMAN_SPEED = [2.5, 1.5, 3, 4, 5]
+        self.__HUMAN_MAX_HEALTH = [250, 100, 150, 200, 250]
+        self.__HUMAN_RANGE = [-80, 100, 150, 200, 250]
         self.__HUMAN_ATTACK_COOLDOWN = [0.9, 2, 3, 4, 5]
+        self.__HUMAN_ATTACK_DAMAGE = [5.0, 10.0, 15.0, 20.0]
 
 
         # (self, FILENAME, X, SPEED, MAX_HEALTH, RANGE, ATTACK, ATTACK_COOLDOWN, UNIT_TYPE, LEVEL=1)
@@ -118,9 +156,6 @@ class Game():
 
 
 
-            # - - - - - - MOVEMENT - - - - - - #
-
-
             # --- FISHES --- #
 
             for FISH in self.__DEPLOYED_FISHES: # For all the fish in existence
@@ -138,21 +173,38 @@ class Game():
                                 FISH.idleAnimation() # idle animation
                                 FISH.setIdlePOS(FISH.getX(), FISH.getY(), FISH.getWidth(), FISH.getHeight()) #make it on screen
 
+                if FISH.inFishRange(self.__E_TOWER.getWidth(), self.__E_TOWER.getX()):  # when fish encounters a human
+                    FISH.setSpeed(0)  # make fish speed zero
+                    if FISH.isAttacking() == False:  # they aren't attacking
+                        FISH.idleAnimation()  # idle animation
+                        FISH.setIdlePOS(FISH.getX(), FISH.getY(), FISH.getWidth(),
+                                        FISH.getHeight())  # make it on screen
+
 
             # --- HUMANS --- #
             for HUMAN in self.__DEPLOYED_HUMANS: # For all the HUMAN in existence
-                if HUMAN.getSpeed() != 0: # if they are moving
-                    HUMAN.setMovePOS(HUMAN.getX(), HUMAN.getY(), HUMAN.getWidth(), HUMAN.getHeight()) # make move animation on screen
-                    HUMAN.moveAnimation() # make it animate
-                HUMAN.marqueeX(self.__WINDOW.getWidth())  # make it move horizontally
-                HUMAN.setSpeed(HUMAN.getInitialSpeed()) # sets it's speed back to its originial amount
-                # --- HUMAN RANGE MECHANICS - - - #
-                for FISH in self.__DEPLOYED_FISHES: #
-                    if HUMAN.inHumanRange(FISH.getX()): # when HUMAN encounters a human
-                        HUMAN.setSpeed(0) # make HUMAN speed zero
-                        if HUMAN.isAttacking() == False: # they aren't attacking
-                            HUMAN.idleAnimation() # idle animation
-                            HUMAN.setIdlePOS(HUMAN.getX(), HUMAN.getY(), HUMAN.getWidth(), HUMAN.getHeight()) #make it on screen
+                if HUMAN.ifDead() == False:
+                    if HUMAN.getSpeed() != 0: # if they are moving
+                        HUMAN.setMovePOS(HUMAN.getX(), HUMAN.getY(), HUMAN.getWidth(), HUMAN.getHeight()) # make move animation on screen
+                        HUMAN.moveAnimation() # make it animate
+                    HUMAN.marqueeX(self.__WINDOW.getWidth())  # make it move horizontally
+                    HUMAN.setSpeed(HUMAN.getInitialSpeed()) # sets it's speed back to its originial amount
+                    # --- HUMAN RANGE MECHANICS - - - #
+                    for FISH in self.__DEPLOYED_FISHES: #
+                        if HUMAN.inHumanRange(FISH.getX()): # when HUMAN encounters a human
+                            HUMAN.setSpeed(0) # make HUMAN speed zero
+                            if HUMAN.isAttacking() == False: # they aren't attacking
+                                HUMAN.idleAnimation() # idle animation
+                                HUMAN.setIdlePOS(HUMAN.getX(), HUMAN.getY(), HUMAN.getWidth(), HUMAN.getHeight()) #make it on screen
+                    # TOWERS
+                    if HUMAN.inHumanRange(self.__A_TOWER.getX()):  # when in human's range
+                        HUMAN.setSpeed(0)  # make HUMAN speed zero
+                        if HUMAN.isAttacking() == False:  # they aren't attacking
+                            HUMAN.idleAnimation()  # idle animation
+                            HUMAN.setIdlePOS(HUMAN.getX(), HUMAN.getY(), HUMAN.getWidth(),
+                                             HUMAN.getHeight())  # make it on screen
+
+
 
 
 
@@ -227,23 +279,22 @@ class Game():
         '''
 
         if self.__HUMAN_CURRENT_SPAWN_COOLDOWN[0] >= self.__HUMAN_SPAWN_COOLDOWN[0]:
-            self.__createHumanWand()
+            self.__createHumanSword()
 
         if self.__HUMAN_CURRENT_SPAWN_COOLDOWN[1] >= self.__HUMAN_SPAWN_COOLDOWN[1]:
-            UNIT = copy.copy(self.__SUBMARINE)
-            self.__HUMAN_CURRENT_SPAWN_COOLDOWN[1] = 0
-        try:
-            UNIT.setY(300 - UNIT.getHeight())
-            UNIT.setX( - UNIT.getWidth() // 2)
-            return UNIT
-        except UnboundLocalError:
-            return None
-
+            self.__createHumanWand()
 
     def __updateWindowFrame(self):
         self.__WINDOW.clearScreen()
         self.__WINDOW.getSurface().blit(self.__BACKGROUND.getSurface(), self.__BACKGROUND.getPOS())
         self.__WINDOW.getSurface().blit(self.__INCOME_TEXT.getSurface(), self.__INCOME_TEXT.getPOS())
+
+        for TOWER in self.__TOWERS:
+            self.__WINDOW.getSurface().blit(TOWER.getSurface(), TOWER.getPOS())
+
+        self.__WINDOW.getSurface().blit(self.__E_TOWER_HEALTH_TEXT.getSurface(), self.__E_TOWER_HEALTH_TEXT.getPOS())
+        self.__WINDOW.getSurface().blit(self.__E_TOWER_DAMAGE_BAR.getSurface(), self.__E_TOWER_DAMAGE_BAR.getPOS())
+        self.__WINDOW.getSurface().blit(self.__E_TOWER_HEALTH_BAR.getSurface(), self.__E_TOWER_HEALTH_BAR.getPOS())
 
         #for FISH in self.__DEPLOYED_FISHES:
         #    self.__WINDOW.getSurface().blit(FISH.getSurface(), FISH.getPOS())
@@ -329,11 +380,30 @@ class Game():
                 try:
                     if self.__LIVE_FISH_ATTACKS[i].isCollision(self.__DEPLOYED_HUMANS[j].getWidth(), self.__DEPLOYED_HUMANS[j].getHeight(), self.__DEPLOYED_HUMANS[j].getPOS()):
                         self.__DEPLOYED_HUMANS[j].takeDamage(self.__LIVE_FISH_ATTACKS[i].getDamage())
-                        print(self.__DEPLOYED_HUMANS[j].getHealth())
                         self.__LIVE_FISH_ATTACKS.pop(i)
                 except IndexError:
                     print("Errored")
                     pass
+            # enemy towwer collides with fish attack
+            try:
+                if self.__LIVE_FISH_ATTACKS[i].isCollision(self.__E_TOWER.getWidth(), self.__E_TOWER.getHeight(),self.__E_TOWER.getPOS()):
+
+                    self.__E_TOWER.takeDamage(self.__LIVE_FISH_ATTACKS[i].getDamage())
+                    self.__E_TOWER_HEALTH_TEXT.setText(f"{self.__E_TOWER.getHealth()}")
+                    self.__E_TOWER_HEALTH_TEXT.setPOS(self.__E_TOWER.getX() + (self.__E_TOWER.getWidth() // 2 - self.__E_TOWER_HEALTH_TEXT.getWidth() // 2),self.__E_TOWER.getY() - 5)
+                    try:
+                        self.__E_TOWER_HEALTH_BAR = Box((self.__E_TOWER.getHealth()/self.__E_MAX_HEALTH) * self.__E_TOWER_DAMAGE_BAR.getWidth(), self.__E_TOWER_DAMAGE_BAR.getHeight())
+                        self.__E_TOWER_HEALTH_BAR.setColor(Color.GREEN)
+                        self.__E_TOWER_HEALTH_BAR.setPOS(self.__E_TOWER_HEALTH_TEXT.getX() + (self.__E_TOWER_HEALTH_TEXT.getWidth() // 2 - self.__E_TOWER_DAMAGE_BAR.getWidth() // 2),self.__E_TOWER_HEALTH_TEXT.getY() + self.__E_TOWER_HEALTH_TEXT.getHeight())
+                    except pygame.error:
+                        self.__ROUND = "Complete"
+                    self.__LIVE_FISH_ATTACKS.pop(i)
+            except IndexError:
+                pass
+
+
+
+
 
     def __checkDeath(self):
         for i in range(len(self.__DEPLOYED_FISHES)-1,-1,-1):
@@ -343,7 +413,6 @@ class Game():
                     self.__DEPLOYED_FISHES[i].deathAnimation()
                     self.__DEPLOYED_FISHES[i].setDeathPOS(self.__DEPLOYED_FISHES[i].getX(), self.__DEPLOYED_FISHES[i].getY(), self.__DEPLOYED_FISHES[i].getWidth(), self.__DEPLOYED_FISHES[i].getHeight())
                     self.__DEPLOYED_FISHES[i].beginDeathAnimationDuration()  # makes attack duration = 0
-                    self.__DEPLOYED_FISHES[i].getDeathTimers()
             if self.__DEPLOYED_FISHES[i].finishedDying(): # if their attack animation has finished
                 self.__DEPLOYED_FISHES.pop(i)
 
@@ -355,7 +424,6 @@ class Game():
                     self.__DEPLOYED_HUMANS[i].deathAnimation()
                     self.__DEPLOYED_HUMANS[i].setDeathPOS(self.__DEPLOYED_HUMANS[i].getX(), self.__DEPLOYED_HUMANS[i].getY(), self.__DEPLOYED_HUMANS[i].getWidth(), self.__DEPLOYED_HUMANS[i].getHeight())
                     self.__DEPLOYED_HUMANS[i].beginDeathAnimationDuration()  # makes attack duration = 0
-                    self.__DEPLOYED_HUMANS[i].getDeathTimers()
             if self.__DEPLOYED_HUMANS[i].finishedDying(): # if their attack animation has finished
                 self.__DEPLOYED_HUMANS.pop(i)
 
@@ -365,7 +433,7 @@ class Game():
 
     # --- FISH CREATION FUNCTIONS --- #
     def __createOctopus(self):
-        # OCTOPUS COST
+        # OCTOPUS (index 4)
         # ANIMATION CREATION
         self.__oct_moving_sprites = pygame.sprite.Group()
         self.__OCTATTACK = Octattack(100, 300)
@@ -378,52 +446,58 @@ class Game():
         self.__oct_moving_sprites.add(self.__OCTDEATH)
         # CREATES OCTOPUS BASE UNIT
         # ATTACK CONFIG (DAMAGE, RANGE, SPEED)
-        self.__OCTOPUS = MyUnit("media/octopus/oct6attack.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[4],self.__FISH_MAX_HEALTH[4], self.__FISH_RANGE[4],Attacks("media/humanBase.png", 50000000, 45, 5, -1), self.__FISH_ATTACK_COOLDOWN[4], -1,self.__OCTIDLE, self.__OCTMOVE, self.__OCTATTACK,self.__OCTDEATH, self.__oct_moving_sprites, 0.8)
-
+        self.__OCTOPUS = MyUnit("media/octopus/oct6attack.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[4],self.__FISH_MAX_HEALTH[4], self.__FISH_RANGE[4],Attacks("media/sword/sword1death.png", self.__FISH_ATTACK_DAMAGE[4], self.__FISH_RANGE[4], 5, -1), self.__FISH_ATTACK_COOLDOWN[4], -1,self.__OCTIDLE, self.__OCTMOVE, self.__OCTATTACK,self.__OCTDEATH, self.__oct_moving_sprites, 0.8)
         self.__OCTOPUS.setScale(3)
         self.__OCTOPUS.flipSprite()
         # RESETS COOLDOWN, SUBRACTS MONEY, AND ADDS IT TO DEPLOYED UNITS
         self.__FISH_CURRENT_SPAWN_COOLDOWN[4] = 0
         self.__INCOME -= self.__OCTOPUS_COST
         self.__DEPLOYED_FISHES.append(self.__OCTOPUS)
-        self.__OCTOPUS.setY(300 - self.__OCTOPUS.getHeight())
+        self.__OCTOPUS.setY(375 - self.__OCTOPUS.getHeight())
 
 
     # --- HUMAN CREATION FUNCTIONS -- #
 
 
+    def __createHumanSword(self):
+        self.__human_sword_moving_sprites = pygame.sprite.Group()
+        self.__SWORDATTACK = Swordattack(300, 150)
+        self.__human_sword_moving_sprites.add(self.__SWORDATTACK)
+        self.__SWORDMOVE = Swordmove(400, 200)
+        self.__human_sword_moving_sprites.add(self.__SWORDMOVE)
+        self.__SWORDDEATH = Sworddeath(400, 300)
+        self.__human_sword_moving_sprites.add(self.__SWORDDEATH)
+        self.__SWORDIDLE = Swordidle(400, 400)
+        self.__human_sword_moving_sprites.add(self.__SWORDIDLE)
+        self.__SWORD = MyUnit("media/sword/sword1idle.png", self.__HUMAN_SPAWN_LOCATION, self.__HUMAN_SPEED[0],
+                             self.__HUMAN_MAX_HEALTH[0], self.__HUMAN_RANGE[0],
+                             Attacks("media/wand/Projectile.png", self.__HUMAN_ATTACK_DAMAGE[0], self.__HUMAN_RANGE[0], 4, 1, 40, False),
+                             self.__HUMAN_ATTACK_COOLDOWN[0], 1, self.__SWORDIDLE, self.__SWORDMOVE, self.__SWORDATTACK,
+                             self.__SWORDDEATH, self.__human_sword_moving_sprites, 0.8)
+        self.__SWORD.setScale(3)
+        # RESETS COOLDOWN, SUBRACTS MONEY, AND ADDS IT TO DEPLOYED UNITS
+        self.__HUMAN_CURRENT_SPAWN_COOLDOWN[0] = 0
+        self.__SWORD.setY(375 - self.__SWORD.getHeight())
+        self.__DEPLOYED_HUMANS.append(self.__SWORD)
+
     def __createHumanWand(self):
         # Animation Creation
         self.__human_wand_moving_sprites = pygame.sprite.Group()
-
         self.__WANDATTACK = Wandattack(500, 800)
-
         self.__human_wand_moving_sprites.add(self.__WANDATTACK)
-
-
         self.__WANDMOVE = Wandmove(500, 800)
-
         self.__human_wand_moving_sprites.add(self.__WANDMOVE)
-
         self.__WANDDEATH = Wanddeath(500, 800)
-
         self.__human_wand_moving_sprites.add(self.__WANDDEATH)
-
         self.__WANDIDLE = Wandidle(500, 800)
-
         self.__human_wand_moving_sprites.add(self.__WANDIDLE)
-
         # ACTUALLY CREATES THE UNIT WITH ALL THEIR RESPECTIVE ATTRIBUTES
         # ATTACK CONFIGURATIONS (DAMAGE, RANGE, SPEED)
-        self.__WAND = MyUnit("media/wand/wand1idle.png", self.__HUMAN_SPAWN_LOCATION, self.__HUMAN_SPEED[0],self.__HUMAN_MAX_HEALTH[0], self.__HUMAN_RANGE[0], Attacks("media/wand/Projectile.png", 50, self.__HUMAN_RANGE[0], 4, 1, 40, True), self.__HUMAN_ATTACK_COOLDOWN[0], 1 , self.__WANDIDLE, self.__WANDMOVE, self.__WANDATTACK, self.__WANDDEATH, self.__human_wand_moving_sprites, 0.8)
-        print("Object Width: ", self.__WAND.getWidth())
-        print("Animation Width", self.__WANDIDLE.getWidth())
+        self.__WAND = MyUnit("media/wand/wand1idle.png", self.__HUMAN_SPAWN_LOCATION, self.__HUMAN_SPEED[1],self.__HUMAN_MAX_HEALTH[1], self.__HUMAN_RANGE[1], Attacks("media/wand/Projectile.png", self.__HUMAN_ATTACK_DAMAGE[1], self.__HUMAN_RANGE[1], 4, 1, 40, True), self.__HUMAN_ATTACK_COOLDOWN[1], 1 , self.__WANDIDLE, self.__WANDMOVE, self.__WANDATTACK, self.__WANDDEATH, self.__human_wand_moving_sprites, 0.8)
         self.__WAND.setScale(3)
-
-
         # RESETS COOLDOWN, SUBRACTS MONEY, AND ADDS IT TO DEPLOYED UNITS
-        self.__HUMAN_CURRENT_SPAWN_COOLDOWN[0] = 0
-        self.__WAND.setY(300 - self.__WAND.getHeight())
+        self.__HUMAN_CURRENT_SPAWN_COOLDOWN[1] = 0
+        self.__WAND.setY(375 - self.__WAND.getHeight())
         self.__DEPLOYED_HUMANS.append(self.__WAND)
 
 

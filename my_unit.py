@@ -15,12 +15,12 @@ class MyUnit(MySprite):
         self.__CURENT_HEALTH = MAX_HEALTH
         self.__RANGE = RANGE
         self.__ATTACK = ATTACK
-        self.__ATTACK_COOLDOWN = float(ATTACK_COOLDOWN)
-        self.__CURRENT_ATTACK_COOLDOWN = float(ATTACK_COOLDOWN)
+        self.__ATTACK_COOLDOWN = ATTACK_COOLDOWN # should be float
+        self.__CURRENT_ATTACK_COOLDOWN = ATTACK_COOLDOWN # should be float
         self.__ATTACK_ANIMATION = ATTACK_ANIMATION
         self.__ATTACKING = False
-        self.__ATTACK_ANIMATION_DURATION = float(ATTACK_ANIMATION_DURATION)
-        self.__CURRENT_ATTACK_ANIMATION_DURATION = float(ATTACK_ANIMATION_DURATION)
+        self.__ATTACK_ANIMATION_DURATION = ATTACK_ANIMATION_DURATION # should be float
+        self.__CURRENT_ATTACK_ANIMATION_DURATION = ATTACK_ANIMATION_DURATION # should be float
 
         self.__IDLE_ANIMATION = IDLE_ANIMATION
         self.__MOVE_ANIMATION = MOVE_ANIMATION
@@ -179,9 +179,6 @@ class MyUnit(MySprite):
         if self.__CURRENT_DEATH_ANIMATION_DURATION >= self.__DEATH_ANIMATION_DURATION and self.__CURRENT_DEATH_ANIMATION_DURATION <= 999:
             return True
 
-    def getDeathTimers(self):
-        print("Current Death Animation Duration: ", self.__CURRENT_DEATH_ANIMATION_DURATION)
-        print("Actual Death duration: ", self.__DEATH_ANIMATION_DURATION)
 
     def updateDeathAnimationDuration(self, TIMEPASSED):
         self.__CURRENT_DEATH_ANIMATION_DURATION += TIMEPASSED
