@@ -12,6 +12,7 @@ import pygame
 from animation import Octidle, Octmove, Octattack, Octdeath
 from animation import Wandidle, Wandmove, Wandattack, Wanddeath
 from animation import Swordidle, Swordmove, Swordattack, Sworddeath
+from animation import Eelidle, Eelmove, Eelattack, Eeldeath
 pygame.init()
 
 
@@ -81,14 +82,15 @@ class Game():
 
         self.__FISH_SPAWN_COOLDOWN = [2.0, 3.0, 4.0, 5.0, 1.0]
         self.__FISH_CURRENT_SPAWN_COOLDOWN = [2.0, 3.0, 4.0, 5.0, 1.0]
-        self.__FISH_MAX_HEALTH = [200, 5, 5, 0, 200]
+        self.__FISH_MAX_HEALTH = [200, 5, 5, 50, 200]
         self.__FISH_RANGE = [50, 100, 150, 200, -50]
         self.__FISH_SPEED = [1, 2, 3, 4, 5]
-        self.__FISH_ATTACK_COOLDOWN = [1, 2, 3, 4, 5]
-        self.__FISH_ATTACK_DAMAGE = [5, 10, 15, 20, 93]
+        self.__FISH_ATTACK_COOLDOWN = [1, 2, 3, 4, 3]
+        self.__FISH_ATTACK_DAMAGE = [5, 10, 15, 20, 300]
 
         # --- COST OF THE UNITS --- #
         self.__OCTOPUS_COST = 400
+        self.__EEL_COST = 300
 
         # - - - - - - - - - - - - - - - - - - - - - #
         #    -  -  - HUMAN CONFIGURATIONS -  -  -   #
@@ -103,7 +105,7 @@ class Game():
         self.__HUMAN_SPEED = [2.5, 1.5, 3, 4, 5]
         self.__HUMAN_MAX_HEALTH = [250, 100, 150, 200, 250]
         self.__HUMAN_RANGE = [-80, 100, 150, 200, 250]
-        self.__HUMAN_ATTACK_COOLDOWN = [0.9, 2, 3, 4, 5]
+        self.__HUMAN_ATTACK_COOLDOWN = [1.2, 2, 3, 4, 5]
         self.__HUMAN_ATTACK_DAMAGE = [5.0, 10.0, 15.0, 20.0]
 
 
@@ -267,6 +269,11 @@ class Game():
         :return:
         '''
 
+        if self.__FISH_CURRENT_SPAWN_COOLDOWN[3] >= self.__FISH_SPAWN_COOLDOWN[3]:
+            if KEYPRESSED[pygame.K_4] == 1:
+                if self.__INCOME >= self.__EEL_COST:
+                    self.__createEel()
+
         if self.__FISH_CURRENT_SPAWN_COOLDOWN[4] >= self.__FISH_SPAWN_COOLDOWN[4]:
             if KEYPRESSED[pygame.K_5] == 1:
                 if self.__INCOME >= self.__OCTOPUS_COST:
@@ -424,7 +431,9 @@ class Game():
                     self.__DEPLOYED_HUMANS[i].deathAnimation()
                     self.__DEPLOYED_HUMANS[i].setDeathPOS(self.__DEPLOYED_HUMANS[i].getX(), self.__DEPLOYED_HUMANS[i].getY(), self.__DEPLOYED_HUMANS[i].getWidth(), self.__DEPLOYED_HUMANS[i].getHeight())
                     self.__DEPLOYED_HUMANS[i].beginDeathAnimationDuration()  # makes attack duration = 0
+                    print("I JUST DIED")
             if self.__DEPLOYED_HUMANS[i].finishedDying(): # if their attack animation has finished
+                print("Finished Dying")
                 self.__DEPLOYED_HUMANS.pop(i)
 
 
@@ -456,6 +465,31 @@ class Game():
         self.__OCTOPUS.setY(375 - self.__OCTOPUS.getHeight())
 
 
+    def __createEel(self):
+        # OCTOPUS (index 4)
+        # ANIMATION CREATION
+        self.__eel_moving_sprites = pygame.sprite.Group()
+        self.__EELATTACK = Eelattack(300, 300)
+        self.__eel_moving_sprites.add(self.__EELATTACK)
+        self.__EELMOVE = Eelmove(300, 144)
+        self.__eel_moving_sprites.add(self.__EELMOVE)
+        self.__EELIDLE = Eelidle(300, 200)
+        self.__eel_moving_sprites.add(self.__EELIDLE)
+        self.__EELDEATH = Eeldeath(300, 150)
+        self.__eel_moving_sprites.add(self.__EELDEATH)
+        # CREATES OCTOPUS BASE UNIT
+        # ATTACK CONFIG (DAMAGE, RANGE, SPEED)
+        self.__EEL = MyUnit("media/octopus/oct6attack.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[3],self.__FISH_MAX_HEALTH[3], self.__FISH_RANGE[3],Attacks("media/sword/sword1death.png", self.__FISH_ATTACK_DAMAGE[3], self.__FISH_RANGE[3], 5, -1), self.__FISH_ATTACK_COOLDOWN[3], -1,self.__EELIDLE, self.__EELMOVE, self.__EELATTACK, self.__EELDEATH, self.__eel_moving_sprites, 0.8)
+        self.__EEL.setScale(3)
+        self.__EEL.flipSprite()
+        # RESETS COOLDOWN, SUBRACTS MONEY, AND ADDS IT TO DEPLOYED UNITS
+        self.__FISH_CURRENT_SPAWN_COOLDOWN[3] = 0
+        self.__INCOME -= self.__EEL_COST
+        self.__DEPLOYED_FISHES.append(self.__EEL)
+        self.__EEL.setY(375 - self.__EEL.getHeight())
+
+
+
     # --- HUMAN CREATION FUNCTIONS -- #
 
 
@@ -473,7 +507,7 @@ class Game():
                              self.__HUMAN_MAX_HEALTH[0], self.__HUMAN_RANGE[0],
                              Attacks("media/wand/Projectile.png", self.__HUMAN_ATTACK_DAMAGE[0], self.__HUMAN_RANGE[0], 4, 1, 40, False),
                              self.__HUMAN_ATTACK_COOLDOWN[0], 1, self.__SWORDIDLE, self.__SWORDMOVE, self.__SWORDATTACK,
-                             self.__SWORDDEATH, self.__human_sword_moving_sprites, 0.8)
+                             self.__SWORDDEATH, self.__human_sword_moving_sprites, 10.0)
         self.__SWORD.setScale(3)
         # RESETS COOLDOWN, SUBRACTS MONEY, AND ADDS IT TO DEPLOYED UNITS
         self.__HUMAN_CURRENT_SPAWN_COOLDOWN[0] = 0
