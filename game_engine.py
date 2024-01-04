@@ -78,7 +78,7 @@ class Game():
         self.__LIVE_HUMAN_ATTACKS = []
         self.__TIME = time.time()
         self.__PREVIOUS_TIME = self.__TIME
-        self.__TIME_PASSED = 0.05
+        self.__TIME_PASSED = 0.10
 
         # - - - - - - - - - - - - - - - - - - - - #
         #   -  -  - FISH CONFIGURATIONS -  -  -   #
@@ -290,13 +290,13 @@ class Game():
             if self.__FISH_CURRENT_SPAWN_COOLDOWN[0] <= self.__FISH_SPAWN_COOLDOWN[0]:
                 self.__CHARACTER1_CD_TEXT.setText(f"{round(self.__FISH_SPAWN_COOLDOWN[0] - self.__FISH_CURRENT_SPAWN_COOLDOWN[0], 1)}")
             else:
-                self.__CHARACTER1_CD_TEXT.setText(f"Ready")
+                self.__CHARACTER1_CD_TEXT.setText(f"Ready", Color.GREEN)
             self.__CHARACTER1_CD_TEXT.setPOS(self.__OUTLINE1.getX() + (self.__OUTLINE1.getWidth() // 2 - self.__CHARACTER1_CD_TEXT.getWidth() // 2),self.__OUTLINE1.getY() + (self.__OUTLINE1.getHeight() // 2 - self.__CHARACTER1_CD_TEXT.getHeight() // 2) + 20)
 
             if self.__FISH_CURRENT_SPAWN_COOLDOWN[1] <= self.__FISH_SPAWN_COOLDOWN[1]:
                 self.__CHARACTER2_CD_TEXT.setText(f"{round(self.__FISH_SPAWN_COOLDOWN[1] - self.__FISH_CURRENT_SPAWN_COOLDOWN[1], 1)}")
             else:
-                self.__CHARACTER2_CD_TEXT.setText(f"Ready")
+                self.__CHARACTER2_CD_TEXT.setText(f"Ready", Color.GREEN)
             self.__CHARACTER2_CD_TEXT.setPOS(self.__OUTLINE2.getX() + (self.__OUTLINE2.getWidth() // 2 - self.__CHARACTER2_CD_TEXT.getWidth() // 2),self.__OUTLINE2.getY() + (self.__OUTLINE2.getHeight() // 2 - self.__CHARACTER2_CD_TEXT.getHeight() // 2) + 20)
 
 
@@ -304,7 +304,7 @@ class Game():
             if self.__FISH_CURRENT_SPAWN_COOLDOWN[2] <= self.__FISH_SPAWN_COOLDOWN[2]:
                 self.__CHARACTER3_CD_TEXT.setText(f"{round(self.__FISH_SPAWN_COOLDOWN[2] - self.__FISH_CURRENT_SPAWN_COOLDOWN[2], 1)}")
             else:
-                self.__CHARACTER3_CD_TEXT.setText(f"Ready")
+                self.__CHARACTER3_CD_TEXT.setText(f"Ready", Color.GREEN)
             self.__CHARACTER3_CD_TEXT.setPOS(self.__OUTLINE3.getX() + (self.__OUTLINE3.getWidth() // 2 - self.__CHARACTER3_CD_TEXT.getWidth() // 2),self.__OUTLINE3.getY() + (self.__OUTLINE3.getHeight() // 2 - self.__CHARACTER3_CD_TEXT.getHeight() // 2) + 20)
 
 

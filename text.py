@@ -18,9 +18,13 @@ class Text(MySprite):
         self.__FONT = pygame.font.SysFont(self.__FONT_FAMILY, self.__FONT_SIZE)
         self._SURFACE = self.__FONT.render(self.__TEXT,True,self._COLOR)
 
-    def setText(self, TEXT):
+    def setText(self, TEXT, COLOR=None):
         self.__TEXT = TEXT
-        self._SURFACE = self.__FONT.render(self.__TEXT, True, self._COLOR)
+        if COLOR == None:
+            self._SURFACE = self.__FONT.render(self.__TEXT, True, self._COLOR)
+        else:
+            self._SURFACE = self.__FONT.render(self.__TEXT, True, COLOR)
+
 
 if __name__ == "__main__":
     from window import Window
