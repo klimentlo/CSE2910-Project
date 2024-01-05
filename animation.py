@@ -1257,6 +1257,173 @@ class Wandidle(pygame.sprite.Sprite):
         return self.height
 
 
+class Bomb(pygame.sprite.Sprite):
+    def __init__(self, pos_x, pos_y):
+        super().__init__()
+        self.sprites = []
+        self.is_animating = False
+        self.sprites.append(pygame.image.load('media/bomb/Explosion_1.png'))
+        self.sprites.append(pygame.image.load('media/bomb/Explosion_2.png'))
+        self.sprites.append(pygame.image.load('media/bomb/Explosion_3.png'))
+        self.sprites.append(pygame.image.load('media/bomb/Explosion_4.png'))
+        self.sprites.append(pygame.image.load('media/bomb/Explosion_5.png'))
+        self.sprites.append(pygame.image.load('media/bomb/Explosion_6.png'))
+        self.sprites.append(pygame.image.load('media/bomb/Explosion_7.png'))
+        self.sprites.append(pygame.image.load('media/bomb/Explosion_8.png'))
+        self.sprites.append(pygame.image.load('media/bomb/Explosion_9.png'))
+        self.sprites.append(pygame.image.load('media/bomb/Explosion_10.png'))
+
+        self.current_sprite = 0
+        self.image = self.sprites[self.current_sprite]
+        self.height = 144
+        self.width = 144
+        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+        self.image = pygame.transform.flip(self.image, False, False)
+
+        self.__X = pos_x
+        self.__Y = pos_y
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (pos_x, pos_y)
+
+#
+    def animate(self):
+        self.is_animating = True
+
+
+    def update(self):
+        if self.is_animating == True:
+            self.current_sprite += 0.2
+
+            if self.current_sprite >= len(self.sprites):
+                self.current_sprite = 0
+                self.is_animating = False
+
+            self.image = self.sprites[int(self.current_sprite)]
+            self.image = pygame.transform.scale(self.image, (self.width, self.height))
+            self.image = pygame.transform.flip(self.image, False, False)
+
+    def setX(self, X):
+        self.__X = X
+        self.rect.topleft = (self.__X, self.__Y)
+
+    def setY(self, Y):
+        self.__Y = Y
+        self.rect.topleft = (self.__X, self.__Y)
+
+    def setScale(self, SCALE_X, SCALE_Y=0):
+        '''
+        changes the image, making it bigger or smaller
+        :param SCALE_X: float
+        :param SCALE_Y: float
+        :return: none
+        '''
+        if SCALE_Y == 0:
+            SCALE_Y = SCALE_X
+
+        self.width = self.getWidth() * SCALE_X
+        self.height = self.getHeight() * SCALE_Y
+        self.image = pygame.transform.scale(self.image, (self.getWidth() * SCALE_X, self.getHeight() * SCALE_Y))
+
+
+    def getPOS(self):
+        return self.rect
+
+    def getX(self):
+        return self.__X
+
+    def getY(self):
+        return self.__Y
+
+    def getWidth(self):
+        return self.width
+
+    def getHeight(self):
+        return self.height
+
+
+class Lighting(pygame.sprite.Sprite):
+    def __init__(self, pos_x, pos_y):
+        super().__init__()
+        self.sprites = []
+        self.is_animating = False
+        self.sprites.append(pygame.image.load('media/lighting/light1.png'))
+        self.sprites.append(pygame.image.load('media/lighting/light2.png'))
+        self.sprites.append(pygame.image.load('media/lighting/light3.png'))
+        self.sprites.append(pygame.image.load('media/lighting/light4.png'))
+        self.sprites.append(pygame.image.load('media/lighting/light5.png'))
+
+        self.current_sprite = 0
+        self.image = self.sprites[self.current_sprite]
+        self.height = 144
+        self.width = 144
+        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+        self.image = pygame.transform.flip(self.image, False, False)
+        self.image = pygame.transform.rotate(self.image, 270)
+
+
+        self.__X = pos_x
+        self.__Y = pos_y
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (pos_x, pos_y)
+
+#
+    def animate(self):
+        self.is_animating = True
+
+
+    def update(self):
+        if self.is_animating == True:
+            self.current_sprite += 0.2
+
+            if self.current_sprite >= len(self.sprites):
+                self.current_sprite = 0
+                self.is_animating = False
+
+            self.image = self.sprites[int(self.current_sprite)]
+            self.image = pygame.transform.scale(self.image, (self.width, self.height))
+            self.image = pygame.transform.flip(self.image, False, False)
+            self.image = pygame.transform.rotate(self.image, 270)
+
+    def setX(self, X):
+        self.__X = X
+        self.rect.topleft = (self.__X, self.__Y)
+
+    def setY(self, Y):
+        self.__Y = Y
+        self.rect.topleft = (self.__X, self.__Y)
+
+    def setScale(self, SCALE_X, SCALE_Y=0):
+        '''
+        changes the image, making it bigger or smaller
+        :param SCALE_X: float
+        :param SCALE_Y: float
+        :return: none
+        '''
+        if SCALE_Y == 0:
+            SCALE_Y = SCALE_X
+
+        self.width = self.getWidth() * SCALE_X
+        self.height = self.getHeight() * SCALE_Y
+        self.image = pygame.transform.scale(self.image, (self.getWidth() * SCALE_X, self.getHeight() * SCALE_Y))
+
+
+    def getPOS(self):
+        return self.rect
+
+    def getX(self):
+        return self.__X
+
+    def getY(self):
+        return self.__Y
+
+    def getWidth(self):
+        return self.width
+
+    def getHeight(self):
+        return self.height
+
+
+
 if __name__ == "__main__":
     pygame.init()
     clock = pygame.time.Clock()
@@ -1320,6 +1487,12 @@ if __name__ == "__main__":
     WANDIDLE = Wandidle(500, 144)
     human_sword_moving_sprites.add(WANDIDLE)
 
+    BOMB = Bomb(600, 144)
+    eel_moving_sprites.add(BOMB)
+
+    LIGHTING = Lighting(600, 300)
+    eel_moving_sprites.add(LIGHTING)
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -1345,6 +1518,8 @@ if __name__ == "__main__":
                 WANDMOVE.animate()
                 WANDDEATH.animate()
                 WANDIDLE.animate()
+                BOMB.animate()
+                LIGHTING.animate()
 #
         # drawing
         screen.fill((0,0,0))
