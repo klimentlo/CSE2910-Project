@@ -109,7 +109,7 @@ class Game():
 
         # Human Spawning Cooldown
         self.__HUMAN_SPAWN_COOLDOWN = [210.0, 400.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
-        self.__HUMAN_CURRENT_SPAWN_COOLDOWN = [800.0, 9.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
+        self.__HUMAN_CURRENT_SPAWN_COOLDOWN = [800, 9.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
 
 
         self.__HUMAN_SPAWN_LOCATION = 60
@@ -149,7 +149,7 @@ class Game():
         self.__CHARACTER1_CD_TEXT = Text(f"{self.__FISH_SPAWN_COOLDOWN[0] - self.__FISH_CURRENT_SPAWN_COOLDOWN[0]}","ComicSans", 18)
         self.__CHARACTER1_CD_TEXT.setPOS(self.__OUTLINE1.getX()+(self.__OUTLINE1.getWidth()//2-self.__CHARACTER1_CD_TEXT.getWidth()//2), self.__OUTLINE1.getY()+(self.__OUTLINE1.getHeight()//2-self.__CHARACTER1_CD_TEXT.getHeight()//2)+27)
 
-        self.__CHARACTER1_COST_TEXT = Text(f"${self.__EEL_COST}","ComicSans", 12)
+        self.__CHARACTER1_COST_TEXT = Text(f"${self.__OCTOPUS_COST}","ComicSans", 12)
         self.__CHARACTER1_COST_TEXT.setPOS(self.__OUTLINE1.getX() + (self.__OUTLINE1.getWidth() - (self.__CHARACTER1_CD_TEXT.getWidth() + 10)), self.__OUTLINE1.getY() + 5)
 
 
@@ -166,7 +166,7 @@ class Game():
         self.__CHARACTER3.setPOS(self.__OUTLINE3.getX()+(self.__OUTLINE3.getWidth()//2-self.__CHARACTER3.getWidth()//2), self.__OUTLINE3.getY()+(self.__OUTLINE3.getHeight()//2-self.__CHARACTER3.getHeight()//2))
         self.__CHARACTER3_CD_TEXT = Text(f"{self.__FISH_SPAWN_COOLDOWN[2] - self.__FISH_CURRENT_SPAWN_COOLDOWN[2]}","ComicSans", 18)
         self.__CHARACTER3_CD_TEXT.setPOS(self.__OUTLINE3.getX() + (self.__OUTLINE3.getWidth() // 2 - self.__CHARACTER3_CD_TEXT.getWidth() // 2),self.__OUTLINE3.getY() + (self.__OUTLINE3.getHeight() // 2 - self.__CHARACTER3_CD_TEXT.getHeight() // 2) + 27)
-        self.__CHARACTER3_COST_TEXT = Text(f"${self.__OCTOPUS_COST}", "ComicSans", 12)
+        self.__CHARACTER3_COST_TEXT = Text(f"${self.__SWORDFISH_COST}", "ComicSans", 12)
         self.__CHARACTER3_COST_TEXT.setPOS(self.__OUTLINE3.getX() + (self.__OUTLINE3.getWidth() - (self.__CHARACTER3_CD_TEXT.getWidth() + 10)),self.__OUTLINE3.getY() + 5)
 
         self.__VISUAL_TIMERS.append(self.__OUTLINE1)
@@ -228,14 +228,22 @@ class Game():
                         FISH.setMovePOS(FISH.getX(), FISH.getY(), FISH.getWidth(), FISH.getHeight()) # make move animation on screen
                         FISH.moveAnimation() # make it animate
                     FISH.marqueeX(self.__WINDOW.getWidth())  # make it move horizontally
+                    if FISH.getUnit() != "media/swordfish/sfidle1.png":
+                        FISH.setSpeed(FISH.getInitialSpeed())
                     # --- FISH RANGE MECHANICS --- #
-                    FISH.setSpeed(FISH.getInitialSpeed())
-                    for HUMAN in self.__DEPLOYED_HUMANS: #
-                        if FISH.inFishRange(HUMAN.getWidth(), HUMAN.getX()): # when fish encounters a human
-                            FISH.setSpeed(0) # make fish speed zero
-                            if FISH.isAttacking() == False: # they aren't attacking
-                                FISH.idleAnimation() # idle animation
-                                FISH.setIdlePOS(FISH.getX(), FISH.getY(), FISH.getWidth(), FISH.getHeight()) #make it on screen
+                    if len(self.__DEPLOYED_HUMANS) >0:
+                        for h in range(len(self.__DEPLOYED_HUMANS)-1, -1, -1): #
+                            if FISH.inFishRange(self.__DEPLOYED_HUMANS[h].getWidth(), self.__DEPLOYED_HUMANS[h].getX()): # when fish encounters a human
+                                FISH.setSpeed(0) # make fish speed zero
+                                FISH.marqueeX(self.__WINDOW.getWidth())  # make it move horizontally
+                                if FISH.isAttacking() == False: # they aren't attacking
+                                    FISH.idleAnimation() # idle animation
+                                    FISH.setIdlePOS(FISH.getX(), FISH.getY(), FISH.getWidth(), FISH.getHeight()) #make it on screen
+                    else:
+                        if FISH.finishedAttacking() == True:
+                            FISH.setSpeed(FISH.getInitialSpeed())
+
+
 
 
 
@@ -326,10 +334,14 @@ class Game():
                         if self.__LIVE_FISH_ATTACKS[-1].isLighting():
                             self.__LIVE_FISH_ATTACKS[-1].setLive(True)
                             self.__LIVE_FISH_ATTACKS[-1].setX(-500)  # place it where the unit is positions on the X axis
+                            print(self.__LIVE_FISH_ATTACKS)
+
                     # ALL RELATED TO SPEAR FISH'S ATTACK
                     if len(self.__LIVE_FISH_ATTACKS) > 0:
                         for i in range(len(self.__LIVE_FISH_ATTACKS)-1, -1, -1):
                             if self.__LIVE_FISH_ATTACKS[i].isLive() == True: # identifies if it's been triggered and if it's lighting
+                                FISH.setSpeed(0)
+                                FISH.idleAnimation()
                                 self.__LIVE_FISH_ATTACKS[i].updateAttackAnimationDuration(1000)
                                 self.__LIVE_FISH_ATTACKS[i].attackAnimation()
                                 self.__LIVE_FISH_ATTACKS[i].setAnimationPOS(FISH.getX() - self.__LIVE_FISH_ATTACKS[i].getWidth()+10, FISH.getY() + (FISH.getHeight()//2 - self.__LIVE_FISH_ATTACKS[i].getWidth()//2)+48)
@@ -339,10 +351,13 @@ class Game():
                             if self.__LIVE_FISH_ATTACKS[i].isLighting():
                                 if self.__LIVE_FISH_ATTACKS[i].finishedAttacking():
                                     FISH.updateAttackAnimationDuration(1000)
-                                    FISH.setSpeed(FISH.getInitialSpeed())
+                                    FISH.resetCurrentAttackAnimationDuration()  # makes attack duration = 0
+                                    FISH.resetAttackCooldown()  # makes cooldown to 0, so it has to wait again before it can attack again
                                     self.__LIVE_FISH_ATTACKS[i].setAnimationPOS(1000, 1000)
                                     self.__LIVE_FISH_ATTACKS[i].updateAttackAnimationDuration(1000)
                                     self.__LIVE_FISH_ATTACKS.pop(i)  # place it where the unit is positions on the X axis
+                                    FISH.setSpeed(FISH.getInitialSpeed())
+
 
 
 
@@ -546,7 +561,7 @@ class Game():
 
     # Fish
     def __createOctopus(self):
-        self.__FISH_RANGE[0] += random.uniform(-1, 1)
+
 
         # OCTOPUS (index 0)
         # ANIMATION CREATION
@@ -573,7 +588,7 @@ class Game():
 
 
     def __createEel(self):
-        self.__FISH_RANGE[1] += random.uniform(-1, 1)
+
 
         # EEL (index 1)
         # ANIMATION CREATION
@@ -598,7 +613,7 @@ class Game():
         self.__EEL.setY(375 - self.__EEL.getHeight())
 
     def __createSwordfish(self):
-        self.__FISH_RANGE[2] += random.uniform(-1, 1)
+
 
         self.__LIGHTING_ANIMATION = Lighting(-200, -100)
         self.__sword_fish_moving_sprites = pygame.sprite.Group()
@@ -620,9 +635,11 @@ class Game():
                               self.__SWORDFISHATTACK,
                               self.__SWORDFISHDEATH, self.__sword_fish_moving_sprites, 0.5, 0.4)
         self.__SWORDFISH.setScale(3)
+
         # RESETS COOLDOWN, SUBRACTS MONEY, AND ADDS IT TO DEPLOYED UNITS
         self.__FISH_CURRENT_SPAWN_COOLDOWN[2] = 0
         self.__SWORDFISH.setY(375 - self.__SWORDFISH.getHeight())
+        self.__INCOME -= self.__SWORDFISH_COST
         self.__DEPLOYED_FISHES.append(self.__SWORDFISH)
 
 
@@ -630,7 +647,7 @@ class Game():
 
     # Humans
     def __createHumanSword(self):
-        self.__HUMAN_RANGE[0] += random.uniform(-1, 1)
+
 
         self.__human_sword_moving_sprites = pygame.sprite.Group()
         self.__SWORDATTACK = Swordattack(300, 150)
@@ -653,7 +670,7 @@ class Game():
         self.__DEPLOYED_HUMANS.append(self.__SWORD)
 
     def __createHumanWand(self):
-        self.__FISH_RANGE[1] += random.uniform(-1, 1)
+
 
         # Animation Creation
         self.__human_wand_moving_sprites = pygame.sprite.Group()
@@ -767,8 +784,8 @@ class Game():
 
 
         for ATTACK in self.__LIVE_FISH_ATTACKS:
-            if ATTACK.isProjectile():
-                self.__WINDOW.getSurface().blit(ATTACK.getSurface(), ATTACK.getPOS())
+            #if ATTACK.isProjectile():
+            self.__WINDOW.getSurface().blit(ATTACK.getSurface(), ATTACK.getPOS())
 
         for ATTACK in self.__LIVE_HUMAN_ATTACKS:
             if ATTACK.isProjectile():

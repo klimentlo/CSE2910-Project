@@ -8,6 +8,7 @@ class MyUnit(MySprite):
                                             #   Y \/
         MySprite.__init__(self, 1, 1, X, 300, SPEED, (255, 255, 255), DIRECTION)
         self.__UNIT = ImageSprite(FILENAME)
+        self.__FILENAME = FILENAME
         # will have to add the skill point modifiers later
         self.__MAX_HEALTH = MAX_HEALTH
         self.__CURENT_HEALTH = MAX_HEALTH
@@ -167,6 +168,8 @@ class MyUnit(MySprite):
         if self.__CURRENT_ATTACK_ANIMATION_DURATION >= self.__ATTACK_ANIMATION_DURATION and self.__CURRENT_ATTACK_ANIMATION_DURATION <= 999.0:
             self.__ATTACKING = False
             return True
+    def attackingFalse(self):
+        self.__ATTACKING = False
 
     # DEATH ANIMATION AND ITS TIMINGS
 
@@ -180,6 +183,9 @@ class MyUnit(MySprite):
 
     def updateDeathAnimationDuration(self, TIMEPASSED):
         self.__CURRENT_DEATH_ANIMATION_DURATION += TIMEPASSED
+
+    def getUnit(self):
+        return self.__FILENAME
 
 
 
