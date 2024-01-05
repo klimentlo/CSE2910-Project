@@ -1354,8 +1354,8 @@ class Lighting(pygame.sprite.Sprite):
 
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
-        self.height = 144
-        self.width = 144
+        self.height = 180
+        self.width = 86
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.image = pygame.transform.flip(self.image, False, False)
         self.image = pygame.transform.rotate(self.image, 270)

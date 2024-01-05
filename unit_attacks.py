@@ -5,16 +5,22 @@ date: 2023-12-1
 """
 from my_sprite import MySprite
 from image_sprite import ImageSprite
+from animation import Lighting
 import pygame
 
 class Attacks(MySprite):
-    def __init__(self, FILENAME, DAMAGE, RANGE, SPEED=5, DIRECTION=1, X =40, PROJECTILE = False):
+    def __init__(self, FILENAME, DAMAGE, RANGE, SPEED=5, DIRECTION=1, X =40, PROJECTILE = False, LIGHTING = False, ANIMATION=None, ATTACK_ANIMATION_DURATION = 0.3):
         MySprite.__init__(self, 1, 1, X, 300, SPEED, (255, 255, 255), DIRECTION)
         self.__ATTACK = ImageSprite(FILENAME)
         self.__DAMAGE = DAMAGE
         self.__RANGE = RANGE
         self.__PROJECTILE = PROJECTILE
         self._SURFACE = self.__ATTACK.getSurface()
+        self.__LIGHTING = LIGHTING
+        self.__ANIMATION = ANIMATION
+        self.__ATTACK_ANIMATION_DURATION = ATTACK_ANIMATION_DURATION
+        self.__CURRENT_ATTACK_ANIMATION_DURATION = ATTACK_ANIMATION_DURATION
+        self.__LIVE = False
         self.width = 50
         self.height = 50
 
@@ -30,6 +36,51 @@ class Attacks(MySprite):
 
     def isProjectile(self):
         return self.__PROJECTILE
+
+    def isLighting(self):
+        if self.__LIGHTING == True:
+            return True
+
+    def getAnimation(self):
+        return self.__ANIMATION
+
+    def attackAnimation(self):
+        self.__ANIMATION.animate()
+
+    def setAnimationPOS(self, X, Y):
+        self.__ANIMATION.setX(X)
+        self.__ANIMATION.setY(Y)
+
+    def update(self):
+        self.__ANIMATION.update()
+
+    # ATTACK ANIMATION DURATION
+    def getAttackAnimationDuration(self):
+        return self.__ATTACK_ANIMATION_DURATION
+
+    def getCurrentAttackAnimationDuration(self):
+        return self.__CURRENT_ATTACK_ANIMATION_DURATION
+
+    def updateAttackAnimationDuration(self, TIMEPASSED):
+        self.__CURRENT_ATTACK_ANIMATION_DURATION += TIMEPASSED
+
+    def resetCurrentAttackAnimationDuration(self):
+        self.__CURRENT_ATTACK_ANIMATION_DURATION = 0
+
+    def isAttacking(self):
+        return self.__ATTACKING
+
+    def setLive(self, BOOL):
+        self.__LIVE = BOOL
+
+    def isLive(self):
+        if self.__LIVE == True:
+            return True
+
+    def finishedAttacking(self):
+        if self.__CURRENT_ATTACK_ANIMATION_DURATION >= self.__ATTACK_ANIMATION_DURATION and self.__CURRENT_ATTACK_ANIMATION_DURATION <= 999.0:
+            self.__ATTACKING = False
+            return True
 
     def setScale(self, WIDTH, HEIGHT):
         self.width = WIDTH

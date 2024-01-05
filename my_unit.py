@@ -1,9 +1,6 @@
 # myunits.py
 from my_sprite import MySprite
 from image_sprite import ImageSprite
-from animation import Octattack
-from window import Window
-import pygame
 
 class MyUnit(MySprite):
     def __init__(self, FILENAME, X, SPEED, MAX_HEALTH, RANGE, ATTACK, ATTACK_COOLDOWN,DIRECTION=1, IDLE_ANIMATION=None, MOVE_ANIMATION=None, ATTACK_ANIMATION=None, DEATH_ANIMATION=None, GROUP_ANIMATION=None, ATTACK_ANIMATION_DURATION = None, DEATH_ANIMATION_DURATION = None):
