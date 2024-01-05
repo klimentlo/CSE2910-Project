@@ -1351,6 +1351,18 @@ class Lighting(pygame.sprite.Sprite):
         self.sprites.append(pygame.image.load('media/lighting/light3.png'))
         self.sprites.append(pygame.image.load('media/lighting/light4.png'))
         self.sprites.append(pygame.image.load('media/lighting/light5.png'))
+        self.sprites.append(pygame.image.load('media/lighting/light4.png'))
+        self.sprites.append(pygame.image.load('media/lighting/light3.png'))
+        self.sprites.append(pygame.image.load('media/lighting/light4.png'))
+        self.sprites.append(pygame.image.load('media/lighting/light5.png'))
+        self.sprites.append(pygame.image.load('media/lighting/light4.png'))
+        self.sprites.append(pygame.image.load('media/lighting/light5.png'))
+        self.sprites.append(pygame.image.load('media/lighting/light4.png'))
+        self.sprites.append(pygame.image.load('media/lighting/light5.png'))
+        self.sprites.append(pygame.image.load('media/lighting/light4.png'))
+        self.sprites.append(pygame.image.load('media/lighting/light3.png'))
+
+
 
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
