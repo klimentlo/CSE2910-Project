@@ -168,8 +168,7 @@ class MyUnit(MySprite):
         if self.__CURRENT_ATTACK_ANIMATION_DURATION >= self.__ATTACK_ANIMATION_DURATION and self.__CURRENT_ATTACK_ANIMATION_DURATION <= 999.0:
             self.__ATTACKING = False
             return True
-    def attackingFalse(self):
-        self.__ATTACKING = False
+
 
     # DEATH ANIMATION AND ITS TIMINGS
 

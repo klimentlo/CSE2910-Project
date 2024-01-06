@@ -90,7 +90,7 @@ class Game():
 
         self.__FISH_SPAWN_LOCATION = self.__WINDOW.getWidth() - 175
 
-        self.__FISH_SPAWN_COOLDOWN = [2.0, 3.0, 0]
+        self.__FISH_SPAWN_COOLDOWN = [2.0, 3.0, 4.0]
         self.__FISH_CURRENT_SPAWN_COOLDOWN = [2.0, 3.0, 4.0]
         self.__FISH_MAX_HEALTH = [150, 5, 5000]
         self.__FISH_RANGE = [-50, 100, 150]
@@ -184,6 +184,7 @@ class Game():
         self.__VISUAL_TIMERS.append(self.__CHARACTER1_COST_TEXT)
         self.__VISUAL_TIMERS.append(self.__CHARACTER2_COST_TEXT)
         self.__VISUAL_TIMERS.append(self.__CHARACTER3_COST_TEXT)
+        self.__i = 0
 
 
 
@@ -210,6 +211,11 @@ class Game():
             SPAWNEDFISH = self.__spawnFish(KEYPRESSED)
             SPAWNEDHUMAN = self.__spawnHuman()
 
+            if self.__i == 0:
+                self.__createOctopus()
+                self.__i = 1
+
+
 
 
             if SPAWNEDFISH != None: # if a key was pressed
@@ -218,8 +224,7 @@ class Game():
             if SPAWNEDHUMAN != None:
                 self.__DEPLOYED_HUMANS.append(SPAWNEDHUMAN)
 
-
-
+            print("Before Speed: ", {self.__DEPLOYED_FISHES[-1].getSpeed()})
             # --- FISHES --- #
 
             for FISH in self.__DEPLOYED_FISHES: # For all the fish in existence
@@ -257,7 +262,7 @@ class Game():
                         FISH.setIdlePOS(FISH.getX(), FISH.getY(), FISH.getWidth(),
                                         FISH.getHeight())  # make it on screen
 
-
+            print("After Speed: ", {self.__DEPLOYED_FISHES[-1].getSpeed()})
             # --- HUMANS --- #
             for HUMAN in self.__DEPLOYED_HUMANS: # For all the HUMAN in existence
                 if HUMAN.ifDead() == False:
@@ -289,12 +294,14 @@ class Game():
             for ATTACK in self.__LIVE_HUMAN_ATTACKS:
                 ATTACK.marqueeX(self.__WINDOW.getWidth())
 
-
+            print("Before Attack Output: ", {self.__DEPLOYED_FISHES[-1].getSpeed()})
             self.__fishOutputAttack()
             self.__humanAttackCollision()
+            print("After Attack output: ", {self.__DEPLOYED_FISHES[-1].getSpeed()})
             self.__humanOutputAttack()
             self.__fishAttackCollision()
             self.__checkDeath()
+            print("After Deaths: ", {self.__DEPLOYED_FISHES[-1].getSpeed()})
 
 
             self.__updateTimers()
@@ -574,7 +581,7 @@ class Game():
         self.__oct_moving_sprites.add(self.__OCTIDLE)
         self.__OCTDEATH = Octdeath(100, 150)
         self.__oct_moving_sprites.add(self.__OCTDEATH)
-        # CREATES OCTOPUS BASE UNIT
+         # CREATES OCTOPUS BASE UNIT
         # ATTACK CONFIG (DAMAGE, RANGE, SPEED)
         self.__OCTOPUS = MyUnit("media/octopus/oct6attack.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[0],self.__FISH_MAX_HEALTH[0], self.__FISH_RANGE[0],Attacks("media/sword/sword1death.png", self.__FISH_ATTACK_DAMAGE[0], self.__FISH_RANGE[0], 5, -1), self.__FISH_ATTACK_COOLDOWN[0], -1,self.__OCTIDLE, self.__OCTMOVE, self.__OCTATTACK,self.__OCTDEATH, self.__oct_moving_sprites, 0.8, 0.5)
         self.__OCTOPUS.setScale(3)
