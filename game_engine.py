@@ -80,7 +80,7 @@ class Game():
         self.__LIVE_HUMAN_ATTACKS = []
         self.__TIME = time.time()
         self.__PREVIOUS_TIME = self.__TIME
-        self.__TIME_PASSED = 0.10
+        self.__TIME_PASSED = 0.05
 
         # - - - - - - - - - - - - - - - - - - - - #
         #   -  -  - FISH CONFIGURATIONS -  -  -   #
@@ -93,10 +93,10 @@ class Game():
         self.__FISH_SPAWN_COOLDOWN = [2.0, 3.0, 4.0]
         self.__FISH_CURRENT_SPAWN_COOLDOWN = [2.0, 3.0, 4.0]
         self.__FISH_MAX_HEALTH = [150, 5, 5000]
-        self.__FISH_RANGE = [-50, 100, 150]
+        self.__FISH_RANGE = [-40, 100, 110]
         self.__FISH_SPEED = [7, 7, 7]
         self.__FISH_ATTACK_COOLDOWN = [1, 2, 5]
-        self.__FISH_ATTACK_DAMAGE = [2000, 10, 17]
+        self.__FISH_ATTACK_DAMAGE = [2, 10, 17]
 
         # --- COST OF THE UNITS --- #
         self.__OCTOPUS_COST = 400
@@ -211,9 +211,6 @@ class Game():
             SPAWNEDFISH = self.__spawnFish(KEYPRESSED)
             SPAWNEDHUMAN = self.__spawnHuman()
 
-            if self.__i == 0:
-                self.__createOctopus()
-                self.__i = 1
 
 
 
@@ -224,7 +221,6 @@ class Game():
             if SPAWNEDHUMAN != None:
                 self.__DEPLOYED_HUMANS.append(SPAWNEDHUMAN)
 
-            print("Before Speed: ", {self.__DEPLOYED_FISHES[-1].getSpeed()})
             # --- FISHES --- #
 
             for FISH in self.__DEPLOYED_FISHES: # For all the fish in existence
@@ -236,21 +232,20 @@ class Game():
                     if FISH.getUnit() != "media/swordfish/sfidle1.png":
                         FISH.setSpeed(FISH.getInitialSpeed())
                     # --- FISH RANGE MECHANICS --- #
-                    if len(self.__DEPLOYED_HUMANS) >0:
+                    if len(self.__DEPLOYED_HUMANS) > 0:
                         for h in range(len(self.__DEPLOYED_HUMANS)-1, -1, -1): #
-                            if FISH.inFishRange(self.__DEPLOYED_HUMANS[h].getWidth(), self.__DEPLOYED_HUMANS[h].getX()): # when fish encounters a human
-                                FISH.setSpeed(0) # make fish speed zero
-                                FISH.marqueeX(self.__WINDOW.getWidth())  # make it move horizontally
-                                if FISH.isAttacking() == False: # they aren't attacking
-                                    FISH.idleAnimation() # idle animation
-                                    FISH.setIdlePOS(FISH.getX(), FISH.getY(), FISH.getWidth(), FISH.getHeight()) #make it on screen
+                            if self.__DEPLOYED_HUMANS[h].ifDead() == False:
+                                if FISH.inFishRange(self.__DEPLOYED_HUMANS[h].getWidth(), self.__DEPLOYED_HUMANS[h].getX()): # when fish encounters a human
+                                    FISH.setSpeed(0) # make fish speed zero
+                                    FISH.marqueeX(self.__WINDOW.getWidth())  # make it move horizontally
+                                    if FISH.isAttacking() == False: # they aren't attacking
+                                        FISH.idleAnimation() # idle animation
+                                        FISH.setIdlePOS(FISH.getX(), FISH.getY(), FISH.getWidth(), FISH.getHeight()) #make it on screen
                     else:
                         if FISH.finishedAttacking() == True:
-                            FISH.setSpeed(FISH.getInitialSpeed())
-
-
-
-
+                            PLACEHOLDER = FISH.getAttack()
+                            if PLACEHOLDER.isLighting():
+                                FISH.setSpeed(FISH.getInitialSpeed())
 
 
 
@@ -262,7 +257,6 @@ class Game():
                         FISH.setIdlePOS(FISH.getX(), FISH.getY(), FISH.getWidth(),
                                         FISH.getHeight())  # make it on screen
 
-            print("After Speed: ", {self.__DEPLOYED_FISHES[-1].getSpeed()})
             # --- HUMANS --- #
             for HUMAN in self.__DEPLOYED_HUMANS: # For all the HUMAN in existence
                 if HUMAN.ifDead() == False:
@@ -273,15 +267,17 @@ class Game():
                     HUMAN.setSpeed(HUMAN.getInitialSpeed())
                     # --- HUMAN RANGE MECHANICS - - - #
                     for FISH in self.__DEPLOYED_FISHES: #
-                        if HUMAN.inHumanRange(FISH.getX()): # when HUMAN encounters a human
-                            HUMAN.setSpeed(0) # make HUMAN speed zero
-                            if HUMAN.isAttacking() == False: # they aren't attacking
-                                HUMAN.idleAnimation() # idle animation
-                                HUMAN.setIdlePOS(HUMAN.getX(), HUMAN.getY(), HUMAN.getWidth(), HUMAN.getHeight()) #make it on screen
+                        if self.__DEPLOYED_HUMANS[h].ifDead() == False:
+                            if HUMAN.inHumanRange(FISH.getX()): # when HUMAN encounters a human
+                                HUMAN.setSpeed(0) # make HUMAN speed zero
+                                if HUMAN.isAttacking() == False: # they aren't attacking
+                                    HUMAN.idleAnimation() # idle animation
+                                    HUMAN.setIdlePOS(HUMAN.getX(), HUMAN.getY(), HUMAN.getWidth(), HUMAN.getHeight()) #make it on screen
                     # TOWERS
                     if HUMAN.inHumanRange(self.__A_TOWER.getX()):  # when in human's range
                         HUMAN.setSpeed(0)  # make HUMAN speed zero
                         if HUMAN.isAttacking() == False:  # they aren't attacking
+
                             HUMAN.idleAnimation()  # idle animation
                             HUMAN.setIdlePOS(HUMAN.getX(), HUMAN.getY(), HUMAN.getWidth(),
                                              HUMAN.getHeight())  # make it on screen
@@ -294,14 +290,11 @@ class Game():
             for ATTACK in self.__LIVE_HUMAN_ATTACKS:
                 ATTACK.marqueeX(self.__WINDOW.getWidth())
 
-            print("Before Attack Output: ", {self.__DEPLOYED_FISHES[-1].getSpeed()})
             self.__fishOutputAttack()
             self.__humanAttackCollision()
-            print("After Attack output: ", {self.__DEPLOYED_FISHES[-1].getSpeed()})
             self.__humanOutputAttack()
             self.__fishAttackCollision()
             self.__checkDeath()
-            print("After Deaths: ", {self.__DEPLOYED_FISHES[-1].getSpeed()})
 
 
             self.__updateTimers()
@@ -341,7 +334,6 @@ class Game():
                         if self.__LIVE_FISH_ATTACKS[-1].isLighting():
                             self.__LIVE_FISH_ATTACKS[-1].setLive(True)
                             self.__LIVE_FISH_ATTACKS[-1].setX(-500)  # place it where the unit is positions on the X axis
-                            print(self.__LIVE_FISH_ATTACKS)
 
                     # ALL RELATED TO SPEAR FISH'S ATTACK
                     if len(self.__LIVE_FISH_ATTACKS) > 0:
@@ -355,6 +347,7 @@ class Game():
                                 self.__LIVE_FISH_ATTACKS[i].resetCurrentAttackAnimationDuration()  # makes attack duration = 0
                                 self.__LIVE_FISH_ATTACKS[i].setLive(False)
                                 self.__LIVE_FISH_ATTACKS[i].setX(FISH.getX() - self.__LIVE_FISH_ATTACKS[i].getWidth()+22)  # place it where the unit is positions on the X axis
+
                             if self.__LIVE_FISH_ATTACKS[i].isLighting():
                                 if self.__LIVE_FISH_ATTACKS[i].finishedAttacking():
                                     FISH.updateAttackAnimationDuration(1000)
@@ -363,7 +356,6 @@ class Game():
                                     self.__LIVE_FISH_ATTACKS[i].setAnimationPOS(1000, 1000)
                                     self.__LIVE_FISH_ATTACKS[i].updateAttackAnimationDuration(1000)
                                     self.__LIVE_FISH_ATTACKS.pop(i)  # place it where the unit is positions on the X axis
-                                    FISH.setSpeed(FISH.getInitialSpeed())
 
 
 
@@ -415,11 +407,9 @@ class Game():
                             self.__DEPLOYED_FISHES[j].takeDamage(self.__LIVE_HUMAN_ATTACKS[i].getDamage())
                             self.__LIVE_HUMAN_ATTACKS.pop(i)
                     except IndexError:
-                        print("Errored")
                         pass
             try:
                 if self.__LIVE_HUMAN_ATTACKS[i].isCollision(self.__A_TOWER.getWidth(), self.__A_TOWER.getHeight(),self.__A_TOWER.getPOS()):
-                    print("OW I've been hit")
                     self.__A_TOWER.takeDamage(self.__LIVE_HUMAN_ATTACKS[i].getDamage())
                     if self.__A_TOWER.getHealth() > 0:
                         self.__A_TOWER_HEALTH_TEXT.setText(f"{self.__A_TOWER.getHealth()}")
@@ -487,10 +477,10 @@ class Game():
         for i in range(len(self.__DEPLOYED_FISHES)-1,-1,-1):
             if self.__DEPLOYED_FISHES[i].ifDead() == False:
                 if self.__DEPLOYED_FISHES[i].getHealth() <= 0:
+                    self.__DEPLOYED_FISHES[i].beginDeathAnimationDuration()  # makes attack duration = 0
                     self.__DEPLOYED_FISHES[i].isDead()
                     self.__DEPLOYED_FISHES[i].deathAnimation()
                     self.__DEPLOYED_FISHES[i].setDeathPOS(self.__DEPLOYED_FISHES[i].getX(), self.__DEPLOYED_FISHES[i].getY(), self.__DEPLOYED_FISHES[i].getWidth(), self.__DEPLOYED_FISHES[i].getHeight())
-                    self.__DEPLOYED_FISHES[i].beginDeathAnimationDuration()  # makes attack duration = 0
             if self.__DEPLOYED_FISHES[i].finishedDying(): # if their attack animation has finished
                 self.__DEPLOYED_FISHES.pop(i)
 
@@ -498,13 +488,12 @@ class Game():
         for i in range(len(self.__DEPLOYED_HUMANS)-1,-1,-1):
             if self.__DEPLOYED_HUMANS[i].ifDead() == False:
                 if self.__DEPLOYED_HUMANS[i].getHealth() <= 0:
+                    self.__DEPLOYED_HUMANS[i].beginDeathAnimationDuration()  # makes attack duration = 0
                     self.__DEPLOYED_HUMANS[i].isDead()
                     self.__DEPLOYED_HUMANS[i].deathAnimation()
                     self.__DEPLOYED_HUMANS[i].setDeathPOS(self.__DEPLOYED_HUMANS[i].getX(), self.__DEPLOYED_HUMANS[i].getY(), self.__DEPLOYED_HUMANS[i].getWidth(), self.__DEPLOYED_HUMANS[i].getHeight())
-                    self.__DEPLOYED_HUMANS[i].beginDeathAnimationDuration()  # makes attack duration = 0
-                    print("I JUST DIED")
+
             if self.__DEPLOYED_HUMANS[i].finishedDying(): # if their attack animation has finished
-                print("Finished Dying")
                 self.__DEPLOYED_HUMANS.pop(i)
 
 
@@ -610,7 +599,7 @@ class Game():
         self.__eel_moving_sprites.add(self.__EELDEATH)
         # CREATES OCTOPUS BASE UNIT
         # ATTACK CONFIG (DAMAGE, RANGE, SPEED)
-        self.__EEL = MyUnit("media/octopus/oct6attack.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[1],self.__FISH_MAX_HEALTH[1], self.__FISH_RANGE[1],Attacks("media/sword/sword1death.png", self.__FISH_ATTACK_DAMAGE[1], self.__FISH_RANGE[1], 5, -1), self.__FISH_ATTACK_COOLDOWN[1], -1,self.__EELIDLE, self.__EELMOVE, self.__EELATTACK, self.__EELDEATH, self.__eel_moving_sprites, 0.8, 0.5)
+        self.__EEL = MyUnit("media/eel/eel1idle.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[1],self.__FISH_MAX_HEALTH[1], self.__FISH_RANGE[1],Attacks("media/eelAttackSprite.png", self.__FISH_ATTACK_DAMAGE[1], self.__FISH_RANGE[1], 5, -1, 40, True), self.__FISH_ATTACK_COOLDOWN[1], -1,self.__EELIDLE, self.__EELMOVE, self.__EELATTACK, self.__EELDEATH, self.__eel_moving_sprites, 0.8, 0.5)
         self.__EEL.setScale(3)
         self.__EEL.flipSprite()
         # RESETS COOLDOWN, SUBRACTS MONEY, AND ADDS IT TO DEPLOYED UNITS
@@ -636,7 +625,7 @@ class Game():
         self.__sword_fish_moving_sprites.add(self.__SWORDFISHMOVE)
         self.__SWORDFISH = MyUnit("media/swordfish/sfidle1.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[2],
                               self.__FISH_MAX_HEALTH[2], self.__FISH_RANGE[2],
-                              Attacks("lightingHitbox.jpg", self.__FISH_ATTACK_DAMAGE[2], self.__FISH_RANGE[2],
+                              Attacks("media/lightingHitbox.jpg", self.__FISH_ATTACK_DAMAGE[2], self.__FISH_RANGE[2],
                                       0, -1, 40, False, True, self.__LIGHTING_ANIMATION, 2.2),
                               self.__FISH_ATTACK_COOLDOWN[2], -1, self.__SWORDFISHIDLE, self.__SWORDFISHMOVE,
                               self.__SWORDFISHATTACK,
@@ -772,6 +761,9 @@ class Game():
         self.__WINDOW.clearScreen()
         self.__WINDOW.getSurface().blit(self.__BACKGROUND.getSurface(), self.__BACKGROUND.getPOS())
         self.__WINDOW.getSurface().blit(self.__INCOME_TEXT.getSurface(), self.__INCOME_TEXT.getPOS())
+
+
+
         for OBJECTS in self.__VISUAL_TIMERS:
             self.__WINDOW.getSurface().blit(OBJECTS.getSurface(), OBJECTS.getPOS())
 
@@ -790,16 +782,7 @@ class Game():
 
 
 
-        for ATTACK in self.__LIVE_FISH_ATTACKS:
-            #if ATTACK.isProjectile():
-            self.__WINDOW.getSurface().blit(ATTACK.getSurface(), ATTACK.getPOS())
 
-        for ATTACK in self.__LIVE_HUMAN_ATTACKS:
-            if ATTACK.isProjectile():
-                self.__WINDOW.getSurface().blit(ATTACK.getSurface(), ATTACK.getPOS())
-            if ATTACK.isLighting():
-                ATTACK.getAnimation().draw(self.__WINDOW.getSurface())
-                ATTACK.update()
 
         for HUMAN in self.__DEPLOYED_HUMANS:
             HUMAN.getGroupAnimation().draw(self.__WINDOW.getSurface())
@@ -809,6 +792,18 @@ class Game():
             FISH.getGroupAnimation().draw(self.__WINDOW.getSurface())
             FISH.updateGroupAnimation()
 
+        for ATTACK in self.__LIVE_FISH_ATTACKS:
+            if ATTACK.isProjectile():
+                print("hi")
+                self.__WINDOW.getSurface().blit(ATTACK.getSurface(), ATTACK.getPOS())
+
+        for ATTACK in self.__LIVE_HUMAN_ATTACKS:
+            if ATTACK.isProjectile():
+                self.__WINDOW.getSurface().blit(ATTACK.getSurface(), ATTACK.getPOS())
+                print("hi")
+            if ATTACK.isLighting():
+                ATTACK.getAnimation().draw(self.__WINDOW.getSurface())
+                ATTACK.update()
 
 
 

@@ -18,6 +18,7 @@ class Attacks(MySprite):
         self._SURFACE = self.__ATTACK.getSurface()
         self.__LIGHTING = LIGHTING
         self.__ANIMATION = ANIMATION
+        self.__ATTACKING = False
         self.__ATTACK_ANIMATION_DURATION = ATTACK_ANIMATION_DURATION
         self.__CURRENT_ATTACK_ANIMATION_DURATION = ATTACK_ANIMATION_DURATION
         self.__LIVE = False
