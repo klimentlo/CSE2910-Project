@@ -25,6 +25,10 @@ class Text(MySprite):
         else:
             self._SURFACE = self.__FONT.render(self.__TEXT, True, COLOR)
 
+    def setSize(self, SIZE):
+        self.__FONT_SIZE = SIZE
+        self.__FONT = pygame.font.SysFont(self.__FONT_FAMILY, SIZE)
+
 
 if __name__ == "__main__":
     from window import Window
