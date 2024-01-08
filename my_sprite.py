@@ -43,10 +43,16 @@ class MySprite:
         self.setX(X)
         self.setY(Y)
 
+    def setDirY(self, DIR):
+        self.__DIR_Y = DIR
+
     def marqueeX(self, MAX_X, MIN_X=0):
         self.__X += (self._SPD * self.__DIR_X)
+        self.__POS = (self.__X, self.__Y)
 
-
+    def marqueeY(self, MAX_Y):
+        if self.__Y <= MAX_Y:
+            self.__Y += self._SPD * self.__DIR_X
 
         self.__POS = (self.__X, self.__Y)
 

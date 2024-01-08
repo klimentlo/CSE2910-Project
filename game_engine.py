@@ -46,12 +46,13 @@ class Game():
         self.__CURRENT_SCREEN = 0
         self.__LEVEL = 0
         self.__LEVEL_SELECTOR = False
+        self.__WIN = None
 
 
 
 
         # Income
-        self.__INCOME = 0
+        self.__INCOME = 5000
         self.__INCOME_TEXT = Text(f"${self.__INCOME}")
         self.__INCOME_TEXT.setPOS(self.__WINDOW.getWidth() - self.__INCOME_TEXT.getWidth() - 25, 25)
 
@@ -105,9 +106,7 @@ class Game():
         self.__PREVIOUS_TIME = self.__TIME
         self.__TIME_PASSED = 0.05
 
-        # - - - - - - - - - - - - - - - - - - - - #
-        #   -  -  - FISH CONFIGURATIONS -  -  -   #
-        # - - - - - - - - - - - - - - - - - - - - #
+
 
         # --- GENERAL ATTRIBUTES  --- #
 
@@ -142,24 +141,9 @@ class Game():
 
 
 
-        while self.__PLAYING == False:
-            self.__menu()
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    exit()
 
-        # E_ARRAY
-        #A_ARRAY [ADDITIONAL BASE HEALTH, PERCENTAGE COOLDOWN DECREASE, PERCENTAGE MAX HEALTH INCREASE, PERCENTAGE ATTACK DAMAGE BOOST, INCOME GENERATION]
-        if self.__LEVEL == 1:
-            self.__levelPreperation([1, 1, 1, 1, 1],[1, 1, 1, 1, 1])
-        if self.__LEVEL == 2:
-            self.__levelPreperation([],[])
-        if self.__LEVEL == 3:
-            self.__levelPreperation([],[])
-        if self.__LEVEL == 4:
-            self.__levelPreperation([],[])
+
 
 
 
@@ -176,6 +160,25 @@ class Game():
                     pygame.quit()
                     exit()
 
+
+
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        exit()
+                while self.__PLAYING == False:
+                    self.__menu()
+
+                # E_ARRAY
+                # A_ARRAY [ADDITIONAL BASE HEALTH, PERCENTAGE COOLDOWN DECREASE, PERCENTAGE MAX HEALTH INCREASE, PERCENTAGE ATTACK DAMAGE BOOST, INCOME GENERATION]
+                if self.__LEVEL == 1:
+                    self.__levelPreperation([1, 1, 1, 1, 1], [1, 1, 1, 1, 1])
+                if self.__LEVEL == 2:
+                    self.__levelPreperation([], [])
+                if self.__LEVEL == 3:
+                    self.__levelPreperation([], [])
+                if self.__LEVEL == 4:
+                    self.__levelPreperation([], [])
 
 
 
@@ -200,6 +203,7 @@ class Game():
             # Updates
             self.__updateTimers()
             self.__updateWindowFrame()
+            self.__endScreen()
 
 
 
@@ -499,6 +503,8 @@ class Game():
 
 
 
+
+
     # - - - - - - - - - - - - - - - -  - #
     # - - - - - SPAWNING UNITS - - - - - #
     # -  - - - - - - - - - - - - - - - - #
@@ -509,34 +515,35 @@ class Game():
         :param KEYPRESSED:
         :return:
         '''
+        if self.__WIN == None:
+            if self.__FISH_CURRENT_SPAWN_COOLDOWN[0] >= self.__FISH_SPAWN_COOLDOWN[0]:
+                if KEYPRESSED[pygame.K_1] == 1:
+                    if self.__INCOME >= self.__OCTOPUS_COST:
+                        self.__createOctopus()
 
-        if self.__FISH_CURRENT_SPAWN_COOLDOWN[0] >= self.__FISH_SPAWN_COOLDOWN[0]:
-            if KEYPRESSED[pygame.K_1] == 1:
-                if self.__INCOME >= self.__OCTOPUS_COST:
-                    self.__createOctopus()
 
+            if self.__FISH_CURRENT_SPAWN_COOLDOWN[1] >= self.__FISH_SPAWN_COOLDOWN[1]:
+                if KEYPRESSED[pygame.K_2] == 1:
+                    if self.__INCOME >= self.__EEL_COST:
+                        self.__createEel()
+            if self.__LEVEL >= 3:
+                if self.__FISH_CURRENT_SPAWN_COOLDOWN[2] >= self.__FISH_SPAWN_COOLDOWN[2]:
+                    if KEYPRESSED[pygame.K_3] == 1:
+                        if self.__INCOME >= self.__SWORDFISH_COST:
+                            self.__createSwordfish()
 
-        if self.__FISH_CURRENT_SPAWN_COOLDOWN[1] >= self.__FISH_SPAWN_COOLDOWN[1]:
-            if KEYPRESSED[pygame.K_2] == 1:
-                if self.__INCOME >= self.__EEL_COST:
-                    self.__createEel()
-        if self.__LEVEL >= 3:
-            if self.__FISH_CURRENT_SPAWN_COOLDOWN[2] >= self.__FISH_SPAWN_COOLDOWN[2]:
-                if KEYPRESSED[pygame.K_3] == 1:
-                    if self.__INCOME >= self.__SWORDFISH_COST:
-                        self.__createSwordfish()
 
     def __spawnHuman(self):
         '''
         checks if they clicked any of the following buttons
         :return:
         '''
+        if self.__WIN == None:
+            if self.__HUMAN_CURRENT_SPAWN_COOLDOWN[0] >= self.__HUMAN_SPAWN_COOLDOWN[0]:
+                self.__createHumanSword()
 
-        if self.__HUMAN_CURRENT_SPAWN_COOLDOWN[0] >= self.__HUMAN_SPAWN_COOLDOWN[0]:
-            self.__createHumanSword()
-
-        if self.__HUMAN_CURRENT_SPAWN_COOLDOWN[1] >= self.__HUMAN_SPAWN_COOLDOWN[1]:
-            self.__createHumanWand()
+            if self.__HUMAN_CURRENT_SPAWN_COOLDOWN[1] >= self.__HUMAN_SPAWN_COOLDOWN[1]:
+                self.__createHumanWand()
 
 
 
@@ -762,6 +769,18 @@ class Game():
                                 self.__OUTLINE3.getHeight() // 2 - self.__CHARACTER3_CD_TEXT.getHeight() // 2) + 26)
 
 
+            if self.__RETURNING == True:
+                self.__RETURNING_WAIT_TIME = 3
+                self.__CURRENT_WAIT_TIME += self.__TIME_PASSED
+                print(self.__CURRENT_WAIT_TIME)
+                if self.__CURRENT_WAIT_TIME >= self.__RETURNING_WAIT_TIME:
+                    self.__DISPLAY = self.__THIRD_SCREEN  # go to level selector
+                    self.__LEVEL_SELECTOR = True
+                    print("should have returned")
+
+
+
+
 
     def __updateWindowFrame(self):
         self.__WINDOW.clearScreen()
@@ -784,11 +803,6 @@ class Game():
         self.__WINDOW.getSurface().blit(self.__A_TOWER_HEALTH_TEXT.getSurface(), self.__A_TOWER_HEALTH_TEXT.getPOS())
         self.__WINDOW.getSurface().blit(self.__A_TOWER_DAMAGE_BAR.getSurface(), self.__A_TOWER_DAMAGE_BAR.getPOS())
         self.__WINDOW.getSurface().blit(self.__A_TOWER_HEALTH_BAR.getSurface(), self.__A_TOWER_HEALTH_BAR.getPOS())
-
-
-
-
-
 
         for HUMAN in self.__DEPLOYED_HUMANS:
             HUMAN.getGroupAnimation().draw(self.__WINDOW.getSurface())
@@ -815,6 +829,9 @@ class Game():
         if self.__LEVEL <= 2:
             self.__WINDOW.getSurface().blit(self.__swordFishLock.getSurface(), self.__swordFishLock.getPOS())
 
+        if self.__WIN != None:
+            for i in range(len(self.__END_SCREEN)):
+                self.__WINDOW.getSurface().blit(self.__END_SCREEN[i].getSurface(), self.__END_SCREEN[i].getPOS())
 
 
 
@@ -909,6 +926,21 @@ class Game():
         self.__VISUAL_TIMERS.append(self.__CHARACTER1_COST_TEXT)
         self.__VISUAL_TIMERS.append(self.__CHARACTER2_COST_TEXT)
         self.__VISUAL_TIMERS.append(self.__CHARACTER3_COST_TEXT)
+
+        self.__DEFEAT_TEXT = ImageSprite("media/defeat.png")
+        self.__DEFEAT_TEXT.setSpeed(4)
+        self.__DEFEAT_TEXT.setScale(1)
+        self.__DEFEAT_TEXT.setPOS(self.__WINDOW.getWidth() // 2 - self.__DEFEAT_TEXT.getWidth() // 2,
+                                    0 - self.__DEFEAT_TEXT.getHeight())
+
+        self.__VICTORY_TEXT = ImageSprite("media/victory.png")
+        self.__VICTORY_TEXT.setScale(1)
+        self.__VICTORY_TEXT.setSpeed(4)
+        self.__VICTORY_TEXT.setPOS(self.__WINDOW.getWidth() // 2 - self.__VICTORY_TEXT.getWidth() // 2,0 - self.__VICTORY_TEXT.getHeight())
+
+        self.__RETURNING_TEXT = ImageSprite("media/menu/returnToMenu.png")
+        self.__RETURNING_TEXT.setScale(0.35)
+        self.__RETURNING_TEXT.setPOS(self.__WINDOW.getWidth()//2 - self.__RETURNING_TEXT.getWidth()//2, self.__WINDOW.getHeight())
 
         self.__swordFishLock = ImageSprite("media/menu/levelsBorderLock.png")
         self.__swordFishLock.setScale(0.2)
@@ -1099,6 +1131,29 @@ class Game():
 
         self.__WINDOW.updateFrame()
 
+    def __endScreen(self):
+
+        if self.__WIN == None:
+            if self.__A_TOWER.getHealth() <= 0:
+                self.__WIN = False
+                self.__END_SCREEN = []
+                self.__END_SCREEN.append(self.__DEFEAT_TEXT)
+
+            if self.__E_TOWER.getHealth() <= 0:
+                self.__WIN = True
+                self.__END_SCREEN = []
+                self.__END_SCREEN.append(self.__VICTORY_TEXT)
+
+        if self.__WIN != None:
+            self.__END_SCREEN[0].marqueeY(20)
+            if self.__END_SCREEN[0].getY() >= 2:
+                self.__END_SCREEN.append(self.__RETURNING_TEXT)
+                self.__END_SCREEN[-1].setY(self.__WINDOW.getHeight()-self.__RETURNING_TEXT.getHeight() -30)
+                print("Returnign is now true")
+                self.__RETURNING = True
+
+
+
 
     def __levelPreperation(self, E_SCALING, A_SCALING ):
 
@@ -1122,8 +1177,9 @@ class Game():
         self.__A_TOWER.setY(90)
         self.__A_TOWER.setX(1015)
         self.__TOWERS.append(self.__A_TOWER)
-        # FISH RELATED SCALING
-
+        # - - - - - - - - - - - - - - - - - - - - #
+        #   -  -  - FISH CONFIGURATIONS -  -  -   #
+        # - - - - - - - - - - - - - - - - - - - - #
         # --- COST OF THE UNITS --- #
         self.__OCTOPUS_COST = 50
         self.__EEL_COST = 150
@@ -1131,9 +1187,9 @@ class Game():
 
         self.__FISH_MAX_HEALTH = [150, 100, 300]
         self.__FISH_RANGE = [-40, 80, 110]
-        self.__FISH_SPEED = [3, 4.5, 7]
+        self.__FISH_SPEED = [7, 4.5, 7]
         self.__FISH_ATTACK_COOLDOWN = [1.2, 4, 8]
-        self.__FISH_ATTACK_DAMAGE = [500, 50, 17]
+        self.__FISH_ATTACK_DAMAGE = [5000, 50, 17]
 
         self.__FISH_SPAWN_COOLDOWN = [3.0, 8.0, 15.0]
         self.__FISH_CURRENT_SPAWN_COOLDOWN = []
@@ -1152,13 +1208,16 @@ class Game():
         self.__HUMAN_SPAWN_COOLDOWN = [210.0, 400.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
         self.__HUMAN_CURRENT_SPAWN_COOLDOWN = [800, 9.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
         self.__HUMAN_SPAWN_LOCATION = 60
-        self.__HUMAN_SPEED = [5, 5, 3, 4, 5]
-        self.__HUMAN_MAX_HEALTH = [500, 200, 150, 200, 250]
+        self.__HUMAN_SPEED = [9, 5, 3, 4, 5]
+        self.__HUMAN_MAX_HEALTH = [1, 200, 150, 200, 250]
         self.__HUMAN_RANGE = [-60, 200, 150, 200, 250]
         self.__HUMAN_ATTACK_COOLDOWN = [1.2, 2, 3, 4, 5]
-        self.__HUMAN_ATTACK_DAMAGE = [37, 80, 15, 20]
+        self.__HUMAN_ATTACK_DAMAGE = [10000, 80, 15, 20]
 
         self.__LEVEL_SELECTOR = False # lets the code know that it's now going to exit level_selector
+        self.__WIN = None
+        self.__CURRENT_WAIT_TIME = 0
+        self.__RETURNING = False
         self.__applyVisuals()
 
 
