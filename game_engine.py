@@ -44,6 +44,7 @@ class Game():
         self.__FIRST_SCREEN.append(self.__PVP_TEXT)
         self.__DISPLAY = self.__FIRST_SCREEN
         self.__CURRENT_SCREEN = 0
+        self.__CURRENT_LEVEL = 0
         self.__LEVEL = 0
         self.__LEVEL_SELECTOR = False
         self.__WIN = None
@@ -161,24 +162,16 @@ class Game():
                     exit()
 
 
-
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        pygame.quit()
-                        exit()
                 while self.__PLAYING == False:
                     self.__menu()
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            pygame.quit()
+                            exit()
+                    # E_ARRAY
 
-                # E_ARRAY
-                # A_ARRAY [ADDITIONAL BASE HEALTH, PERCENTAGE COOLDOWN DECREASE, PERCENTAGE MAX HEALTH INCREASE, PERCENTAGE ATTACK DAMAGE BOOST, INCOME GENERATION]
-                if self.__LEVEL == 1:
-                    self.__levelPreperation([1, 1, 1, 1, 1], [1, 1, 1, 1, 1])
-                if self.__LEVEL == 2:
-                    self.__levelPreperation([], [])
-                if self.__LEVEL == 3:
-                    self.__levelPreperation([], [])
-                if self.__LEVEL == 4:
-                    self.__levelPreperation([], [])
+
+
 
 
 
@@ -190,6 +183,7 @@ class Game():
             self.__humanMovement()
             self.__attackMovement()
             # Attack Functions
+            self.__checkDeath()
             self.__fishOutputAttack()
             self.__humanOutputAttack()
 
@@ -198,7 +192,7 @@ class Game():
             self.__fishAttackCollision()
 
             # Death Detection
-            self.__checkDeath()
+
 
             # Updates
             self.__updateTimers()
@@ -325,14 +319,15 @@ class Game():
                         FISH.resetAttackCooldown() # makes cooldown to 0, so it has to wait again before it can attack again
                     if FISH.finishedAttacking(): # if their attack animation has finished
                         ATTACK = copy.copy(FISH.getAttack()) # create the actual attack
-                        FISH.updateAttackAnimationDuration(1000)  # make the cooldown 1000, so that it wont continuously attack. So now, I acutally dont know how this works but it seems fine
-                        self.__LIVE_FISH_ATTACKS.append(ATTACK)  # make it exist
-                        self.__LIVE_FISH_ATTACKS[-1].setX(FISH.getX() - ATTACK.getWidth()+30)  # place it where the unit is positions on the X axis
-                        self.__LIVE_FISH_ATTACKS[-1].setY(FISH.getY() + (FISH.getWidth() // 2 - ATTACK.getWidth() // 2))  # place it at proper height of the unit
-                        # Checks if its spearfishes' attack, if so, itll continue on to the code below
-                        if self.__LIVE_FISH_ATTACKS[-1].isLighting():
-                            self.__LIVE_FISH_ATTACKS[-1].setLive(True)
-                            self.__LIVE_FISH_ATTACKS[-1].setX(-500)  # place it where the unit is positions on the X axis
+                        if FISH.ifDead() == False:
+                            FISH.updateAttackAnimationDuration(1000)  # make the cooldown 1000, so that it wont continuously attack. So now, I acutally dont know how this works but it seems fine
+                            self.__LIVE_FISH_ATTACKS.append(ATTACK)  # make it exist
+                            self.__LIVE_FISH_ATTACKS[-1].setX(FISH.getX() - ATTACK.getWidth()+30)  # place it where the unit is positions on the X axis
+                            self.__LIVE_FISH_ATTACKS[-1].setY(FISH.getY() + (FISH.getWidth() // 2 - ATTACK.getWidth() // 2))  # place it at proper height of the unit
+                            # Checks if its spearfishes' attack, if so, itll continue on to the code below
+                            if self.__LIVE_FISH_ATTACKS[-1].isLighting():
+                                self.__LIVE_FISH_ATTACKS[-1].setLive(True)
+                                self.__LIVE_FISH_ATTACKS[-1].setX(-500)  # place it where the unit is positions on the X axis
 
                     # ALL RELATED TO SPEAR FISH'S ATTACK
                     if len(self.__LIVE_FISH_ATTACKS) > 0:
@@ -349,12 +344,13 @@ class Game():
 
                             if self.__LIVE_FISH_ATTACKS[i].isLighting():
                                 if self.__LIVE_FISH_ATTACKS[i].finishedAttacking():
-                                    FISH.updateAttackAnimationDuration(1000)
-                                    FISH.resetCurrentAttackAnimationDuration()  # makes attack duration = 0
-                                    FISH.resetAttackCooldown()  # makes cooldown to 0, so it has to wait again before it can attack again
-                                    self.__LIVE_FISH_ATTACKS[i].setAnimationPOS(1000, 1000)
-                                    self.__LIVE_FISH_ATTACKS[i].updateAttackAnimationDuration(1000)
-                                    self.__LIVE_FISH_ATTACKS.pop(i)  # place it where the unit is positions on the X axis
+                                    if FISH.ifDead() == False:
+                                        FISH.updateAttackAnimationDuration(1000)
+                                        FISH.resetCurrentAttackAnimationDuration()  # makes attack duration = 0
+                                        FISH.resetAttackCooldown()  # makes cooldown to 0, so it has to wait again before it can attack again
+                                        self.__LIVE_FISH_ATTACKS[i].setAnimationPOS(1000, 1000)
+                                        self.__LIVE_FISH_ATTACKS[i].updateAttackAnimationDuration(1000)
+                                        self.__LIVE_FISH_ATTACKS.pop(i)  # place it where the unit is positions on the X axis
 
 
 
@@ -366,23 +362,25 @@ class Game():
 
     def __humanOutputAttack(self):
         for HUMAN in self.__DEPLOYED_HUMANS:
-            if HUMAN.getSpeed() == 0: # if their movement speed is zero
-                if HUMAN.getCurrentAttackCooldown() >= HUMAN.getAttackCooldown(): # if its allowed to attack again
-                    HUMAN.updateAttackAnimationDuration(1000)  # make the cooldown 1000, so that it wont continuously attack. So now, I acutally dont know how this works but it seems fine
-                    HUMAN.attackAnimation() # activates attack animation
-                    HUMAN.setAttackPOS(HUMAN.getX(), HUMAN.getY(), HUMAN.getWidth(), HUMAN.getHeight()) # makes attack animation come on screen
-                    HUMAN.resetCurrentAttackAnimationDuration()  # makes attack duration = 0
-                    HUMAN.resetAttackCooldown() # makes cooldown to 0, so it has to wait again before it can attack again
-                if HUMAN.finishedAttacking(): # if their attack animation has finished
-                    HUMAN.updateAttackAnimationDuration(1000)  # make the cooldown 1000, so that it wont continuously attack. So now, I acutally dont know how this works but it seems fine
-                    ATTACK = copy.copy(HUMAN.getAttack()) # create the actual attack
-                    self.__LIVE_HUMAN_ATTACKS.append(ATTACK) #make it exist
-                    if self.__LIVE_HUMAN_ATTACKS[-1].isProjectile():
-                        self.__LIVE_HUMAN_ATTACKS[-1].setScale(15, 15)
-                        self.__LIVE_HUMAN_ATTACKS[-1].setY(HUMAN.getY() + HUMAN.getWidth() // 5)  # place it at proper height of the unit
-                    else:
-                        self.__LIVE_HUMAN_ATTACKS[-1].setY(HUMAN.getY() + HUMAN.getWidth() // 2 - ATTACK.getWidth() // 2)  # place it at proper height of the unit
-                    self.__LIVE_HUMAN_ATTACKS[-1].setX(HUMAN.getX() + HUMAN.getWidth()-10)  # place it where the unit is positions on the X axis
+                if HUMAN.getSpeed() == 0: # if their movement speed is zero
+                    if HUMAN.getCurrentAttackCooldown() >= HUMAN.getAttackCooldown(): # if its allowed to attack again
+                        HUMAN.updateAttackAnimationDuration(1000)  # make the cooldown 1000, so that it wont continuously attack. So now, I acutally dont know how this works but it seems fine
+                        HUMAN.attackAnimation() # activates attack animation
+                        HUMAN.setAttackPOS(HUMAN.getX(), HUMAN.getY(), HUMAN.getWidth(), HUMAN.getHeight()) # makes attack animation come on screen
+                        HUMAN.resetCurrentAttackAnimationDuration()  # makes attack duration = 0
+                        HUMAN.resetAttackCooldown() # makes cooldown to 0, so it has to wait again before it can attack again
+                    if HUMAN.finishedAttacking(): # if their attack animation has finished
+                        HUMAN.updateAttackAnimationDuration(1000)  # make the cooldown 1000, so that it wont continuously attack. So now, I acutally dont know how this works but it seems fine
+                        if HUMAN.ifDead() == False:
+                            ATTACK = copy.copy(HUMAN.getAttack()) # create the actual attack
+                            print("Done attacking")
+                            self.__LIVE_HUMAN_ATTACKS.append(ATTACK) #make it exist
+                            if self.__LIVE_HUMAN_ATTACKS[-1].isProjectile():
+                                self.__LIVE_HUMAN_ATTACKS[-1].setScale(15, 15)
+                                self.__LIVE_HUMAN_ATTACKS[-1].setY(HUMAN.getY() + HUMAN.getWidth() // 5)  # place it at proper height of the unit
+                            else:
+                                self.__LIVE_HUMAN_ATTACKS[-1].setY(HUMAN.getY() + HUMAN.getWidth() // 2 - ATTACK.getWidth() // 2)  # place it at proper height of the unit
+                            self.__LIVE_HUMAN_ATTACKS[-1].setX(HUMAN.getX() + HUMAN.getWidth()-30)  # place it where the unit is positions on the X axis
 
 
 
@@ -526,6 +524,7 @@ class Game():
                 if KEYPRESSED[pygame.K_2] == 1:
                     if self.__INCOME >= self.__EEL_COST:
                         self.__createEel()
+
             if self.__LEVEL >= 3:
                 if self.__FISH_CURRENT_SPAWN_COOLDOWN[2] >= self.__FISH_SPAWN_COOLDOWN[2]:
                     if KEYPRESSED[pygame.K_3] == 1:
@@ -574,7 +573,7 @@ class Game():
         self.__oct_moving_sprites.add(self.__OCTDEATH)
          # CREATES OCTOPUS BASE UNIT
         # ATTACK CONFIG (DAMAGE, RANGE, SPEED)
-        self.__OCTOPUS = MyUnit("media/octopus/oct6attack.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[0],self.__FISH_MAX_HEALTH[0], self.__FISH_RANGE[0],Attacks("media/sword/sword1death.png", self.__FISH_ATTACK_DAMAGE[0], self.__FISH_RANGE[0], 5, -1), self.__FISH_ATTACK_COOLDOWN[0], -1,self.__OCTIDLE, self.__OCTMOVE, self.__OCTATTACK,self.__OCTDEATH, self.__oct_moving_sprites, 0.8, 0.5)
+        self.__OCTOPUS = MyUnit("media/octopus/oct6attack.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[0],self.__FISH_MAX_HEALTH[0], self.__FISH_RANGE[0],Attacks("media/sword/sword1death.png", self.__FISH_ATTACK_DAMAGE[0], self.__FISH_RANGE[0], 5, -1), self.__FISH_ATTACK_COOLDOWN[0], -1,self.__OCTIDLE, self.__OCTMOVE, self.__OCTATTACK,self.__OCTDEATH, self.__oct_moving_sprites, 0.7, 0.5)
         self.__OCTOPUS.setScale(3)
         self.__OCTOPUS.flipSprite()
         # RESETS COOLDOWN, SUBRACTS MONEY, AND ADDS IT TO DEPLOYED UNITS
@@ -660,7 +659,7 @@ class Game():
                              self.__HUMAN_MAX_HEALTH[0], self.__HUMAN_RANGE[0],
                              Attacks("media/wand/Projectile.png", self.__HUMAN_ATTACK_DAMAGE[0], self.__HUMAN_RANGE[0], 4, 1, 40, False),
                              self.__HUMAN_ATTACK_COOLDOWN[0], 1, self.__SWORDIDLE, self.__SWORDMOVE, self.__SWORDATTACK,
-                             self.__SWORDDEATH, self.__human_sword_moving_sprites, 0.8, 0.4)
+                             self.__SWORDDEATH, self.__human_sword_moving_sprites, 0.7, 0.6)
         self.__SWORD.setScale(3)
         # RESETS COOLDOWN, SUBRACTS MONEY, AND ADDS IT TO DEPLOYED UNITS
         self.__HUMAN_CURRENT_SPAWN_COOLDOWN[0] = 0
@@ -767,16 +766,6 @@ class Game():
                     self.__OUTLINE3.getX() + (self.__OUTLINE3.getWidth() // 2 - self.__CHARACTER3_CD_TEXT.getWidth() // 2),
                     self.__OUTLINE3.getY() + (
                                 self.__OUTLINE3.getHeight() // 2 - self.__CHARACTER3_CD_TEXT.getHeight() // 2) + 26)
-
-
-            if self.__RETURNING == True:
-                self.__RETURNING_WAIT_TIME = 3
-                self.__CURRENT_WAIT_TIME += self.__TIME_PASSED
-                print(self.__CURRENT_WAIT_TIME)
-                if self.__CURRENT_WAIT_TIME >= self.__RETURNING_WAIT_TIME:
-                    self.__DISPLAY = self.__THIRD_SCREEN  # go to level selector
-                    self.__LEVEL_SELECTOR = True
-                    print("should have returned")
 
 
 
@@ -1099,22 +1088,37 @@ class Game():
         if self.__LEVEL_SELECTOR == True:
             if KEY_PRESSED[pygame.K_1]:
                 self.__PLAYING = True
-                self.__LEVEL = 1
+                # A_ARRAY [ADDITIONAL BASE HEALTH, PERCENTAGE COOLDOWN DECREASE, PERCENTAGE MAX HEALTH INCREASE, PERCENTAGE ATTACK DAMAGE BOOST, INCOME GENERATION]
+                self.__levelPreperation([1, 1, 1, 1, 1], [1, 1, 1, 1, 1])
+                self.__CURRENT_LEVEL = 1
+                if self.__LEVEL <= 1:
+                    self.__LEVEL = 1
 
-            if self.__LEVEL >= 1:
+            if self.__CURRENT_LEVEL >= 1:
                 if KEY_PRESSED[pygame.K_2]:
                     self.__PLAYING = True
-                    self.__LEVEL = 2
+                    # A_ARRAY [ADDITIONAL BASE HEALTH, PERCENTAGE COOLDOWN DECREASE, PERCENTAGE MAX HEALTH INCREASE, PERCENTAGE ATTACK DAMAGE BOOST, INCOME GENERATION]
+                    self.__levelPreperation([1, 1, 1, 1, 1], [1, 1, 1, 1, 1])
+                    self.__CURRENT_LEVEL = 2
+                    if self.__LEVEL <= 2:
+                        self.__LEVEL = 2
 
-            if self.__LEVEL >= 2:
+            if self.__CURRENT_LEVEL >= 2:
                 if KEY_PRESSED[pygame.K_3]:
                     self.__PLAYING = True
-                    self.__LEVEL = 3
+                    # A_ARRAY [ADDITIONAL BASE HEALTH, PERCENTAGE COOLDOWN DECREASE, PERCENTAGE MAX HEALTH INCREASE, PERCENTAGE ATTACK DAMAGE BOOST, INCOME GENERATION]
+                    self.__levelPreperation([1, 1, 1, 1, 1], [1, 1, 1, 1, 1])
+                    self.__CURRENT_LEVEL = 3
+                    if self.__LEVEL <= 3:
+                        self.__LEVEL = 3
 
-            if self.__LEVEL >= 3:
+            if self.__CURRENT_LEVEL >= 3:
                 if KEY_PRESSED[pygame.K_4]:
                     self.__PLAYING = True
-                    self.__LEVEL = 4
+                    # A_ARRAY [ADDITIONAL BASE HEALTH, PERCENTAGE COOLDOWN DECREASE, PERCENTAGE MAX HEALTH INCREASE, PERCENTAGE ATTACK DAMAGE BOOST, INCOME GENERATION]
+                    self.__levelPreperation([1, 1, 1, 1, 1], [1, 1, 1, 1, 1])
+                    if self.__LEVEL <= 41:
+                        self.__LEVEL = 4
 
 
         # - - - UPDATES THE SCREEN - - - #
@@ -1132,7 +1136,6 @@ class Game():
         self.__WINDOW.updateFrame()
 
     def __endScreen(self):
-
         if self.__WIN == None:
             if self.__A_TOWER.getHealth() <= 0:
                 self.__WIN = False
@@ -1143,14 +1146,17 @@ class Game():
                 self.__WIN = True
                 self.__END_SCREEN = []
                 self.__END_SCREEN.append(self.__VICTORY_TEXT)
+                self.__CURRENT_LEVEL += 1
 
         if self.__WIN != None:
             self.__END_SCREEN[0].marqueeY(20)
             if self.__END_SCREEN[0].getY() >= 2:
                 self.__END_SCREEN.append(self.__RETURNING_TEXT)
                 self.__END_SCREEN[-1].setY(self.__WINDOW.getHeight()-self.__RETURNING_TEXT.getHeight() -30)
-                print("Returnign is now true")
-                self.__RETURNING = True
+                self.__LEVEL_SELECTOR = True
+                self.__PLAYING = False
+
+
 
 
 
@@ -1162,25 +1168,35 @@ class Game():
 
 
         self.__TOWERS = []
-        self.__E_MAX_HEALTH = 2000 + E_SCALING[0]
+        self.__E_MAX_HEALTH = 2000 * E_SCALING[0]
         self.__E_TOWER = MyUnit("media/enemybase1.png", None, None, self.__E_MAX_HEALTH, None, None, None, None, None,
                                 None, None, None, None, None)
         self.__E_TOWER.setScale(4 / 10)
         self.__E_TOWER.setY(190)
         self.__E_TOWER.setX(-10)
         self.__TOWERS.append(self.__E_TOWER)
+        self.__E_TOWER_HEALTH_TEXT.setText(f"{self.__E_TOWER.getHealth()}")
+        self.__E_TOWER_HEALTH_BAR = Box((self.__E_TOWER.getHealth() / self.__E_MAX_HEALTH) * self.__E_TOWER_DAMAGE_BAR.getWidth(),self.__E_TOWER_DAMAGE_BAR.getHeight())
+        self.__E_TOWER_HEALTH_BAR.setColor(Color.GREEN)
+        self.__E_TOWER_HEALTH_BAR.setPOS(self.__E_TOWER_HEALTH_TEXT.getX() + (self.__E_TOWER_HEALTH_TEXT.getWidth() // 2 - self.__E_TOWER_DAMAGE_BAR.getWidth() // 2),self.__E_TOWER_HEALTH_TEXT.getY() + self.__E_TOWER_HEALTH_TEXT.getHeight())
 
-        self.__A_MAX_HEALTH = 2000 + A_SCALING[0]
+        self.__A_MAX_HEALTH = 2000 * A_SCALING[0]
         self.__A_TOWER = MyUnit("media/allybase11.png", None, None, self.__A_MAX_HEALTH, None, None, None, None, None,
                                None, None, None, None, None)
         self.__A_TOWER.setScale(0.80)
         self.__A_TOWER.setY(90)
         self.__A_TOWER.setX(1015)
         self.__TOWERS.append(self.__A_TOWER)
+
+        self.__A_TOWER_HEALTH_TEXT.setText(f"{self.__A_TOWER.getHealth()}")
+        self.__A_TOWER_HEALTH_BAR = Box((self.__A_TOWER.getHealth() / self.__A_MAX_HEALTH) * self.__A_TOWER_DAMAGE_BAR.getWidth(),self.__A_TOWER_DAMAGE_BAR.getHeight())
+        self.__A_TOWER_HEALTH_BAR.setColor(Color.GREEN)
+        self.__A_TOWER_HEALTH_BAR.setPOS(self.__A_TOWER_HEALTH_TEXT.getX() + (self.__A_TOWER_HEALTH_TEXT.getWidth() // 2 - self.__A_TOWER_DAMAGE_BAR.getWidth() // 2),self.__A_TOWER_HEALTH_TEXT.getY() + self.__A_TOWER_HEALTH_TEXT.getHeight())
         # - - - - - - - - - - - - - - - - - - - - #
         #   -  -  - FISH CONFIGURATIONS -  -  -   #
         # - - - - - - - - - - - - - - - - - - - - #
         # --- COST OF THE UNITS --- #
+        self.__DEPLOYED_FISHES = []
         self.__OCTOPUS_COST = 50
         self.__EEL_COST = 150
         self.__SWORDFISH_COST = 400
@@ -1205,6 +1221,8 @@ class Game():
 
 
         # --- COST OF THE UNITS --- #
+        self.__DEPLOYED_HUMANS = []
+
         self.__HUMAN_SPAWN_COOLDOWN = [210.0, 400.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
         self.__HUMAN_CURRENT_SPAWN_COOLDOWN = [800, 9.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
         self.__HUMAN_SPAWN_LOCATION = 60
@@ -1214,10 +1232,8 @@ class Game():
         self.__HUMAN_ATTACK_COOLDOWN = [1.2, 2, 3, 4, 5]
         self.__HUMAN_ATTACK_DAMAGE = [10000, 80, 15, 20]
 
-        self.__LEVEL_SELECTOR = False # lets the code know that it's now going to exit level_selector
+        #self.__LEVEL_SELECTOR = False # lets the code know that it's now going to exit level_selector
         self.__WIN = None
-        self.__CURRENT_WAIT_TIME = 0
-        self.__RETURNING = False
         self.__applyVisuals()
 
 
