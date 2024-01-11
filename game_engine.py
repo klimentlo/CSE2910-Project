@@ -50,101 +50,15 @@ class Game():
         self.__WIN = None
 
 
-
-
-        # Income
-        self.__INCOME = 5000
+        self.__INCOME = 0
         self.__INCOME_TEXT = Text(f"${self.__INCOME}")
         self.__INCOME_TEXT.setPOS(self.__WINDOW.getWidth() - self.__INCOME_TEXT.getWidth() - 25, 25)
-
-        # - - - Bases
-        self.__TOWERS = []
-        # - Enemy Tower
-        self.__E_MAX_HEALTH = 5000
-        self.__E_TOWER = MyUnit("media/enemybase1.png", None , None ,self.__E_MAX_HEALTH, None, None, None, None , None, None, None, None, None, None)
-        self.__E_TOWER.setScale(4 / 10)
-        self.__E_TOWER.setY(190)
-        self.__E_TOWER.setX(-10)
-        self.__TOWERS.append(self.__E_TOWER)
-
-        self.__E_TOWER_HEALTH_TEXT = Text(f"{self.__E_MAX_HEALTH}", "ComicSans", 18)
-        self.__E_TOWER_HEALTH_TEXT.setPOS(self.__E_TOWER.getX() + (self.__E_TOWER.getWidth()//2 - self.__E_TOWER_HEALTH_TEXT.getWidth()//2),self.__E_TOWER.getY() - 5)
-        self.__E_TOWER_HEALTH_BAR = Box(100, 10)
-        self.__E_TOWER_HEALTH_BAR.setPOS(self.__E_TOWER_HEALTH_TEXT.getX() + (self.__E_TOWER_HEALTH_TEXT.getWidth()//2 - self.__E_TOWER_HEALTH_BAR.getWidth()//2), self.__E_TOWER_HEALTH_TEXT.getY() + self.__E_TOWER_HEALTH_TEXT.getHeight())
-        self.__E_TOWER_HEALTH_BAR.setColor(Color.GREEN)
-
-        self.__E_TOWER_DAMAGE_BAR = Box(100, 10)
-        self.__E_TOWER_DAMAGE_BAR.setPOS(self.__E_TOWER_HEALTH_TEXT.getX() + (self.__E_TOWER_HEALTH_TEXT.getWidth() // 2 - self.__E_TOWER_HEALTH_BAR.getWidth() // 2),self.__E_TOWER_HEALTH_TEXT.getY() + self.__E_TOWER_HEALTH_TEXT.getHeight())
-
-        self.__E_TOWER_DAMAGE_BAR.setColor(Color.RED)
-
-        # Ally Tower
-        self.__A_MAX_HEALTH = 5000
-        self.__A_TOWER = MyUnit("media/allybase11.png", None, None, self.__A_MAX_HEALTH, None, None, None, None, None, None,None, None, None, None)
-        self.__A_TOWER.setScale(0.80)
-        self.__A_TOWER.setY(90)
-        self.__A_TOWER.setX(1015)
-        self.__TOWERS.append(self.__A_TOWER)
-
-        self.__A_TOWER_HEALTH_TEXT = Text(f"{self.__A_MAX_HEALTH}", "ComicSans", 18)
-        self.__A_TOWER_HEALTH_TEXT.setPOS(self.__A_TOWER.getX() + (self.__A_TOWER.getWidth() // 2 - self.__A_TOWER_HEALTH_TEXT.getWidth() // 2 +15),self.__A_TOWER.getY() + 95)
-        self.__A_TOWER_HEALTH_BAR = Box(100, 10)
-        self.__A_TOWER_HEALTH_BAR.setPOS(self.__A_TOWER_HEALTH_TEXT.getX() + (self.__A_TOWER_HEALTH_TEXT.getWidth() // 2 - self.__A_TOWER_HEALTH_BAR.getWidth() // 2),self.__A_TOWER_HEALTH_TEXT.getY() + self.__A_TOWER_HEALTH_TEXT.getHeight())
-        self.__A_TOWER_HEALTH_BAR.setColor(Color.GREEN)
-
-        self.__A_TOWER_DAMAGE_BAR = Box(100, 10)
-        self.__A_TOWER_DAMAGE_BAR.setPOS(self.__A_TOWER_HEALTH_TEXT.getX() + (self.__A_TOWER_HEALTH_TEXT.getWidth() // 2 - self.__A_TOWER_HEALTH_BAR.getWidth() // 2),self.__A_TOWER_HEALTH_TEXT.getY() + self.__A_TOWER_HEALTH_TEXT.getHeight())
-        self.__A_TOWER_DAMAGE_BAR.setColor(Color.RED)
-
-
-
+        self.__FISH_SPAWN_LOCATION = self.__WINDOW.getWidth() - 175
+        self.__HUMAN_SPAWN_LOCATION = 60
         # Lists for the objects in the game
-        self.__DEPLOYED_FISHES = []
-        self.__DEPLOYED_HUMANS = []
-        self.__LIVE_FISH_ATTACKS = []
-        self.__LIVE_HUMAN_ATTACKS = []
         self.__TIME = time.time()
         self.__PREVIOUS_TIME = self.__TIME
         self.__TIME_PASSED = 0.05
-
-
-
-        # --- GENERAL ATTRIBUTES  --- #
-
-        self.__FISH_SPAWN_LOCATION = self.__WINDOW.getWidth() - 175
-
-        self.__FISH_SPAWN_COOLDOWN = [2.0, 3.0, 4.0]
-        self.__FISH_CURRENT_SPAWN_COOLDOWN = [1.8, 2.8, 3.8]
-        self.__FISH_MAX_HEALTH = [150, 5, 5000]
-        self.__FISH_RANGE = [-40, 80, 110]
-        self.__FISH_SPEED = [7, 7, 7]
-        self.__FISH_ATTACK_COOLDOWN = [1, 2, 5]
-        self.__FISH_ATTACK_DAMAGE = [2, 10, 17]
-
-
-
-        # - - - - - - - - - - - - - - - - - - - - - #
-        #    -  -  - HUMAN CONFIGURATIONS -  -  -   #
-        # - - - - - - - - - - - - - - - - - - - - - #
-
-        # Human Spawning Cooldown
-
-        self.__HUMAN_SPAWN_COOLDOWN = [210.0, 400.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
-        self.__HUMAN_CURRENT_SPAWN_COOLDOWN = [800, 9.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
-
-
-        self.__HUMAN_SPAWN_LOCATION = 60
-        self.__HUMAN_SPEED = [5, 5, 3, 4, 5]
-        self.__HUMAN_MAX_HEALTH = [500, 200, 150, 200, 250]
-        self.__HUMAN_RANGE = [-60, 200, 150, 200, 250]
-        self.__HUMAN_ATTACK_COOLDOWN = [1.2, 2, 3, 4, 5]
-        self.__HUMAN_ATTACK_DAMAGE = [37, 80, 15, 20]
-
-
-
-
-
-
 
 
 
@@ -273,6 +187,7 @@ class Game():
                     HUMAN.setSpeed(0)  # make HUMAN speed zero
                     if HUMAN.isAttacking() == False:  # they aren't attacking
                         HUMAN.idleAnimation()  # idle animation
+
                         HUMAN.setIdlePOS(HUMAN.getX(), HUMAN.getY(), HUMAN.getWidth(),
                                          HUMAN.getHeight())  # make it on screen
 
@@ -366,6 +281,7 @@ class Game():
                     if HUMAN.getCurrentAttackCooldown() >= HUMAN.getAttackCooldown(): # if its allowed to attack again
                         HUMAN.updateAttackAnimationDuration(1000)  # make the cooldown 1000, so that it wont continuously attack. So now, I acutally dont know how this works but it seems fine
                         HUMAN.attackAnimation() # activates attack animation
+
                         HUMAN.setAttackPOS(HUMAN.getX(), HUMAN.getY(), HUMAN.getWidth(), HUMAN.getHeight()) # makes attack animation come on screen
                         HUMAN.resetCurrentAttackAnimationDuration()  # makes attack duration = 0
                         HUMAN.resetAttackCooldown() # makes cooldown to 0, so it has to wait again before it can attack again
@@ -373,7 +289,6 @@ class Game():
                         HUMAN.updateAttackAnimationDuration(1000)  # make the cooldown 1000, so that it wont continuously attack. So now, I acutally dont know how this works but it seems fine
                         if HUMAN.ifDead() == False:
                             ATTACK = copy.copy(HUMAN.getAttack()) # create the actual attack
-                            print("Done attacking")
                             self.__LIVE_HUMAN_ATTACKS.append(ATTACK) #make it exist
                             if self.__LIVE_HUMAN_ATTACKS[-1].isProjectile():
                                 self.__LIVE_HUMAN_ATTACKS[-1].setScale(15, 15)
@@ -573,7 +488,7 @@ class Game():
         self.__oct_moving_sprites.add(self.__OCTDEATH)
          # CREATES OCTOPUS BASE UNIT
         # ATTACK CONFIG (DAMAGE, RANGE, SPEED)
-        self.__OCTOPUS = MyUnit("media/octopus/oct6attack.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[0],self.__FISH_MAX_HEALTH[0], self.__FISH_RANGE[0],Attacks("media/sword/sword1death.png", self.__FISH_ATTACK_DAMAGE[0], self.__FISH_RANGE[0], 5, -1), self.__FISH_ATTACK_COOLDOWN[0], -1,self.__OCTIDLE, self.__OCTMOVE, self.__OCTATTACK,self.__OCTDEATH, self.__oct_moving_sprites, 0.7, 0.5)
+        self.__OCTOPUS = MyUnit("media/octopus/oct6attack.png", self.__FISH_SPAWN_LOCATION, self.__FISH_SPEED[0],self.__FISH_MAX_HEALTH[0], self.__FISH_RANGE[0],Attacks("media/sword/sword1death.png", self.__FISH_ATTACK_DAMAGE[0], self.__FISH_RANGE[0], 5, -1), self.__FISH_ATTACK_COOLDOWN[0], -1,self.__OCTIDLE, self.__OCTMOVE, self.__OCTATTACK,self.__OCTDEATH, self.__oct_moving_sprites, 0.7, 0.4)
         self.__OCTOPUS.setScale(3)
         self.__OCTOPUS.flipSprite()
         # RESETS COOLDOWN, SUBRACTS MONEY, AND ADDS IT TO DEPLOYED UNITS
@@ -659,7 +574,7 @@ class Game():
                              self.__HUMAN_MAX_HEALTH[0], self.__HUMAN_RANGE[0],
                              Attacks("media/wand/Projectile.png", self.__HUMAN_ATTACK_DAMAGE[0], self.__HUMAN_RANGE[0], 4, 1, 40, False),
                              self.__HUMAN_ATTACK_COOLDOWN[0], 1, self.__SWORDIDLE, self.__SWORDMOVE, self.__SWORDATTACK,
-                             self.__SWORDDEATH, self.__human_sword_moving_sprites, 0.7, 0.6)
+                             self.__SWORDDEATH, self.__human_sword_moving_sprites, 0.7, 0.4)
         self.__SWORD.setScale(3)
         # RESETS COOLDOWN, SUBRACTS MONEY, AND ADDS IT TO DEPLOYED UNITS
         self.__HUMAN_CURRENT_SPAWN_COOLDOWN[0] = 0
@@ -680,7 +595,7 @@ class Game():
         self.__WANDIDLE = Wandidle(500, 800)
         self.__human_wand_moving_sprites.add(self.__WANDIDLE)
         # ACTUALLY CREATES THE UNIT WITH ALL THEIR RESPECTIVE ATTRIBUTES
-        self.__WAND = MyUnit("media/wand/wand1idle.png", self.__HUMAN_SPAWN_LOCATION, self.__HUMAN_SPEED[1],self.__HUMAN_MAX_HEALTH[1], self.__HUMAN_RANGE[1], Attacks("media/wand/Projectile.png", self.__HUMAN_ATTACK_DAMAGE[1], self.__HUMAN_RANGE[1], 4, 1, 40, True), self.__HUMAN_ATTACK_COOLDOWN[1], 1 , self.__WANDIDLE, self.__WANDMOVE, self.__WANDATTACK, self.__WANDDEATH, self.__human_wand_moving_sprites, 0.8, 0.5)
+        self.__WAND = MyUnit("media/wand/wand1idle.png", self.__HUMAN_SPAWN_LOCATION, self.__HUMAN_SPEED[1],self.__HUMAN_MAX_HEALTH[1], self.__HUMAN_RANGE[1], Attacks("media/wand/Projectile.png", self.__HUMAN_ATTACK_DAMAGE[1], self.__HUMAN_RANGE[1], 4, 1, 40, True), self.__HUMAN_ATTACK_COOLDOWN[1], 1 , self.__WANDIDLE, self.__WANDMOVE, self.__WANDATTACK, self.__WANDDEATH, self.__human_wand_moving_sprites, 0.8, 0.4)
         self.__WAND.setScale(3)
         # RESETS COOLDOWN, SUBRACTS MONEY, AND ADDS IT TO DEPLOYED UNITS
         self.__HUMAN_CURRENT_SPAWN_COOLDOWN[1] = 0
@@ -746,26 +661,20 @@ class Game():
                 self.__OUTLINE2.getX() + (self.__OUTLINE2.getWidth() // 2 - self.__CHARACTER2_CD_TEXT.getWidth() // 2),
                 self.__OUTLINE2.getY() + (
                             self.__OUTLINE2.getHeight() // 2 - self.__CHARACTER2_CD_TEXT.getHeight() // 2) + 26)
-
-            if self.__FISH_CURRENT_SPAWN_COOLDOWN[2] <= self.__FISH_SPAWN_COOLDOWN[2]:
+            if self.__LEVEL <= 2:
                 self.__CHARACTER3_CD_TEXT.setText(
-                    f"{round(self.__FISH_SPAWN_COOLDOWN[2] - self.__FISH_CURRENT_SPAWN_COOLDOWN[2], 1)}")
+                    f"")
             else:
-                if self.__LEVEL <= 2:
-                    self.__CHARACTER3_CD_TEXT.setText(f"Unavailable'", Color.RED)
-                    self.__CHARACTER3_CD_TEXT.setSize(1)
-                    self.__CHARACTER3_CD_TEXT.setPOS(
-                        self.__OUTLINE3.getX() + (
-                                    self.__OUTLINE3.getWidth() // 2 - self.__CHARACTER3_CD_TEXT.getWidth() // 2),
-                        self.__OUTLINE3.getY() + (
-                                self.__OUTLINE3.getHeight() // 2 - self.__CHARACTER3_CD_TEXT.getHeight() // 2) + 26)
+                if self.__FISH_CURRENT_SPAWN_COOLDOWN[2] <= self.__FISH_SPAWN_COOLDOWN[2]:
+                    self.__CHARACTER3_CD_TEXT.setText(
+                        f"{round(self.__FISH_SPAWN_COOLDOWN[2] - self.__FISH_CURRENT_SPAWN_COOLDOWN[2], 1)}")
                 else:
                     self.__CHARACTER3_CD_TEXT.setText(f"Ready", Color.GREEN)
 
-                self.__CHARACTER3_CD_TEXT.setPOS(
-                    self.__OUTLINE3.getX() + (self.__OUTLINE3.getWidth() // 2 - self.__CHARACTER3_CD_TEXT.getWidth() // 2),
-                    self.__OUTLINE3.getY() + (
-                                self.__OUTLINE3.getHeight() // 2 - self.__CHARACTER3_CD_TEXT.getHeight() // 2) + 26)
+                    self.__CHARACTER3_CD_TEXT.setPOS(
+                        self.__OUTLINE3.getX() + (self.__OUTLINE3.getWidth() // 2 - self.__CHARACTER3_CD_TEXT.getWidth() // 2),
+                        self.__OUTLINE3.getY() + (
+                                    self.__OUTLINE3.getHeight() // 2 - self.__CHARACTER3_CD_TEXT.getHeight() // 2) + 26)
 
 
 
@@ -939,8 +848,6 @@ class Game():
 
 
     def __menu(self):
-
-
         self.__SECOND_SCREEN = []
         self.__SECOND_SCREEN.append(self.__TITLE_TEXT)
         self.__HTP_TEXT = ImageSprite("media/menu/howToPlay1.1.png")
@@ -1053,13 +960,14 @@ class Game():
         self.__THIRD_SCREEN.append(self.__SELECT_TEXT)
 
 
-
         if self.__LEVEL == 0:
             self.__THIRD_SCREEN.append(self.__LOCK2)
             self.__THIRD_SCREEN.append(self.__LOCK3)
             self.__THIRD_SCREEN.append(self.__LOCK4)
 
         if self.__LEVEL == 1:
+            print("appened")
+            print(len(self.__THIRD_SCREEN))
             self.__THIRD_SCREEN.append(self.__LOCK3)
             self.__THIRD_SCREEN.append(self.__LOCK4)
 
@@ -1091,8 +999,6 @@ class Game():
                 # A_ARRAY [ADDITIONAL BASE HEALTH, PERCENTAGE COOLDOWN DECREASE, PERCENTAGE MAX HEALTH INCREASE, PERCENTAGE ATTACK DAMAGE BOOST, INCOME GENERATION]
                 self.__levelPreperation([1, 1, 1, 1, 1], [1, 1, 1, 1, 1])
                 self.__CURRENT_LEVEL = 1
-                if self.__LEVEL <= 1:
-                    self.__LEVEL = 1
 
             if self.__CURRENT_LEVEL >= 1:
                 if KEY_PRESSED[pygame.K_2]:
@@ -1100,8 +1006,6 @@ class Game():
                     # A_ARRAY [ADDITIONAL BASE HEALTH, PERCENTAGE COOLDOWN DECREASE, PERCENTAGE MAX HEALTH INCREASE, PERCENTAGE ATTACK DAMAGE BOOST, INCOME GENERATION]
                     self.__levelPreperation([1, 1, 1, 1, 1], [1, 1, 1, 1, 1])
                     self.__CURRENT_LEVEL = 2
-                    if self.__LEVEL <= 2:
-                        self.__LEVEL = 2
 
             if self.__CURRENT_LEVEL >= 2:
                 if KEY_PRESSED[pygame.K_3]:
@@ -1109,16 +1013,12 @@ class Game():
                     # A_ARRAY [ADDITIONAL BASE HEALTH, PERCENTAGE COOLDOWN DECREASE, PERCENTAGE MAX HEALTH INCREASE, PERCENTAGE ATTACK DAMAGE BOOST, INCOME GENERATION]
                     self.__levelPreperation([1, 1, 1, 1, 1], [1, 1, 1, 1, 1])
                     self.__CURRENT_LEVEL = 3
-                    if self.__LEVEL <= 3:
-                        self.__LEVEL = 3
 
             if self.__CURRENT_LEVEL >= 3:
                 if KEY_PRESSED[pygame.K_4]:
                     self.__PLAYING = True
                     # A_ARRAY [ADDITIONAL BASE HEALTH, PERCENTAGE COOLDOWN DECREASE, PERCENTAGE MAX HEALTH INCREASE, PERCENTAGE ATTACK DAMAGE BOOST, INCOME GENERATION]
                     self.__levelPreperation([1, 1, 1, 1, 1], [1, 1, 1, 1, 1])
-                    if self.__LEVEL <= 41:
-                        self.__LEVEL = 4
 
 
         # - - - UPDATES THE SCREEN - - - #
@@ -1146,7 +1046,15 @@ class Game():
                 self.__WIN = True
                 self.__END_SCREEN = []
                 self.__END_SCREEN.append(self.__VICTORY_TEXT)
-                self.__CURRENT_LEVEL += 1
+                if self.__LEVEL == 0 and self.__CURRENT_LEVEL == 1:
+                    self.__LEVEL = 1
+
+                if self.__LEVEL == 1 and self.__CURRENT_LEVEL == 2:
+                    self.__LEVEL = 2
+
+                if self.__LEVEL == 2 and self.__CURRENT_LEVEL == 3:
+                    self.__LEVEL = 3
+
 
         if self.__WIN != None:
             self.__END_SCREEN[0].marqueeY(20)
@@ -1166,8 +1074,10 @@ class Game():
         # A_SCALING = [ADDITIONAL BASE HEALTH, PERCENTAGE COOLDOWN DECREASE, PERCENTAGE MAX HEALTH INCREASE, PERCENTAGE ATTACK DAMAGE BOOST, INCOME GENERATION]
         # A_SCALING 0, 1, 2, 3, 4
 
+        self.__INCOME = 0
 
         self.__TOWERS = []
+
         self.__E_MAX_HEALTH = 2000 * E_SCALING[0]
         self.__E_TOWER = MyUnit("media/enemybase1.png", None, None, self.__E_MAX_HEALTH, None, None, None, None, None,
                                 None, None, None, None, None)
@@ -1175,23 +1085,56 @@ class Game():
         self.__E_TOWER.setY(190)
         self.__E_TOWER.setX(-10)
         self.__TOWERS.append(self.__E_TOWER)
-        self.__E_TOWER_HEALTH_TEXT.setText(f"{self.__E_TOWER.getHealth()}")
-        self.__E_TOWER_HEALTH_BAR = Box((self.__E_TOWER.getHealth() / self.__E_MAX_HEALTH) * self.__E_TOWER_DAMAGE_BAR.getWidth(),self.__E_TOWER_DAMAGE_BAR.getHeight())
+
+        self.__E_TOWER_HEALTH_TEXT = Text(f"{self.__E_MAX_HEALTH}", "ComicSans", 18)
+        self.__E_TOWER_HEALTH_TEXT.setPOS(
+            self.__E_TOWER.getX() + (self.__E_TOWER.getWidth() // 2 - self.__E_TOWER_HEALTH_TEXT.getWidth() // 2),
+            self.__E_TOWER.getY() - 5)
+        self.__E_TOWER_HEALTH_BAR = Box(100, 10)
+        self.__E_TOWER_HEALTH_BAR.setPOS(self.__E_TOWER_HEALTH_TEXT.getX() + (
+                    self.__E_TOWER_HEALTH_TEXT.getWidth() // 2 - self.__E_TOWER_HEALTH_BAR.getWidth() // 2),
+                                         self.__E_TOWER_HEALTH_TEXT.getY() + self.__E_TOWER_HEALTH_TEXT.getHeight())
         self.__E_TOWER_HEALTH_BAR.setColor(Color.GREEN)
-        self.__E_TOWER_HEALTH_BAR.setPOS(self.__E_TOWER_HEALTH_TEXT.getX() + (self.__E_TOWER_HEALTH_TEXT.getWidth() // 2 - self.__E_TOWER_DAMAGE_BAR.getWidth() // 2),self.__E_TOWER_HEALTH_TEXT.getY() + self.__E_TOWER_HEALTH_TEXT.getHeight())
+
+        self.__E_TOWER_DAMAGE_BAR = Box(100, 10)
+        self.__E_TOWER_DAMAGE_BAR.setPOS(self.__E_TOWER_HEALTH_TEXT.getX() + (
+                    self.__E_TOWER_HEALTH_TEXT.getWidth() // 2 - self.__E_TOWER_HEALTH_BAR.getWidth() // 2),
+                                         self.__E_TOWER_HEALTH_TEXT.getY() + self.__E_TOWER_HEALTH_TEXT.getHeight())
+
+        self.__E_TOWER_DAMAGE_BAR.setColor(Color.RED)
 
         self.__A_MAX_HEALTH = 2000 * A_SCALING[0]
+        # Ally Tower
+        self.__A_MAX_HEALTH = 5000
         self.__A_TOWER = MyUnit("media/allybase11.png", None, None, self.__A_MAX_HEALTH, None, None, None, None, None,
-                               None, None, None, None, None)
+                                None, None, None, None, None)
         self.__A_TOWER.setScale(0.80)
         self.__A_TOWER.setY(90)
         self.__A_TOWER.setX(1015)
         self.__TOWERS.append(self.__A_TOWER)
 
-        self.__A_TOWER_HEALTH_TEXT.setText(f"{self.__A_TOWER.getHealth()}")
-        self.__A_TOWER_HEALTH_BAR = Box((self.__A_TOWER.getHealth() / self.__A_MAX_HEALTH) * self.__A_TOWER_DAMAGE_BAR.getWidth(),self.__A_TOWER_DAMAGE_BAR.getHeight())
+        self.__A_TOWER_HEALTH_TEXT = Text(f"{self.__A_MAX_HEALTH}", "ComicSans", 18)
+        self.__A_TOWER_HEALTH_TEXT.setPOS(
+            self.__A_TOWER.getX() + (self.__A_TOWER.getWidth() // 2 - self.__A_TOWER_HEALTH_TEXT.getWidth() // 2 + 15),
+            self.__A_TOWER.getY() + 95)
+        self.__A_TOWER_HEALTH_BAR = Box(100, 10)
+        self.__A_TOWER_HEALTH_BAR.setPOS(self.__A_TOWER_HEALTH_TEXT.getX() + (
+                    self.__A_TOWER_HEALTH_TEXT.getWidth() // 2 - self.__A_TOWER_HEALTH_BAR.getWidth() // 2),
+                                         self.__A_TOWER_HEALTH_TEXT.getY() + self.__A_TOWER_HEALTH_TEXT.getHeight())
         self.__A_TOWER_HEALTH_BAR.setColor(Color.GREEN)
-        self.__A_TOWER_HEALTH_BAR.setPOS(self.__A_TOWER_HEALTH_TEXT.getX() + (self.__A_TOWER_HEALTH_TEXT.getWidth() // 2 - self.__A_TOWER_DAMAGE_BAR.getWidth() // 2),self.__A_TOWER_HEALTH_TEXT.getY() + self.__A_TOWER_HEALTH_TEXT.getHeight())
+
+        self.__A_TOWER_DAMAGE_BAR = Box(100, 10)
+        self.__A_TOWER_DAMAGE_BAR.setPOS(self.__A_TOWER_HEALTH_TEXT.getX() + (
+                    self.__A_TOWER_HEALTH_TEXT.getWidth() // 2 - self.__A_TOWER_HEALTH_BAR.getWidth() // 2),
+                                         self.__A_TOWER_HEALTH_TEXT.getY() + self.__A_TOWER_HEALTH_TEXT.getHeight())
+        self.__A_TOWER_DAMAGE_BAR.setColor(Color.RED)
+
+        self.__DEPLOYED_FISHES = []
+        self.__DEPLOYED_HUMANS = []
+        self.__LIVE_FISH_ATTACKS = []
+        self.__LIVE_HUMAN_ATTACKS = []
+
+
         # - - - - - - - - - - - - - - - - - - - - #
         #   -  -  - FISH CONFIGURATIONS -  -  -   #
         # - - - - - - - - - - - - - - - - - - - - #
@@ -1225,7 +1168,6 @@ class Game():
 
         self.__HUMAN_SPAWN_COOLDOWN = [210.0, 400.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
         self.__HUMAN_CURRENT_SPAWN_COOLDOWN = [800, 9.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
-        self.__HUMAN_SPAWN_LOCATION = 60
         self.__HUMAN_SPEED = [9, 5, 3, 4, 5]
         self.__HUMAN_MAX_HEALTH = [1, 200, 150, 200, 250]
         self.__HUMAN_RANGE = [-60, 200, 150, 200, 250]
