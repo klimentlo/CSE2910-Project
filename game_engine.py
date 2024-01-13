@@ -45,13 +45,15 @@ class Game():
         self.__DISPLAY = self.__FIRST_SCREEN
         self.__CURRENT_SCREEN = 0
         self.__CURRENT_LEVEL = 0
-        self.__LEVEL = 0
+        self.__LEVEL = 1
+        self.__SKILLPOINTS = 1
         self.__LEVEL_SELECTOR = False
+        self.__SKILLPOINTS_SELECTOR = False
         self.__WIN = None
 
 
         self.__INCOME = 0
-        self.__INCOME_TEXT = Text(f"${self.__INCOME}")
+        self.__INCOME_TEXT = Text(f"${self.__INCOME}", "Times New Roman")
         self.__INCOME_TEXT.setPOS(self.__WINDOW.getWidth() - self.__INCOME_TEXT.getWidth() - 25, 25)
         self.__FISH_SPAWN_LOCATION = self.__WINDOW.getWidth() - 175
         self.__HUMAN_SPAWN_LOCATION = 60
@@ -82,12 +84,6 @@ class Game():
                         if event.type == pygame.QUIT:
                             pygame.quit()
                             exit()
-                    # E_ARRAY
-
-
-
-
-
 
             self.__incomeGeneration()
             # - - - SPAWNING - - - #
@@ -123,9 +119,11 @@ class Game():
 
 
     def __incomeGeneration(self, MULTIPLIER=1):
-        self.__INCOME += 1 * MULTIPLIER
-        self.__INCOME_TEXT.setText(f"$ {round(self.__INCOME)}")
-        self.__INCOME_TEXT.setPOS(self.__WINDOW.getWidth() - self.__INCOME_TEXT.getWidth() - 25, 25)
+        if self.__WIN == None:
+            self.__INCOME += 1 * MULTIPLIER
+            self.__INCOME_TEXT.setText(f"$ {round(self.__INCOME)}")
+            self.__INCOME_TEXT.setPOS(self.__WINDOW.getWidth() - self.__INCOME_TEXT.getWidth() - 25, 25)
+
 
     def __fishMovement(self):
         for FISH in self.__DEPLOYED_FISHES:  # For all the fish in existence
@@ -836,9 +834,9 @@ class Game():
         self.__VICTORY_TEXT.setSpeed(4)
         self.__VICTORY_TEXT.setPOS(self.__WINDOW.getWidth() // 2 - self.__VICTORY_TEXT.getWidth() // 2,0 - self.__VICTORY_TEXT.getHeight())
 
-        self.__RETURNING_TEXT = ImageSprite("media/menu/returnToMenu.png")
-        self.__RETURNING_TEXT.setScale(0.35)
-        self.__RETURNING_TEXT.setPOS(self.__WINDOW.getWidth()//2 - self.__RETURNING_TEXT.getWidth()//2, self.__WINDOW.getHeight())
+        self.__RETURNING_TEXT = ImageSprite("media/menu/Press-Space-To-Return-1-12-2024.png")
+        self.__RETURNING_TEXT.setScale(0.4)
+        self.__RETURNING_TEXT.setPOS(self.__WINDOW.getWidth()//2 - self.__RETURNING_TEXT.getWidth()//2, self.__WINDOW.getHeight()+30)
 
         self.__swordFishLock = ImageSprite("media/menu/levelsBorderLock.png")
         self.__swordFishLock.setScale(0.2)
@@ -959,20 +957,73 @@ class Game():
         self.__THIRD_SCREEN.append(self.__OUTLINE)
         self.__THIRD_SCREEN.append(self.__SELECT_TEXT)
 
+        self.__FOURTH_SCREEN = []
+        self.__SELECT_TEXT = ImageSprite("media/menu/Increase-Damage-x-1-3-1-1-12-2024.png")
+        self.__SELECT_TEXT.setScale(0.35)
+        self.__SELECT_TEXT.setPOS(50, 150)
+        self.__OUTLINE = ImageSprite("media/menu/skillPointsBorder.png")
+        self.__OUTLINE.setScale(0.35)
+        self.__OUTLINE.setPOS(
+            self.__SELECT_TEXT.getX() + (self.__SELECT_TEXT.getWidth() // 2 - self.__OUTLINE.getWidth() // 2),
+            self.__SELECT_TEXT.getY() + (self.__SELECT_TEXT.getHeight() // 2 - self.__OUTLINE.getHeight() // 2))
+        self.__FOURTH_SCREEN.append(self.__OUTLINE)
+        self.__FOURTH_SCREEN.append(self.__SELECT_TEXT)
 
-        if self.__LEVEL == 0:
+
+        self.__SELECT_TEXT = ImageSprite("media/menu/Increase-Defense-x-1-3-2-1-12-2024.png")
+        self.__SELECT_TEXT.setScale(0.35)
+        self.__SELECT_TEXT.setPOS(self.__WINDOW.getWidth() // 2 - self.__SELECT_TEXT.getWidth() // 2, 150)
+        self.__OUTLINE = ImageSprite("media/menu/skillPointsBorder.png")
+        self.__OUTLINE.setScale(0.35)
+        self.__OUTLINE.setPOS(
+            self.__SELECT_TEXT.getX() + (self.__SELECT_TEXT.getWidth() // 2 - self.__OUTLINE.getWidth() // 2),
+            self.__SELECT_TEXT.getY() + (self.__SELECT_TEXT.getHeight() // 2 - self.__OUTLINE.getHeight() // 2))
+        self.__FOURTH_SCREEN.append(self.__OUTLINE)
+        self.__FOURTH_SCREEN.append(self.__SELECT_TEXT)
+
+
+        self.__SELECT_TEXT = ImageSprite("media/menu/Income-Generation-x-1-3-3-1-12-2024.png")
+        self.__SELECT_TEXT.setScale(0.35)
+        self.__SELECT_TEXT.setPOS(self.__WINDOW.getWidth()- (self.__SELECT_TEXT.getWidth() +50),150)
+        self.__OUTLINE = ImageSprite("media/menu/skillPointsBorder.png")
+        self.__OUTLINE.setScale(0.35)
+        self.__OUTLINE.setPOS(
+            self.__SELECT_TEXT.getX() + (self.__SELECT_TEXT.getWidth() // 2 - self.__OUTLINE.getWidth() // 2),
+            self.__SELECT_TEXT.getY() + (self.__SELECT_TEXT.getHeight() // 2 - self.__OUTLINE.getHeight() // 2))
+        self.__FOURTH_SCREEN.append(self.__OUTLINE)
+        self.__FOURTH_SCREEN.append(self.__SELECT_TEXT)
+
+        self.__SELECT_TEXT = ImageSprite("media/menu/Income-Generation-x-1-3-3-1-12-2024.png")
+        self.__SELECT_TEXT.setScale(0.35)
+        self.__SELECT_TEXT.setPOS(self.__WINDOW.getWidth() - (self.__SELECT_TEXT.getWidth() + 50), 150)
+        self.__OUTLINE = ImageSprite("media/menu/skillPointsBorder.png")
+        self.__OUTLINE.setScale(0.35)
+        self.__OUTLINE.setPOS(
+            self.__SELECT_TEXT.getX() + (self.__SELECT_TEXT.getWidth() // 2 - self.__OUTLINE.getWidth() // 2),
+            self.__SELECT_TEXT.getY() + (self.__SELECT_TEXT.getHeight() // 2 - self.__OUTLINE.getHeight() // 2))
+        self.__FOURTH_SCREEN.append(self.__OUTLINE)
+        self.__FOURTH_SCREEN.append(self.__SELECT_TEXT)
+
+
+
+        if self.__LEVEL == 1:
             self.__THIRD_SCREEN.append(self.__LOCK2)
             self.__THIRD_SCREEN.append(self.__LOCK3)
             self.__THIRD_SCREEN.append(self.__LOCK4)
 
-        if self.__LEVEL == 1:
-            print("appened")
-            print(len(self.__THIRD_SCREEN))
+        if self.__LEVEL == 2:
+            print("Level 2")
+            self.__LOCK2.setPOS(-1000,-1000)
             self.__THIRD_SCREEN.append(self.__LOCK3)
             self.__THIRD_SCREEN.append(self.__LOCK4)
 
-        if self.__LEVEL == 2:
+        if self.__LEVEL == 3:
+            self.__LOCK2.setPOS(-1000,-1000)
+            self.__LOCK3.setPOS(-1000, -1000)
             self.__THIRD_SCREEN.append(self.__LOCK4)
+
+        if self.__LEVEL == 4:
+            pass
 
 
 
@@ -987,9 +1038,14 @@ class Game():
 
         # Explanation Menu
         if self.__CURRENT_SCREEN == 1: # If in instruction menu
-            if KEY_PRESSED[pygame.K_c] == 1: # and they click c
+            if KEY_PRESSED[pygame.K_c] == 1 or self.__CURRENT_LEVEL != 0: # and they click c
                 self.__DISPLAY = self.__THIRD_SCREEN # go to level selector
                 self.__LEVEL_SELECTOR = True
+
+        print("Level: ", self.__LEVEL)
+        print("Current Level: ", self.__CURRENT_LEVEL)
+        print(self.__LEVEL_SELECTOR)
+
 
 
         # LEVEL SELECTING
@@ -1000,25 +1056,34 @@ class Game():
                 self.__levelPreperation([1, 1, 1, 1, 1], [1, 1, 1, 1, 1])
                 self.__CURRENT_LEVEL = 1
 
-            if self.__CURRENT_LEVEL >= 1:
+            if self.__LEVEL >= 2:
                 if KEY_PRESSED[pygame.K_2]:
                     self.__PLAYING = True
                     # A_ARRAY [ADDITIONAL BASE HEALTH, PERCENTAGE COOLDOWN DECREASE, PERCENTAGE MAX HEALTH INCREASE, PERCENTAGE ATTACK DAMAGE BOOST, INCOME GENERATION]
                     self.__levelPreperation([1, 1, 1, 1, 1], [1, 1, 1, 1, 1])
                     self.__CURRENT_LEVEL = 2
 
-            if self.__CURRENT_LEVEL >= 2:
+            if self.__LEVEL >= 3:
                 if KEY_PRESSED[pygame.K_3]:
                     self.__PLAYING = True
                     # A_ARRAY [ADDITIONAL BASE HEALTH, PERCENTAGE COOLDOWN DECREASE, PERCENTAGE MAX HEALTH INCREASE, PERCENTAGE ATTACK DAMAGE BOOST, INCOME GENERATION]
                     self.__levelPreperation([1, 1, 1, 1, 1], [1, 1, 1, 1, 1])
                     self.__CURRENT_LEVEL = 3
 
-            if self.__CURRENT_LEVEL >= 3:
+            if self.__LEVEL >= 4:
                 if KEY_PRESSED[pygame.K_4]:
                     self.__PLAYING = True
                     # A_ARRAY [ADDITIONAL BASE HEALTH, PERCENTAGE COOLDOWN DECREASE, PERCENTAGE MAX HEALTH INCREASE, PERCENTAGE ATTACK DAMAGE BOOST, INCOME GENERATION]
                     self.__levelPreperation([1, 1, 1, 1, 1], [1, 1, 1, 1, 1])
+                    self.__CURRENT_LEVEL = 4
+
+            if KEY_PRESSED[pygame.K_s] == 1:
+                self.__LEVEL_SELECTOR = False
+                self.__SKILLPOINTS_SELECTOR = True
+
+        if self.__SKILLPOINTS_SELECTOR == True:
+            self.__DISPLAY = self.__FOURTH_SCREEN
+
 
 
         # - - - UPDATES THE SCREEN - - - #
@@ -1046,23 +1111,29 @@ class Game():
                 self.__WIN = True
                 self.__END_SCREEN = []
                 self.__END_SCREEN.append(self.__VICTORY_TEXT)
-                if self.__LEVEL == 0 and self.__CURRENT_LEVEL == 1:
-                    self.__LEVEL = 1
-
-                if self.__LEVEL == 1 and self.__CURRENT_LEVEL == 2:
+                if self.__LEVEL == 1 and self.__CURRENT_LEVEL == 1:
                     self.__LEVEL = 2
+                    self.__SKILLPOINTS += 2
 
-                if self.__LEVEL == 2 and self.__CURRENT_LEVEL == 3:
+                if self.__LEVEL == 2 and self.__CURRENT_LEVEL == 2:
                     self.__LEVEL = 3
+                    self.__SKILLPOINTS += 2
+
+                if self.__LEVEL == 3 and self.__CURRENT_LEVEL == 3:
+                    self.__LEVEL = 4
+                    self.__SKILLPOINTS += 2
 
 
         if self.__WIN != None:
-            self.__END_SCREEN[0].marqueeY(20)
+            self.__END_SCREEN[0].marqueeY(0)
             if self.__END_SCREEN[0].getY() >= 2:
                 self.__END_SCREEN.append(self.__RETURNING_TEXT)
-                self.__END_SCREEN[-1].setY(self.__WINDOW.getHeight()-self.__RETURNING_TEXT.getHeight() -30)
-                self.__LEVEL_SELECTOR = True
-                self.__PLAYING = False
+                self.__END_SCREEN[-1].setY(self.__WINDOW.getHeight()-self.__RETURNING_TEXT.getHeight() -20)
+                KEYPRESSED = pygame.key.get_pressed()
+                if KEYPRESSED[pygame.K_SPACE] == 1:
+                    self.__LEVEL_SELECTOR = True
+                    self.__PLAYING = False
+                    self.__CURRENT_SCREEN = 1
 
 
 
