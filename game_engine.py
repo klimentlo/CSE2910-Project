@@ -46,10 +46,11 @@ class Game():
         self.__CURRENT_SCREEN = 0
         self.__CURRENT_LEVEL = 0
         self.__LEVEL = 1
-        self.__SKILLPOINTS = 1
+        self.__SKILLPOINTS = 2
         self.__LEVEL_SELECTOR = False
         self.__SKILLPOINTS_SELECTOR = False
         self.__WIN = None
+
 
 
         self.__INCOME = 0
@@ -57,10 +58,16 @@ class Game():
         self.__INCOME_TEXT.setPOS(self.__WINDOW.getWidth() - self.__INCOME_TEXT.getWidth() - 25, 25)
         self.__FISH_SPAWN_LOCATION = self.__WINDOW.getWidth() - 175
         self.__HUMAN_SPAWN_LOCATION = 60
+
+        self.__INCOME_MULTIPLIER = 1
+        self.__DAMAGE_MULTIPLIER = 1
+        self.__HEALTH_MULTIPLIER = 1
+
         # Lists for the objects in the game
         self.__TIME = time.time()
         self.__PREVIOUS_TIME = self.__TIME
         self.__TIME_PASSED = 0.05
+        self.__SP_TIME_PASSED = 0.3
 
 
 
@@ -85,7 +92,7 @@ class Game():
                             pygame.quit()
                             exit()
 
-            self.__incomeGeneration()
+            self.__incomeGeneration(self.__INCOME_MULTIPLIER)
             # - - - SPAWNING - - - #
             self.__spawnControl()
             # Movement Functions
@@ -614,7 +621,7 @@ class Game():
 
     def __updateTimers(self):
         self.__TIME = time.time()
-        if self.__TIME >= self.__PREVIOUS_TIME + self.__TIME_PASSED:
+        if self.__TIME >= self.__PREVIOUS_TIME + self.__TIME_PASSED: # self.__TIME_PASSED = 0.10. So when 0.10 seconds pass
             self.__PREVIOUS_TIME = self.__TIME  # saves its current time, so when another second passes, it will do this again
 
             # updates the cooldowns
@@ -970,7 +977,7 @@ class Game():
         self.__FOURTH_SCREEN.append(self.__SELECT_TEXT)
 
 
-        self.__SELECT_TEXT = ImageSprite("media/menu/Increase-Defense-x-1-3-2-1-12-2024.png")
+        self.__SELECT_TEXT = ImageSprite("media/menu/Increase-Health-x-1-3-2-1-13-2024.png")
         self.__SELECT_TEXT.setScale(0.35)
         self.__SELECT_TEXT.setPOS(self.__WINDOW.getWidth() // 2 - self.__SELECT_TEXT.getWidth() // 2, 150)
         self.__OUTLINE = ImageSprite("media/menu/skillPointsBorder.png")
@@ -1004,7 +1011,30 @@ class Game():
         self.__FOURTH_SCREEN.append(self.__OUTLINE)
         self.__FOURTH_SCREEN.append(self.__SELECT_TEXT)
 
+        self.__SELECT_TEXT = ImageSprite("media/menu/Remaining-Skillpoints-1-13-2024.png")
+        self.__SELECT_TEXT.setScale(0.30)
+        self.__SELECT_TEXT.setPOS(self.__WINDOW.getWidth() - (self.__SELECT_TEXT.getWidth() + 65), 15)
+        self.__OUTLINE = ImageSprite("media/menu/skillPointsBorder.png")
+        self.__OUTLINE.setScale(0.35)
+        self.__OUTLINE.setPOS(
+            self.__SELECT_TEXT.getX() + (self.__SELECT_TEXT.getWidth() // 2 - self.__OUTLINE.getWidth() // 2 + 30),
+            self.__SELECT_TEXT.getY() + (self.__SELECT_TEXT.getHeight() // 2 - self.__OUTLINE.getHeight() // 2))
+        self.__FOURTH_SCREEN.append(self.__OUTLINE)
+        self.__FOURTH_SCREEN.append(self.__SELECT_TEXT)
 
+        self.__SKILLPOINTS_TEXT = Text(f"{self.__SKILLPOINTS}", "Cosmic Sans", 42)
+        self.__SKILLPOINTS_TEXT.setPOS(1175, 33)
+        self.__FOURTH_SCREEN.append(self.__SKILLPOINTS_TEXT)
+
+        self.__SELECT_TEXT = ImageSprite("media/menu/Beating-a-new-Level-grants-yo-1-13-2024.png")
+        self.__SELECT_TEXT.setScale(0.47)
+        self.__SELECT_TEXT.setPOS(0, -10)
+        self.__FOURTH_SCREEN.append(self.__SELECT_TEXT)
+
+        self.__SELECT_TEXT = ImageSprite("media/menu/Return-to-Levels-r-1-13-2024.png")
+        self.__SELECT_TEXT.setScale(0.40)
+        self.__SELECT_TEXT.setPOS(self.__WINDOW.getWidth()//2 - self.__SELECT_TEXT.getWidth()//2, self.__WINDOW.getHeight() - self.__SELECT_TEXT.getHeight() - 30)
+        self.__FOURTH_SCREEN.append(self.__SELECT_TEXT)
 
         if self.__LEVEL == 1:
             self.__THIRD_SCREEN.append(self.__LOCK2)
@@ -1049,40 +1079,64 @@ class Game():
 
 
         # LEVEL SELECTING
-        if self.__LEVEL_SELECTOR == True:
+        if self.__LEVEL_SELECTOR == True and self.__SKILLPOINTS_SELECTOR == False:
+            self.__DISPLAY = self.__THIRD_SCREEN  # go to level selector
             if KEY_PRESSED[pygame.K_1]:
                 self.__PLAYING = True
                 # A_ARRAY [ADDITIONAL BASE HEALTH, PERCENTAGE COOLDOWN DECREASE, PERCENTAGE MAX HEALTH INCREASE, PERCENTAGE ATTACK DAMAGE BOOST, INCOME GENERATION]
-                self.__levelPreperation([1, 1, 1, 1, 1], [1, 1, 1, 1, 1])
+                self.__levelPreperation([1, 1, 1, 1, 1])
                 self.__CURRENT_LEVEL = 1
 
             if self.__LEVEL >= 2:
                 if KEY_PRESSED[pygame.K_2]:
                     self.__PLAYING = True
                     # A_ARRAY [ADDITIONAL BASE HEALTH, PERCENTAGE COOLDOWN DECREASE, PERCENTAGE MAX HEALTH INCREASE, PERCENTAGE ATTACK DAMAGE BOOST, INCOME GENERATION]
-                    self.__levelPreperation([1, 1, 1, 1, 1], [1, 1, 1, 1, 1])
+                    self.__levelPreperation([1, 1, 1, 1, 1])
                     self.__CURRENT_LEVEL = 2
 
             if self.__LEVEL >= 3:
                 if KEY_PRESSED[pygame.K_3]:
                     self.__PLAYING = True
                     # A_ARRAY [ADDITIONAL BASE HEALTH, PERCENTAGE COOLDOWN DECREASE, PERCENTAGE MAX HEALTH INCREASE, PERCENTAGE ATTACK DAMAGE BOOST, INCOME GENERATION]
-                    self.__levelPreperation([1, 1, 1, 1, 1], [1, 1, 1, 1, 1])
+                    self.__levelPreperation([1, 1, 1, 1, 1])
                     self.__CURRENT_LEVEL = 3
 
             if self.__LEVEL >= 4:
                 if KEY_PRESSED[pygame.K_4]:
                     self.__PLAYING = True
                     # A_ARRAY [ADDITIONAL BASE HEALTH, PERCENTAGE COOLDOWN DECREASE, PERCENTAGE MAX HEALTH INCREASE, PERCENTAGE ATTACK DAMAGE BOOST, INCOME GENERATION]
-                    self.__levelPreperation([1, 1, 1, 1, 1], [1, 1, 1, 1, 1])
+                    self.__levelPreperation([1, 1, 1, 1, 1])
                     self.__CURRENT_LEVEL = 4
 
             if KEY_PRESSED[pygame.K_s] == 1:
                 self.__LEVEL_SELECTOR = False
                 self.__SKILLPOINTS_SELECTOR = True
 
+
         if self.__SKILLPOINTS_SELECTOR == True:
             self.__DISPLAY = self.__FOURTH_SCREEN
+            self.__TIME = time.time()
+            if self.__TIME >= self.__PREVIOUS_TIME + self.__SP_TIME_PASSED:  # self.__TIME_PASSED = 0.10. So when 0.10 seconds pass
+                if self.__SKILLPOINTS > 0:
+                    if KEY_PRESSED[pygame.K_1] == 1:
+                        self.__DAMAGE_MULTIPLIER += 0.3
+                        self.__SKILLPOINTS -= 1
+                        self.__PREVIOUS_TIME = self.__TIME  # saves its current
+                if self.__SKILLPOINTS > 0:
+                    if KEY_PRESSED[pygame.K_2] == 1:
+                        self.__HEALTH_MULTIPLIER += 0.3
+                        self.__SKILLPOINTS -= 1
+                        self.__PREVIOUS_TIME = self.__TIME  # saves its current
+                if self.__SKILLPOINTS > 0:
+                    if KEY_PRESSED[pygame.K_3] == 1:
+                        self.__INCOME_MULTIPLIER += 0.3
+                        self.__SKILLPOINTS -= 1
+                        self.__PREVIOUS_TIME = self.__TIME  # saves its current
+
+            if KEY_PRESSED[pygame.K_r] == 1:
+                self.__SKILLPOINTS_SELECTOR = False
+                self.__LEVEL_SELECTOR = True
+
 
 
 
@@ -1140,7 +1194,7 @@ class Game():
 
 
 
-    def __levelPreperation(self, E_SCALING, A_SCALING ):
+    def __levelPreperation(self, E_SCALING):
 
         # A_SCALING = [ADDITIONAL BASE HEALTH, PERCENTAGE COOLDOWN DECREASE, PERCENTAGE MAX HEALTH INCREASE, PERCENTAGE ATTACK DAMAGE BOOST, INCOME GENERATION]
         # A_SCALING 0, 1, 2, 3, 4
@@ -1174,9 +1228,8 @@ class Game():
 
         self.__E_TOWER_DAMAGE_BAR.setColor(Color.RED)
 
-        self.__A_MAX_HEALTH = 2000 * A_SCALING[0]
+        self.__A_MAX_HEALTH = 2000
         # Ally Tower
-        self.__A_MAX_HEALTH = 5000
         self.__A_TOWER = MyUnit("media/allybase11.png", None, None, self.__A_MAX_HEALTH, None, None, None, None, None,
                                 None, None, None, None, None)
         self.__A_TOWER.setScale(0.80)
@@ -1223,21 +1276,14 @@ class Game():
 
         self.__FISH_SPAWN_COOLDOWN = [3.0, 8.0, 15.0]
         self.__FISH_CURRENT_SPAWN_COOLDOWN = []
-
         for i in range(len(self.__FISH_SPAWN_COOLDOWN)):
-            # COOLDOWN
-            self.__FISH_SPAWN_COOLDOWN[i] *= A_SCALING[1] # reduces spawn cooldown by 20% of current spawn cooldown
-            self.__FISH_CURRENT_SPAWN_COOLDOWN.append(self.__FISH_SPAWN_COOLDOWN[i]-0.5)
-            # FISH MAX HEALTH
-            self.__FISH_MAX_HEALTH[i] *= 1.25 # increase health by 25 percent
-            # FISH DAMAGE
-            self.__FISH_ATTACK_DAMAGE[i] = round(self.__FISH_ATTACK_DAMAGE[i]* 1.1)# increase damage by 10%
+            self.__FISH_CURRENT_SPAWN_COOLDOWN.append(self.__FISH_SPAWN_COOLDOWN[i]-0.3)
 
 
         # --- COST OF THE UNITS --- #
         self.__DEPLOYED_HUMANS = []
 
-        self.__HUMAN_SPAWN_COOLDOWN = [210.0, 400.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
+        self.__HUMAN_SPAWN_COOLDOWN = [210.0, 4.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
         self.__HUMAN_CURRENT_SPAWN_COOLDOWN = [800, 9.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
         self.__HUMAN_SPEED = [9, 5, 3, 4, 5]
         self.__HUMAN_MAX_HEALTH = [1, 200, 150, 200, 250]

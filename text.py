@@ -30,6 +30,7 @@ class Text(MySprite):
         self.__FONT = pygame.font.SysFont(self.__FONT_FAMILY, SIZE)
 
 
+
 if __name__ == "__main__":
     from window import Window
     pygame.init()
