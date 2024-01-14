@@ -1175,14 +1175,14 @@ class Game():
                 if KEY_PRESSED[pygame.K_3]:
                     self.__PLAYING = True
                     # E_SCALING = [TOWER HEALTH, % Damage Increase, % Health Increase]
-                    self.__levelPreperation([10000, 1, 1])
+                    self.__levelPreperation([10000, 1.5, 1.3])
                     self.__CURRENT_LEVEL = 3
 
             if self.__LEVEL >= 4:
                 if KEY_PRESSED[pygame.K_4]:
                     self.__PLAYING = True
                     # E_SCALING = [TOWER HEALTH, % Damage Increase, % Health Increase]
-                    self.__levelPreperation([10000, 1, 1, 1, 1])
+                    self.__levelPreperation([10000, 1.7, 1.5])
                     self.__CURRENT_LEVEL = 4
 
             if KEY_PRESSED[pygame.K_s] == 1:
