@@ -45,8 +45,8 @@ class Game():
         self.__DISPLAY = self.__FIRST_SCREEN
         self.__CURRENT_SCREEN = 0
         self.__CURRENT_LEVEL = 0
-        self.__LEVEL = 4
-        self.__SKILLPOINTS = 4
+        self.__LEVEL = 1
+        self.__SKILLPOINTS = 2
         self.__LEVEL_SELECTOR = False
         self.__SKILLPOINTS_SELECTOR = False
         self.__WIN = None
